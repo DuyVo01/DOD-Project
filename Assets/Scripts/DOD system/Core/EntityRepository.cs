@@ -2,10 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EntityRepository<T> : MonoBehaviour, IDataRepository<T>
-    where T : IDataEntity
+public class EntityRepository<T> : MonoBehaviour, IEntityRepository<T>
+    where T : IEntity
 {
-    public static EntityRepository<T> Instance { get; private set; }
     public ChunkArray<T> DataEntities { get; set; }
 
     private int initialCapacity;
@@ -19,5 +18,10 @@ public class EntityRepository<T> : MonoBehaviour, IDataRepository<T>
     public void AddEntity(T entity)
     {
         DataEntities.Add(entity);
+    }
+
+    public void PopulateEntityId(int indexId)
+    {
+        DataEntities.Get(indexId).EntityID = indexId;
     }
 }

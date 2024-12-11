@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MusicColumnLine_DataComponent
+public interface IEntity
 {
-    public int[] Col_Ids {get; set;}
+    public int EntityID { get; set; }
 }

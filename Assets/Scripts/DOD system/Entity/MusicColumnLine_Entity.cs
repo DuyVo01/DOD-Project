@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MusicColumnLine_Entity : MonoBehaviour, IDataEntity
+public class MusicColumnLine_Entity : MonoBehaviour, IEntity
 {
-    public int EntityID {get; private set;}
+    public int EntityID { get; set; }
 }
