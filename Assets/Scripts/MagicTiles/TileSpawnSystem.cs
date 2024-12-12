@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class TileSpawn_System
+public struct TileSpawnSystem
 {
     public void SpawnTile(int[] posIDs, float[] timeAppears, ref Vector2[] notePositions)
     {
