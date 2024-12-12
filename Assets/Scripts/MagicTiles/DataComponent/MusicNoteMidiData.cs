@@ -1,35 +1,33 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Security.Cryptography;
 using UnityEngine;
 
 public struct MusicNoteMidiData
 {
-    public int[] ids;
+    // Core data arrays
+    public int[] Ids;
+    public int[] NoteNumbers;
+    public float[] TimeAppears;
+    public float[] Timespans;
+    public float[] Durations;
+    public float[] Velocities;
+    public int[] PositionIds;
+    public Vector2[] Positions;
 
-    // public int[] notes_num { get; set; }
-    public int[] pos_ids;
-
-    // public int[] mood_changes { get; set; }
-    public float[] time_appears;
-
-    // public float[] timespans { get; set; }
-    // public float[] durations { get; set; }
-    // public float[] velocities { get; set; }
-    public Vector2[] positions;
-
-    // public float min_duration ;
-    // public int raw_total_notes ;
-    // public int total_notes ;
-
-    public int count;
+    // Metadata
+    public int TotalNotes;
+    public float MinDuration;
 
     public MusicNoteMidiData(int capacity)
     {
-        ids = new int[capacity];
-        pos_ids = new int[capacity];
-        time_appears = new float[capacity];
-        positions = new Vector2[capacity];
-        count = 0;
+        // Preallocate arrays with specified capacity
+        Ids = new int[capacity];
+        NoteNumbers = new int[capacity];
+        TimeAppears = new float[capacity];
+        Timespans = new float[capacity];
+        Durations = new float[capacity];
+        Velocities = new float[capacity];
+        PositionIds = new int[capacity];
+        Positions = new Vector2[capacity];
+        TotalNotes = 0;
+        MinDuration = float.MaxValue;
     }
 }

@@ -11,50 +11,69 @@ public class MusicTileWorld
     //System components
     private TileSpawnSystem tileSpawnSystem;
     private TransformUpdateSystem transformUpdateSystem;
+    private MovingTileSystem movingTileSystem;
 
     private UnityTransformBridge unityTransformBridge;
 
-    private int addedNoteCount;
+    private bool hasDoneInitialize;
 
     public MusicTileWorld(int capacity, Transform parent, GameObject tilePrefab)
     {
         musicNoteMidiData = new MusicNoteMidiData(capacity);
         musicNoteTransformData = new MusicNoteTransformData(capacity);
+
+        //System Initialize
         tileSpawnSystem = new TileSpawnSystem();
         transformUpdateSystem = new TransformUpdateSystem();
+        movingTileSystem = new MovingTileSystem();
+
         unityTransformBridge = new UnityTransformBridge(parent, tilePrefab);
-        addedNoteCount = 0;
+
+        hasDoneInitialize = false;
     }
 
-    public void AddNote(int id, int posId, float timeAppears)
+    public void PopulateNoteData(string midiContent)
     {
-        musicNoteMidiData.ids[addedNoteCount] = id;
-        musicNoteMidiData.pos_ids[addedNoteCount] = posId;
-        musicNoteMidiData.time_appears[addedNoteCount] = timeAppears;
-        musicNoteMidiData.positions[addedNoteCount] = Vector2.zero;
+        musicNoteMidiData = MidiNoteParser.ParseFromText(midiContent);
+        Debug.Log($"Loaded {musicNoteMidiData.TotalNotes} notes");
 
-        musicNoteTransformData.entityIDs.Add(addedNoteCount);
-        musicNoteTransformData.positions.Add(Vector2.zero);
-        musicNoteTransformData.count++;
-
-        addedNoteCount++;
+        for (int i = 0; i < musicNoteMidiData.TotalNotes; i++)
+        {
+            musicNoteTransformData.entityIDs.Add(i);
+            musicNoteTransformData.positions.Add(Vector2.zero);
+        }
+        musicNoteTransformData.count = musicNoteMidiData.TotalNotes;
 
         tileSpawnSystem.SpawnTile(
-            musicNoteMidiData.pos_ids,
-            musicNoteMidiData.time_appears,
-            ref musicNoteMidiData.positions
+            musicNoteMidiData.PositionIds,
+            musicNoteMidiData.TimeAppears,
+            ref musicNoteMidiData.Positions
         );
+
+        SyncUp();
+        hasDoneInitialize = true;
     }
 
     public void Update()
     {
-        transformUpdateSystem.SyncTransform(ref musicNoteMidiData, ref musicNoteTransformData);
+        if (!hasDoneInitialize)
+        {
+            return;
+        }
 
-        unityTransformBridge.SyncToUnity(ref musicNoteTransformData);
+        movingTileSystem.MovingTile(ref musicNoteMidiData);
+        SyncUp();
     }
 
     public void Cleanup()
     {
         unityTransformBridge.Cleanup();
+    }
+
+    private void SyncUp()
+    {
+        transformUpdateSystem.SyncTransform(ref musicNoteMidiData, ref musicNoteTransformData);
+
+        unityTransformBridge.SyncToUnity(ref musicNoteTransformData);
     }
 }

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public struct TransformUpdateSystem
@@ -15,7 +13,7 @@ public struct TransformUpdateSystem
         {
             entityId = musicNoteTransformData.entityIDs.Get(i);
 
-            musicNoteTransformData.positions.Set(i, musicNoteMidiData.positions[entityId]);
+            musicNoteTransformData.positions.Set(i, musicNoteMidiData.Positions[entityId]);
         }
     }
 }
