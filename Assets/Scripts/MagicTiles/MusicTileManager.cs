@@ -17,7 +17,7 @@ public class MusicTileManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        musicTileWorld = new MusicTileWorld(64, tileParent, tilePrefab);
+        musicTileWorld = new MusicTileWorld(tileParent, tilePrefab);
         musicTileWorld.PopulateNoteData(midiContent.text);
     }
 

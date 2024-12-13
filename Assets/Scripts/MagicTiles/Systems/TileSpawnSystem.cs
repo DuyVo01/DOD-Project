@@ -1,21 +1,24 @@
 using System;
 using UnityEngine;
 
-public struct TileSpawnSystem
+public struct TileSpawnSystem : ITileSpawnSystem, IGameSystem
 {
-    public void SpawnTile(int[] posIDs, float[] timeAppears, ref Vector2[] notePositions)
+    public void SpawnTileNote(ref MusicNoteMidiData musicNoteMidiData)
     {
+        int[] posIDs = musicNoteMidiData.PositionIds;
+        float[] timeAppears = musicNoteMidiData.TimeAppears;
+
         float posX;
         for (int i = 0; i < posIDs.Length; i++)
         {
             posX = MagicTileHelper.GetXPositionBasedOnPosID(posIDs[i]);
-            notePositions[i].x = posX;
+            musicNoteMidiData.SetPositionX(i, posX);
         }
         float posY;
         for (int i = 0; i < timeAppears.Length; i++)
         {
             posY = MagicTileHelper.GetYPositionBasedOnTimeAppear(timeAppears[i]);
-            notePositions[i].y = posY;
+            musicNoteMidiData.SetPositionY(i, posY);
         }
     }
 }

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct MusicNoteTransformData
+public struct MusicNoteTransformData : IDataComponent
 {
     public ChunkArray<int> entityIDs;
     public ChunkArray<Vector3> positions;
