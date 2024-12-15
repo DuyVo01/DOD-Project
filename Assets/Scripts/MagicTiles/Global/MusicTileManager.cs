@@ -5,9 +5,6 @@ using UnityEngine;
 public class MusicTileManager : MonoBehaviour
 {
     [SerializeField]
-    private TextAsset midiContent;
-
-    [SerializeField]
     private Transform tileParent;
 
     [SerializeField]
@@ -17,18 +14,13 @@ public class MusicTileManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        musicTileWorld = new MusicTileWorld(tileParent, tilePrefab);
-        musicTileWorld.PopulateNoteData(midiContent.text);
+        musicTileWorld = new MusicTileWorld();
+        musicTileWorld.Initialize();
     }
 
     // Update is called once per frame
     void Update()
     {
         musicTileWorld.Update();
-    }
-
-    private void OnDestroy()
-    {
-        musicTileWorld.Cleanup();
     }
 }
