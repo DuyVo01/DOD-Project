@@ -243,6 +243,8 @@ MonoBehaviour:
   generalSetting: {fileID: 11400000, guid: ed6ccf6072fffca40b837c5b9c6cf9d3, type: 2}
   dataSystemSetting: {fileID: 11400000, guid: 8dd20fefdf2161f45b1585cd5229c40d, type: 2}
   perfectLineSettingSO: {fileID: 11400000, guid: a12736c430f23984f8317f2aefad4b55, type: 2}
+  musicNotePresenter: {fileID: 11400000, guid: b00e5a15d0fd80446a0363675671e7aa, type: 2}
+  presenterParent: {fileID: 926917583}
 --- !u!4 &894207762
 Transform:
   m_ObjectHideFlags: 0
@@ -287,7 +289,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1149b9f93f2bd4dbca8c561e0d13e0cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  midiContent: {fileID: 4900000, guid: 5651cca0434e843a4af2569038996f88, type: 3}
   tileParent: {fileID: 926917583}
   tilePrefab: {fileID: 8137537297466452066, guid: 8c1c272d019a341fa8cc13b90b199606, type: 3}
 --- !u!4 &926917583
