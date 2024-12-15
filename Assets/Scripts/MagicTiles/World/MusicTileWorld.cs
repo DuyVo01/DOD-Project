@@ -1,73 +1,35 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class MusicTileWorld
+public struct MusicTileWorld
 {
-    private UnityTransformBridge unityTransformBridge;
+    private bool isInitialized;
 
-    private bool hasDoneInitialize;
-
-    ITileSpawnSystem tileSpawnSystem;
-    ITransformUpdateSystem transformUpdateSystem;
-
-    public MusicTileWorld(Transform parent, GameObject tilePrefab)
+    public void Initialize()
     {
-        unityTransformBridge = new UnityTransformBridge(parent, tilePrefab);
+        if (isInitialized)
+            return;
 
-        hasDoneInitialize = false;
+        SystemRepository.GetSystem<TileSpawnSystem>().SpawnTileNote();
+        SystemRepository.GetSystem<TransformUpdateSystem>().SyncTransformScale();
 
-        tileSpawnSystem = SystemRepository.GetSystem<TileSpawnSystem>();
-        transformUpdateSystem = SystemRepository.GetSystem<TransformUpdateSystem>();
-    }
+        ref var bridge = ref BridgeRepository.GetBridge<UnityTransformBridge>(
+            BridgeType.NoteTransform
+        );
+        bridge.SyncTransformToUnity();
 
-    public void PopulateNoteData(string midiContent)
-    {
-        ref var musicNoteMidiData = ref DataComponentRepository.GetData<MusicNoteMidiData>();
-        ref var musicNoteTransformData =
-            ref DataComponentRepository.GetData<MusicNoteTransformData>();
-
-        musicNoteMidiData = MidiNoteParser.ParseFromText(midiContent);
-
-        Debug.Log($"Loaded {musicNoteMidiData.TotalNotes} notes");
-
-        for (int i = 0; i < musicNoteMidiData.TotalNotes; i++)
-        {
-            musicNoteTransformData.entityIDs.Add(i);
-            musicNoteTransformData.positions.Add(Vector2.zero);
-        }
-        musicNoteTransformData.count = musicNoteMidiData.TotalNotes;
-
-        tileSpawnSystem.SpawnTileNote(ref musicNoteMidiData);
-
-        SyncUp();
-        hasDoneInitialize = true;
+        isInitialized = true;
     }
 
     public void Update()
     {
-        if (!hasDoneInitialize)
-        {
+        if (!isInitialized)
             return;
-        }
 
-        SyncUp();
-    }
+        SystemRepository.GetSystem<MovingTileSystem>().MovingTile();
+        SystemRepository.GetSystem<NoteCornerUpdateSystem>().UpdateCorners();
+        SystemRepository.GetSystem<NoteStateSystem>().NoteStateUpdate();
 
-    public void Cleanup()
-    {
-        unityTransformBridge.Cleanup();
-    }
-
-    private void SyncUp()
-    {
-        transformUpdateSystem.SyncTransform(
-            ref DataComponentRepository.GetData<MusicNoteMidiData>(),
-            ref DataComponentRepository.GetData<MusicNoteTransformData>()
+        ref var bridge = ref BridgeRepository.GetBridge<UnityTransformBridge>(
+            BridgeType.NoteTransform
         );
-
-        unityTransformBridge.SyncToUnity(
-            ref DataComponentRepository.GetData<MusicNoteTransformData>()
-        );
+        bridge.SyncTransformToUnity();
     }
 }

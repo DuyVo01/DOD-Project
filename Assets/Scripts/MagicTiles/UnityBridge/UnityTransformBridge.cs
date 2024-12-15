@@ -2,41 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UnityTransformBridge
+public struct UnityTransformBridge : IBridge
 {
-    private Dictionary<int, GameObject> gameObjects = new();
-    private Transform tilesParent;
-    private GameObject tilePrefab;
-
-    public UnityTransformBridge(Transform tilesParent, GameObject tilePrefab)
+    public void SyncTransformToUnity()
     {
-        this.tilesParent = tilesParent;
-        this.tilePrefab = tilePrefab;
-    }
+        ref var entityGroup = ref EntityRepository.GetEGroup<EntityGroup<MusicNoteComponentType>>(
+            EntityType.NoteEntityGroup
+        );
+        ref var transformData = ref entityGroup.GetComponent<MusicNoteTransformData>(
+            MusicNoteComponentType.MusicNoteTransformData
+        );
+        ref var presenterManager = ref SingletonComponentRepository.GetComponent<PresenterManager>(
+            SingletonComponentType.MusicNotePresenterManager
+        );
 
-    public void SyncToUnity(ref MusicNoteTransformData musicNoteTransformData)
-    {
-        int entityId = -1;
-        for (int i = 0; i < musicNoteTransformData.count; i++)
+        GameObject presenter;
+
+        for (int entityId = 0; entityId < entityGroup.EntityCount; entityId++)
         {
-            entityId = musicNoteTransformData.entityIDs.Get(i);
-            if (!gameObjects.TryGetValue(entityId, out GameObject go))
-            {
-                go = GameObject.Instantiate(tilePrefab, tilesParent);
-                gameObjects[entityId] = go;
-            }
+            presenter = presenterManager.GetOrCreatePresenter(entityId);
 
-            go.transform.position = musicNoteTransformData.positions.Get(i);
+            presenter.transform.position = transformData.positions.Get(entityId);
+            presenter.transform.localScale = transformData.sizes.Get(entityId);
         }
-    }
-
-    public void Cleanup()
-    {
-        foreach (var go in gameObjects.Values)
-        {
-            if (go != null)
-                GameObject.Destroy(go);
-        }
-        gameObjects.Clear();
     }
 }
