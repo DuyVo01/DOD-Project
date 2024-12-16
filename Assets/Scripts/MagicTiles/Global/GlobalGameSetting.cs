@@ -9,16 +9,26 @@ public class GlobalGameSetting : PersistentSingleton<GlobalGameSetting>
     public PerfectLineSettingSO perfectLineSettingSO;
 
     [Header("Music Note")]
-    public PresenterTemplateSO musicNotePresenter;
-    public Transform presenterParent;
+    public MusicNotePresenterTemplateSO musicNotePresenter;
+    public Transform notePresenterParent;
+
+    [Header("Input Debugger")]
+    public InputDebuggerPresenterTemplateSO inputDebuggerPresenter;
+    public Transform inputPresenterParent;
 
     protected override void OnAwake()
     {
+        #region Systems registration
         SystemRepository.RegisterSystem(new TileSpawnSystem());
         SystemRepository.RegisterSystem(new TransformUpdateSystem());
         SystemRepository.RegisterSystem(new MovingTileSystem());
         SystemRepository.RegisterSystem(new NoteCornerUpdateSystem());
         SystemRepository.RegisterSystem(new NoteStateSystem());
+        SystemRepository.RegisterSystem(new InputSystem());
+        SystemRepository.RegisterSystem(new InputCollisionSystem());
+        #endregion
+
+        #region Entities and data components registration
 
         MusicNoteMidiData musicNoteMidiData = MidiNoteParser.ParseFromText(
             generalSetting.midiContent.text
@@ -43,17 +53,14 @@ public class GlobalGameSetting : PersistentSingleton<GlobalGameSetting>
 
         EntityRepository.RegisterEGroup(EntityType.NoteEntityGroup, ref musicNoteEntityGroup);
 
+        #endregion
+
+        #region bridges registration
         BridgeRepository.RegisterBridge(BridgeType.NoteTransform, new UnityTransformBridge());
+        BridgeRepository.RegisterBridge(BridgeType.InputDebugger, new InputDebuggerBridge());
+        #endregion
 
-        SingletonComponentRepository.RegisterComponent(
-            SingletonComponentType.MusicNotePresenterManager,
-            new PresenterManager(
-                musicNoteEntityGroup.EntityCount,
-                presenterParent,
-                musicNotePresenter
-            )
-        );
-
+        #region Singleton registration
         SingletonComponentRepository.RegisterComponent(
             SingletonComponentType.PerfectLine,
             new PerfectLineData(
@@ -63,6 +70,32 @@ public class GlobalGameSetting : PersistentSingleton<GlobalGameSetting>
                 perfectLineSettingSO.BottomRight
             )
         );
+
+        SingletonComponentRepository.RegisterComponent(
+            SingletonComponentType.Input,
+            new InputDataComponent(2)
+        );
+        #endregion
+
+        #region Presenters registration
+        PresenterManagerRepository.RegisterManager(
+            PresenterManagerType.MusicNotePresenterManager,
+            new PresenterManager<MusicNotePresenterTemplateSO>(
+                musicNoteEntityGroup.EntityCount,
+                notePresenterParent,
+                musicNotePresenter
+            )
+        );
+
+        PresenterManagerRepository.RegisterManager(
+            PresenterManagerType.InputDebuggerPresenterManager,
+            new PresenterManager<InputDebuggerPresenterTemplateSO>(
+                dataSystemSetting.defaultCapacity,
+                inputPresenterParent,
+                inputDebuggerPresenter
+            )
+        );
+        #endregion
     }
 
     private void OnDestroy()

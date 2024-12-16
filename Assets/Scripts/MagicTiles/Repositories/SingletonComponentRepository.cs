@@ -27,10 +27,3 @@ public static class SingletonComponentRepository
         public SingletonComponentWrapper(T data) => Data = data;
     }
 }
-
-public enum SingletonComponentType
-{
-    PerfectLine,
-    MusicNotePresenterManager,
-    Count,
-}

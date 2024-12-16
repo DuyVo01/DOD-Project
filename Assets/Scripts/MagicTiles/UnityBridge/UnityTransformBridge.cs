@@ -4,26 +4,20 @@ using UnityEngine;
 
 public struct UnityTransformBridge : IBridge
 {
-    public void SyncTransformToUnity()
+    public void SyncTransformToUnity(
+        int entityId,
+        ref MusicNoteTransformData musicNoteTransformData
+    )
     {
-        ref var entityGroup = ref EntityRepository.GetEGroup<EntityGroup<MusicNoteComponentType>>(
-            EntityType.NoteEntityGroup
-        );
-        ref var transformData = ref entityGroup.GetComponent<MusicNoteTransformData>(
-            MusicNoteComponentType.MusicNoteTransformData
-        );
-        ref var presenterManager = ref SingletonComponentRepository.GetComponent<PresenterManager>(
-            SingletonComponentType.MusicNotePresenterManager
-        );
+        ref var presenterManager = ref PresenterManagerRepository.GetManager<
+            PresenterManager<MusicNotePresenterTemplateSO>
+        >(PresenterManagerType.MusicNotePresenterManager);
 
         GameObject presenter;
 
-        for (int entityId = 0; entityId < entityGroup.EntityCount; entityId++)
-        {
-            presenter = presenterManager.GetOrCreatePresenter(entityId);
+        presenter = presenterManager.GetOrCreatePresenter(entityId);
 
-            presenter.transform.position = transformData.positions.Get(entityId);
-            presenter.transform.localScale = transformData.sizes.Get(entityId);
-        }
+        presenter.transform.position = musicNoteTransformData.positions.Get(entityId);
+        presenter.transform.localScale = musicNoteTransformData.sizes.Get(entityId);
     }
 }
