@@ -27,5 +27,25 @@ public struct NoteCornerUpdateSystem : IGameSystem
             entityId,
             new Vector2(position.x + halfWidth, position.y - halfHeight)
         );
+        GizmoDebugger.Instance.UpdateData(
+            entityId,
+            0,
+            musicNoteTransformData.TopLeft.Get(entityId)
+        );
+        GizmoDebugger.Instance.UpdateData(
+            entityId,
+            1,
+            musicNoteTransformData.TopRight.Get(entityId)
+        );
+        GizmoDebugger.Instance.UpdateData(
+            entityId,
+            2,
+            musicNoteTransformData.BottomLeft.Get(entityId)
+        );
+        GizmoDebugger.Instance.UpdateData(
+            entityId,
+            3,
+            musicNoteTransformData.BottomRight.Get(entityId)
+        );
     }
 }

@@ -239,9 +239,8 @@ MonoBehaviour:
   generalSetting: {fileID: 11400000, guid: ed6ccf6072fffca40b837c5b9c6cf9d3, type: 2}
   dataSystemSetting: {fileID: 11400000, guid: 8dd20fefdf2161f45b1585cd5229c40d, type: 2}
   perfectLineSettingSO: {fileID: 11400000, guid: a12736c430f23984f8317f2aefad4b55, type: 2}
-  musicNotePresenter: {fileID: 11400000, guid: f977b3b5a984848cf80ae86cef7ccbee, type: 2}
+  presenterSetting: {fileID: 11400000, guid: cef7bacd0c6f14627bc71745f55622fb, type: 2}
   notePresenterParent: {fileID: 926917583}
-  inputDebuggerPresenter: {fileID: 11400000, guid: d9b0274621a554b7da9609ad472ed0c8, type: 2}
   inputPresenterParent: {fileID: 1285177879}
 --- !u!4 &894207762
 Transform:
@@ -287,8 +286,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1149b9f93f2bd4dbca8c561e0d13e0cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileParent: {fileID: 926917583}
-  tilePrefab: {fileID: 8137537297466452066, guid: 8c1c272d019a341fa8cc13b90b199606, type: 3}
 --- !u!4 &926917583
 Transform:
   m_ObjectHideFlags: 0
@@ -385,7 +382,7 @@ Transform:
   m_GameObject: {fileID: 1188224422}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -2.5, z: 0}
-  m_LocalScale: {x: 4.620536, y: 0.099999994, z: 1}
+  m_LocalScale: {x: 4.620536, y: 0.07, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -434,7 +431,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   widthPercentage: 1
-  heightPercentage: 0.01
+  heightPercentage: 0.007
   maintainAspectRatio: 0
 --- !u!1 &1285177878
 GameObject:
@@ -445,6 +442,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1285177879}
+  - component: {fileID: 1285177880}
   m_Layer: 0
   m_Name: DebuggerHolder
   m_TagString: Untagged
@@ -467,3 +465,16 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1285177880
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1285177878}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c545a8b295f314a098f701047c23b4cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gizmosSize: 0.3

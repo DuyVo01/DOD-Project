@@ -2,14 +2,10 @@ using UnityEngine;
 
 public struct InputSystem : IGameSystem
 {
-    private Touch[] touchCache;
-    private bool isUsingMouse;
     private bool wasMousePressed;
 
     public InputSystem(bool fake = true)
     {
-        touchCache = new Touch[InputDataComponent.MAX_INPUTS];
-        isUsingMouse = false;
         wasMousePressed = false;
     }
 
@@ -18,6 +14,8 @@ public struct InputSystem : IGameSystem
         ref var inputData = ref SingletonComponentRepository.GetComponent<InputDataComponent>(
             SingletonComponentType.Input
         );
+
+        UpdateInputStates(ref inputData);
 
         inputData.activeInputCount = 0;
         if (Input.touchCount > 0)
@@ -30,7 +28,6 @@ public struct InputSystem : IGameSystem
         }
 
         //LogInputDebugInfo(ref inputData);
-        UpdateInputStates(ref inputData);
     }
 
     private void ProcessMouseInput(ref InputDataComponent inputData)

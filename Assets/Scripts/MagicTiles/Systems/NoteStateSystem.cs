@@ -41,4 +41,20 @@ public struct NoteStateSystem : IGameSystem
             //Debug.Log($"Entity {entityId} has passed perfect line");
         }
     }
+
+    public void NoteStateDeterminer(
+        int entityId,
+        ref MusicNoteMidiData musicNoteMidiData,
+        ref MusicNoteStateData musicNoteStateData
+    )
+    {
+        if (musicNoteMidiData.Durations[entityId] == musicNoteMidiData.MinDuration)
+        {
+            musicNoteStateData.noteTypes.Set(entityId, MusicNoteType.ShortNote);
+        }
+        else if (musicNoteMidiData.Durations[entityId] > musicNoteMidiData.MinDuration)
+        {
+            musicNoteStateData.noteTypes.Set(entityId, MusicNoteType.LongNote);
+        }
+    }
 }

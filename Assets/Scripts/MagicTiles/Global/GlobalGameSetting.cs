@@ -7,13 +7,12 @@ public class GlobalGameSetting : PersistentSingleton<GlobalGameSetting>
     public GeneralGameSettingSO generalSetting;
     public DataSystemSettingSO dataSystemSetting;
     public PerfectLineSettingSO perfectLineSettingSO;
+    public PresenterSettingSO presenterSetting;
 
     [Header("Music Note")]
-    public MusicNotePresenterTemplateSO musicNotePresenter;
     public Transform notePresenterParent;
 
     [Header("Input Debugger")]
-    public InputDebuggerPresenterTemplateSO inputDebuggerPresenter;
     public Transform inputPresenterParent;
 
     protected override void OnAwake()
@@ -50,14 +49,13 @@ public class GlobalGameSetting : PersistentSingleton<GlobalGameSetting>
             MusicNoteComponentType.MusicNoteStateData,
             new MusicNoteStateData(musicNoteEntityGroup.EntityCount)
         );
+        musicNoteEntityGroup.RegisterComponent(
+            MusicNoteComponentType.MusicNoteFiller,
+            new MusicNoteFillerData(musicNoteEntityGroup.EntityCount)
+        );
 
         EntityRepository.RegisterEGroup(EntityType.NoteEntityGroup, ref musicNoteEntityGroup);
 
-        #endregion
-
-        #region bridges registration
-        BridgeRepository.RegisterBridge(BridgeType.NoteTransform, new UnityTransformBridge());
-        BridgeRepository.RegisterBridge(BridgeType.InputDebugger, new InputDebuggerBridge());
         #endregion
 
         #region Singleton registration
@@ -78,24 +76,32 @@ public class GlobalGameSetting : PersistentSingleton<GlobalGameSetting>
         #endregion
 
         #region Presenters registration
+
+
         PresenterManagerRepository.RegisterManager(
             PresenterManagerType.MusicNotePresenterManager,
-            new PresenterManager<MusicNotePresenterTemplateSO>(
+            new PresenterManager(
                 musicNoteEntityGroup.EntityCount,
                 notePresenterParent,
-                musicNotePresenter
+                presenterSetting.musicNotePresenterPrefab
             )
         );
 
         PresenterManagerRepository.RegisterManager(
             PresenterManagerType.InputDebuggerPresenterManager,
-            new PresenterManager<InputDebuggerPresenterTemplateSO>(
+            new PresenterManager(
                 dataSystemSetting.defaultCapacity,
                 inputPresenterParent,
-                inputDebuggerPresenter
+                presenterSetting.inputDebuggerPresenterPrefab
             )
         );
         #endregion
+
+        #region bridges registration
+        BridgeRepository.RegisterBridge(BridgeType.NoteTransform, UnityTransformBridge.Create());
+        BridgeRepository.RegisterBridge(BridgeType.InputDebugger, new InputDebuggerBridge());
+        #endregion
+        GizmoDebugger.Instance.InitData(musicNoteEntityGroup.EntityCount);
     }
 
     private void OnDestroy()

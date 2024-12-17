@@ -1,24 +1,23 @@
 using UnityEngine;
 
-public struct PresenterManager<T> : IPresenterManager
-    where T : BasePresenterTemplate
+public struct PresenterManager : IPresenterManager
 {
     private GameObject[] presenters;
     private Transform parent;
-    private T template;
+    private GameObject @base;
 
-    public PresenterManager(int capacity, Transform parent, T template)
+    public PresenterManager(int capacity, Transform parent, GameObject @base)
     {
         this.presenters = new GameObject[capacity];
         this.parent = parent;
-        this.template = template;
+        this.@base = @base;
     }
 
     public GameObject GetOrCreatePresenter(int entityId)
     {
         if (presenters[entityId] == null)
         {
-            presenters[entityId] = GameObject.Instantiate(template.BasePrefab, parent);
+            presenters[entityId] = GameObject.Instantiate(@base, parent);
         }
         return presenters[entityId];
     }

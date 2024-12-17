@@ -1,5 +1,3 @@
-using Mono.Cecil.Cil;
-
 public struct MusicTileWorld
 {
     private bool isInitialized;
@@ -10,7 +8,7 @@ public struct MusicTileWorld
             return;
 
         SystemRepository.GetSystem<TileSpawnSystem>().SpawnTileNote();
-        SystemRepository.GetSystem<TransformUpdateSystem>().SyncTransformScale();
+        ref var transfromUpdateSystem = ref SystemRepository.GetSystem<TransformUpdateSystem>();
 
         ref var bridge = ref BridgeRepository.GetBridge<UnityTransformBridge>(
             BridgeType.NoteTransform
@@ -24,9 +22,40 @@ public struct MusicTileWorld
             MusicNoteComponentType.MusicNoteTransformData
         );
 
+        ref var musicNoteMidiData = ref noteEntityGroup.GetComponent<MusicNoteMidiData>(
+            MusicNoteComponentType.MusicNoteMidiData
+        );
+
+        ref var musicNoteStateData = ref noteEntityGroup.GetComponent<MusicNoteStateData>(
+            MusicNoteComponentType.MusicNoteStateData
+        );
+
+        ref var musicNoteFillerData = ref noteEntityGroup.GetComponent<MusicNoteFillerData>(
+            MusicNoteComponentType.MusicNoteFiller
+        );
+
+        ref var noteStateSystem = ref SystemRepository.GetSystem<NoteStateSystem>();
+
         for (int entityId = 0; entityId < noteEntityGroup.EntityCount; entityId++)
         {
-            bridge.SyncTransformToUnity(entityId, ref musicNoteTransformData);
+            bridge.SyncNoteTransformToUnity(entityId, ref musicNoteTransformData);
+            noteStateSystem.NoteStateDeterminer(
+                entityId,
+                ref musicNoteMidiData,
+                ref musicNoteStateData
+            );
+            transfromUpdateSystem.SyncTransformScale(
+                entityId,
+                ref musicNoteMidiData,
+                ref musicNoteTransformData,
+                ref musicNoteStateData
+            );
+            transfromUpdateSystem.SyncNoteFiller(
+                entityId,
+                ref musicNoteStateData,
+                ref musicNoteTransformData,
+                ref musicNoteFillerData
+            );
         }
 
         isInitialized = true;
@@ -36,23 +65,17 @@ public struct MusicTileWorld
     {
         if (!isInitialized)
             return;
-        // // Process input first
-        // SystemRepository.GetSystem<InputSystem>().ProcessInput();
-        // SystemRepository.GetSystem<InputCollisionSystem>().ProcessCollisions();
-        // SystemRepository.GetSystem<MovingTileSystem>().MovingTile();
-        // SystemRepository.GetSystem<NoteCornerUpdateSystem>().UpdateCorners();
-        // SystemRepository.GetSystem<NoteStateSystem>().NoteStateUpdate();
 
         ref var bridge = ref BridgeRepository.GetBridge<UnityTransformBridge>(
             BridgeType.NoteTransform
         );
 
         SystemRepository.GetSystem<InputSystem>().ProcessInput();
-        SystemRepository.GetSystem<InputCollisionSystem>().ProcessCollisions();
 
         ref var movingTileSystem = ref SystemRepository.GetSystem<MovingTileSystem>();
         ref var noteCornerUpdateSystem = ref SystemRepository.GetSystem<NoteCornerUpdateSystem>();
         ref var noteStateSystem = ref SystemRepository.GetSystem<NoteStateSystem>();
+        ref var inputCollisionSystem = ref SystemRepository.GetSystem<InputCollisionSystem>();
 
         ref var noteEntityGroup = ref EntityRepository.GetEGroup<
             EntityGroup<MusicNoteComponentType>
@@ -66,30 +89,40 @@ public struct MusicTileWorld
             MusicNoteComponentType.MusicNoteStateData
         );
 
+        ref var musicNoteFillerData = ref noteEntityGroup.GetComponent<MusicNoteFillerData>(
+            MusicNoteComponentType.MusicNoteFiller
+        );
+
         ref var perfectLineData = ref SingletonComponentRepository.GetComponent<PerfectLineData>(
             SingletonComponentType.PerfectLine
         );
 
         for (int entityId = 0; entityId < noteEntityGroup.EntityCount; entityId++)
         {
-            // if (!noteEntityGroup.IsEntityActive(entityId))
-            //     continue;
+            movingTileSystem.MovingTile(
+                entityId,
+                ref musicNoteTransformData,
+                ref musicNoteFillerData,
+                ref musicNoteStateData
+            );
 
-            movingTileSystem.MovingTile(entityId, ref musicNoteTransformData);
             noteCornerUpdateSystem.UpdateCorners(entityId, ref musicNoteTransformData);
+
             noteStateSystem.NoteStateUpdate(
                 entityId,
                 ref musicNoteTransformData,
                 ref musicNoteStateData,
                 ref perfectLineData
             );
-            bridge.SyncTransformToUnity(entityId, ref musicNoteTransformData);
+
+            inputCollisionSystem.ProcessCollisions(
+                entityId,
+                ref musicNoteTransformData,
+                ref musicNoteStateData,
+                ref musicNoteFillerData
+            );
+
+            bridge.SyncNoteTransformToUnity(entityId, ref musicNoteTransformData);
         }
-
-        ref var inputDebuggerBridge = ref BridgeRepository.GetBridge<InputDebuggerBridge>(
-            BridgeType.InputDebugger
-        );
-
-        inputDebuggerBridge.SpawnDebuggerAtInputPressed();
     }
 }

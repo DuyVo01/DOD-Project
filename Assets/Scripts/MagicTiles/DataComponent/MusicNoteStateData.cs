@@ -39,4 +39,5 @@ public enum MusicNoteInteractiveState
     Normal,
     Pressed,
     Hold,
+    Completed,
 }

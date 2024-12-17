@@ -5,4 +5,5 @@ public enum MusicNoteComponentType
     MusicNoteMidiData,
     MusicNoteTransformData,
     MusicNoteStateData,
+    MusicNoteFiller,
 }

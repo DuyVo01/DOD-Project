@@ -4,7 +4,12 @@ public struct InputCollisionSystem : IGameSystem
 {
     private const string LOG_PREFIX = "[Input Collision] ";
 
-    public void ProcessCollisions()
+    public void ProcessCollisions(
+        int entityId,
+        ref MusicNoteTransformData musicNoteTransformData,
+        ref MusicNoteStateData musicNoteStateData,
+        ref MusicNoteFillerData musicNoteFillerData
+    )
     {
         ref var inputData = ref SingletonComponentRepository.GetComponent<InputDataComponent>(
             SingletonComponentType.Input
@@ -13,13 +18,6 @@ public struct InputCollisionSystem : IGameSystem
             EntityGroup<MusicNoteComponentType>
         >(EntityType.NoteEntityGroup);
 
-        ref var transformData = ref noteEntityGroup.GetComponent<MusicNoteTransformData>(
-            MusicNoteComponentType.MusicNoteTransformData
-        );
-        ref var stateData = ref noteEntityGroup.GetComponent<MusicNoteStateData>(
-            MusicNoteComponentType.MusicNoteStateData
-        );
-
         // Process each active input
         for (int inputIdx = 0; inputIdx < InputDataComponent.MAX_INPUTS; inputIdx++)
         {
@@ -27,73 +25,128 @@ public struct InputCollisionSystem : IGameSystem
                 continue;
 
             var inputState = inputData.inputStates.Get(inputIdx);
+            Vector2 inputPosition = inputState.Position;
 
-            if (inputState.State != InputState.JustPressed)
-                continue;
-
-            Debug.Log($"{LOG_PREFIX} Processing input at position: {inputState.Position}");
-
-            // Check collision with each note
-            CheckCollisionsForInput(
-                inputState.Position,
-                ref noteEntityGroup,
-                ref transformData,
-                ref stateData
-            );
-        }
-    }
-
-    private void CheckCollisionsForInput(
-        Vector2 inputPosition,
-        ref EntityGroup<MusicNoteComponentType> entityGroup,
-        ref MusicNoteTransformData transformData,
-        ref MusicNoteStateData stateData
-    )
-    {
-        int playableNotesCount = 0;
-
-        for (int entityId = 0; entityId < entityGroup.EntityCount; entityId++)
-        {
-            // Only check notes that are in the playable zone
+            // Skip notes not in playable zone
             if (
-                stateData.positionStates.Get(entityId)
+                musicNoteStateData.positionStates.Get(entityId)
                 != MusicNotePositionState.InlineWithPerfectLine
             )
                 continue;
 
-            playableNotesCount++;
+            // Skip completed notes
+            if (
+                musicNoteStateData.interactiveStates.Get(entityId)
+                == MusicNoteInteractiveState.Completed
+            )
+                continue;
 
-            // Get tile boundaries
-            Vector2 topLeft = transformData.TopLeft.Get(entityId);
-            Vector2 topRight = transformData.TopRight.Get(entityId);
-            Vector2 bottomLeft = transformData.BottomLeft.Get(entityId);
-            Vector2 bottomRight = transformData.BottomRight.Get(entityId);
-
-            // Log detailed boundary information
-            Debug.Log(
-                $"{LOG_PREFIX} Note {entityId} boundaries:"
-                    + $"\nTopLeft: {topLeft}"
-                    + $"\nTopRight: {topRight}"
-                    + $"\nBottomLeft: {bottomLeft}"
-                    + $"\nBottomRight: {bottomRight}"
-                    + $"\nInput Position: {inputPosition}"
+            bool isInsideNote = IsPointInNote(
+                inputPosition,
+                musicNoteTransformData.TopLeft.Get(entityId),
+                musicNoteTransformData.TopRight.Get(entityId),
+                musicNoteTransformData.BottomLeft.Get(entityId),
+                musicNoteTransformData.BottomRight.Get(entityId)
             );
 
-            // Check if point is inside the tile using winding number algorithm
-            if (IsPointInPolygon(inputPosition, topLeft, topRight, bottomRight, bottomLeft))
+            if (!isInsideNote)
             {
-                Debug.Log($"{LOG_PREFIX} Hit detected on note {entityId}!");
-                stateData.interactiveStates.Set(entityId, MusicNoteInteractiveState.Pressed);
+                continue;
             }
-        }
 
-        Debug.Log($"{LOG_PREFIX} Checked {playableNotesCount} playable notes for collisions");
+            ProcessNoteInteraction(
+                entityId,
+                inputState,
+                ref musicNoteStateData,
+                ref musicNoteTransformData,
+                ref musicNoteFillerData
+            );
+        }
     }
 
-    private bool IsPointInPolygon(Vector2 point, params Vector2[] vertices)
+    private void ProcessNoteInteraction(
+        int entityId,
+        InputStateData inputState,
+        ref MusicNoteStateData stateData,
+        ref MusicNoteTransformData transformData,
+        ref MusicNoteFillerData musicNoteFillerData
+    )
     {
-        // Using the winding number algorithm for more accurate polygon containment
+        var currentInteractiveState = stateData.interactiveStates.Get(entityId);
+        var noteType = stateData.noteTypes.Get(entityId);
+
+        switch (inputState.State)
+        {
+            case InputState.JustPressed:
+                if (currentInteractiveState == MusicNoteInteractiveState.Normal)
+                {
+                    stateData.interactiveStates.Set(entityId, MusicNoteInteractiveState.Pressed);
+
+                    // For short notes, immediately complete after press
+                    if (noteType == MusicNoteType.ShortNote)
+                    {
+                        stateData.interactiveStates.Set(
+                            entityId,
+                            MusicNoteInteractiveState.Completed
+                        );
+                    }
+                    Debug.Log($"{LOG_PREFIX} Note {entityId} pressed");
+                }
+                break;
+
+            case InputState.Held:
+                if (noteType == MusicNoteType.LongNote)
+                {
+                    if (currentInteractiveState == MusicNoteInteractiveState.Pressed)
+                    {
+                        stateData.interactiveStates.Set(entityId, MusicNoteInteractiveState.Hold);
+                        Debug.Log($"{LOG_PREFIX} Long note {entityId} entering hold state");
+                    }
+                    else if (currentInteractiveState == MusicNoteInteractiveState.Hold)
+                    {
+                        // Temporary completion condition: Check if input is above note's top edge
+                        float noteTopY = transformData.TopLeft.Get(entityId).y;
+
+                        if (inputState.Position.y > noteTopY)
+                        {
+                            stateData.interactiveStates.Set(
+                                entityId,
+                                MusicNoteInteractiveState.Completed
+                            );
+                            Debug.Log($"{LOG_PREFIX} Long note {entityId} completed");
+                        }
+                    }
+                }
+                break;
+
+            case InputState.JustReleased:
+                if (
+                    noteType == MusicNoteType.LongNote
+                    && (
+                        currentInteractiveState == MusicNoteInteractiveState.Pressed
+                        || currentInteractiveState == MusicNoteInteractiveState.Hold
+                    )
+                )
+                {
+                    stateData.interactiveStates.Set(entityId, MusicNoteInteractiveState.Completed);
+                    Debug.Log($"{LOG_PREFIX} Long note {entityId} released and completed");
+                }
+                break;
+        }
+    }
+
+    private bool IsPointInNote(
+        Vector2 point,
+        Vector2 topLeft,
+        Vector2 topRight,
+        Vector2 bottomLeft,
+        Vector2 bottomRight
+    )
+    {
         int wn = 0; // Winding number
+
+        // Using winding number algorithm for accurate polygon containment
+        Vector2[] vertices = { topLeft, topRight, bottomRight, bottomLeft };
 
         for (int i = 0; i < vertices.Length; i++)
         {
@@ -112,15 +165,11 @@ public struct InputCollisionSystem : IGameSystem
             }
         }
 
-        bool isInside = wn != 0;
-        Debug.Log(
-            $"{LOG_PREFIX} Point {point} is {(isInside ? "inside" : "outside")} polygon. Winding number: {wn}"
-        );
-        return isInside;
+        return wn != 0;
     }
 
     private float IsLeftOf(Vector2 a, Vector2 b, Vector2 point)
     {
-        return ((b.x - a.x) * (point.y - a.y) - (point.x - a.x) * (b.y - a.y));
+        return (b.x - a.x) * (point.y - a.y) - (point.x - a.x) * (b.y - a.y);
     }
 }

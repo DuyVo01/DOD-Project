@@ -4,11 +4,6 @@ using UnityEngine;
 
 public class MusicTileManager : MonoBehaviour
 {
-    [SerializeField]
-    private Transform tileParent;
-
-    [SerializeField]
-    private GameObject tilePrefab;
     private MusicTileWorld musicTileWorld;
 
     // Start is called before the first frame update

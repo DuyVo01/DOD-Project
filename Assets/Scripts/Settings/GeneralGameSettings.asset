@@ -15,3 +15,5 @@ MonoBehaviour:
   gameSpeed: 10
   baseScaleYForNote: 1
   midiContent: {fileID: 4900000, guid: 5651cca0434e843a4af2569038996f88, type: 3}
+  shortNoteScaleYFactor: 0.7
+  longNoteScaleYFactor: 3

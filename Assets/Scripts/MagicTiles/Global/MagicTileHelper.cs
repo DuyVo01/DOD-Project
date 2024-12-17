@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public static class MagicTileHelper
@@ -12,13 +13,25 @@ public static class MagicTileHelper
         return timeAppear * GlobalGameSetting.Instance.generalSetting.gameSpeed;
     }
 
-    public static float ConvertDurationToAppropiateScaleY(
-        float smallestDuration,
-        float baseScaleY,
-        float targetDuration
+    public static float CalculateScaleY(
+        MusicNoteType noteType,
+        float scaleX,
+        float longNoteDuration = 1f
     )
     {
-        return baseScaleY * targetDuration / smallestDuration;
+        float scaleY;
+        if (noteType == MusicNoteType.ShortNote)
+        {
+            scaleY =
+                scaleX + GlobalGameSetting.Instance.generalSetting.shortNoteScaleYFactor * scaleX;
+        }
+        else
+        {
+            scaleY =
+                (scaleX + longNoteDuration)
+                * GlobalGameSetting.Instance.generalSetting.longNoteScaleYFactor;
+        }
+        return scaleY;
     }
 }
 

@@ -13,9 +13,9 @@ public struct InputDebuggerBridge : IBridge
 
     public void SpawnDebuggerAtInputPressed()
     {
-        ref var presenterManager = ref PresenterManagerRepository.GetManager<
-            PresenterManager<InputDebuggerPresenterTemplateSO>
-        >(PresenterManagerType.InputDebuggerPresenterManager);
+        ref var presenterManager = ref PresenterManagerRepository.GetManager<PresenterManager>(
+            PresenterManagerType.InputDebuggerPresenterManager
+        );
 
         ref var inputData = ref SingletonComponentRepository.GetComponent<InputDataComponent>(
             SingletonComponentType.Input
