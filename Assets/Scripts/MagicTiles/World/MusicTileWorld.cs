@@ -10,10 +10,6 @@ public struct MusicTileWorld
         SystemRepository.GetSystem<TileSpawnSystem>().SpawnTileNote();
         ref var transfromUpdateSystem = ref SystemRepository.GetSystem<TransformUpdateSystem>();
 
-        ref var bridge = ref BridgeRepository.GetBridge<UnityTransformBridge>(
-            BridgeType.NoteTransform
-        );
-
         ref var noteEntityGroup = ref EntityRepository.GetEGroup<
             EntityGroup<MusicNoteComponentType>
         >(EntityType.NoteEntityGroup);
@@ -38,7 +34,6 @@ public struct MusicTileWorld
 
         for (int entityId = 0; entityId < noteEntityGroup.EntityCount; entityId++)
         {
-            bridge.SyncNoteTransformToUnity(entityId, ref musicNoteTransformData);
             noteStateSystem.NoteStateDeterminer(
                 entityId,
                 ref musicNoteMidiData,
@@ -66,7 +61,7 @@ public struct MusicTileWorld
         if (!isInitialized)
             return;
 
-        ref var bridge = ref BridgeRepository.GetBridge<UnityTransformBridge>(
+        ref var bridge = ref BridgeRepository.GetBridge<MusicNoteTransformBridge>(
             BridgeType.NoteTransform
         );
 
@@ -122,7 +117,11 @@ public struct MusicTileWorld
                 ref musicNoteFillerData
             );
 
-            bridge.SyncNoteTransformToUnity(entityId, ref musicNoteTransformData);
+            bridge.SyncNoteTransformToUnity(
+                entityId,
+                ref musicNoteTransformData,
+                ref musicNoteStateData
+            );
         }
     }
 }

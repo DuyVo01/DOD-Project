@@ -5,6 +5,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "PresenterSetting", menuName = "Setting/Presenter Settings")]
 public class PresenterSettingSO : ScriptableObject
 {
-    public GameObject musicNotePresenterPrefab;
+    [Header("Music Note Presenter")]
+    public GameObject shortMusicNotePresenterPrefab;
+    public GameObject longMusicNotePresenterPrefab;
+
+    [Header("Input Deugger Presenter")]
     public GameObject inputDebuggerPresenterPrefab;
 }

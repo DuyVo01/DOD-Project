@@ -80,8 +80,6 @@ public struct InputCollisionSystem : IGameSystem
             case InputState.JustPressed:
                 if (currentInteractiveState == MusicNoteInteractiveState.Normal)
                 {
-                    stateData.interactiveStates.Set(entityId, MusicNoteInteractiveState.Pressed);
-
                     // For short notes, immediately complete after press
                     if (noteType == MusicNoteType.ShortNote)
                     {
@@ -89,7 +87,12 @@ public struct InputCollisionSystem : IGameSystem
                             entityId,
                             MusicNoteInteractiveState.Completed
                         );
+                        break;
                     }
+                    //Long note process
+                    stateData.interactiveStates.Set(entityId, MusicNoteInteractiveState.Pressed);
+                    musicNoteFillerData.IsVisibles.Set(entityId, true);
+
                     Debug.Log($"{LOG_PREFIX} Note {entityId} pressed");
                 }
                 break;

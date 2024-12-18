@@ -5,6 +5,7 @@ using UnityEngine;
 public enum PresenterManagerType
 {
     MusicNotePresenterManager,
+    LongNotePresenterManager,
     InputDebuggerPresenterManager,
     Count,
 }

@@ -11,6 +11,12 @@ public class MusicTileManager : MonoBehaviour
     {
         musicTileWorld = new MusicTileWorld();
         musicTileWorld.Initialize();
+
+        ref var musicNoteBridge = ref BridgeRepository.GetBridge<MusicNoteTransformBridge>(
+            BridgeType.NoteTransform
+        );
+
+        musicNoteBridge.InitializeBridge();
     }
 
     // Update is called once per frame

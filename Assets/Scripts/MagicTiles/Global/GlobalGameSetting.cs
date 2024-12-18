@@ -83,7 +83,16 @@ public class GlobalGameSetting : PersistentSingleton<GlobalGameSetting>
             new PresenterManager(
                 musicNoteEntityGroup.EntityCount,
                 notePresenterParent,
-                presenterSetting.musicNotePresenterPrefab
+                presenterSetting.shortMusicNotePresenterPrefab
+            )
+        );
+
+        PresenterManagerRepository.RegisterManager(
+            PresenterManagerType.LongNotePresenterManager,
+            new PresenterManager(
+                musicNoteEntityGroup.EntityCount,
+                notePresenterParent,
+                presenterSetting.longMusicNotePresenterPrefab
             )
         );
 
@@ -98,7 +107,7 @@ public class GlobalGameSetting : PersistentSingleton<GlobalGameSetting>
         #endregion
 
         #region bridges registration
-        BridgeRepository.RegisterBridge(BridgeType.NoteTransform, UnityTransformBridge.Create());
+        BridgeRepository.RegisterBridge(BridgeType.NoteTransform, new MusicNoteTransformBridge());
         BridgeRepository.RegisterBridge(BridgeType.InputDebugger, new InputDebuggerBridge());
         #endregion
         GizmoDebugger.Instance.InitData(musicNoteEntityGroup.EntityCount);

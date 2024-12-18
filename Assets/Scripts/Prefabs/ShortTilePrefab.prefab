@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6830457600340365524}
   - component: {fileID: 825267904523317309}
   m_Layer: 0
-  m_Name: Tile
+  m_Name: ShortTilePrefab
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
