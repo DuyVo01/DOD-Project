@@ -42,7 +42,7 @@ public struct TransformUpdateSystem : IGameSystem
         if (musicNoteStateData.noteTypes.Get(entityId) == MusicNoteType.LongNote)
         {
             Vector2 size = musicNoteTransformData.sizes.Get(entityId);
-            size.y = size.y * 30 / 100;
+            size.y = size.y * 70 / 100;
             musicNoteFillerData.Sizes.Set(entityId, size);
         }
     }

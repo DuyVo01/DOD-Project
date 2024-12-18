@@ -7,7 +7,7 @@ public struct MusicNoteTransformBridge : IBridge
     private ChunkArray<GameObject> cachedNotePresenters;
     private ChunkArray<SpriteRenderer> cachedNotePresenterSprites;
 
-    private ChunkArray<GameObject> cachedLongNoteFiller;
+    private Dictionary<int, SpriteRenderer> cachedLongNoteFiller;
 
     public void InitializeBridge()
     {
@@ -31,6 +31,7 @@ public struct MusicNoteTransformBridge : IBridge
 
         cachedNotePresenters = new ChunkArray<GameObject>(noteEntityGroup.EntityCount);
         cachedNotePresenterSprites = new ChunkArray<SpriteRenderer>(noteEntityGroup.EntityCount);
+        cachedLongNoteFiller = new Dictionary<int, SpriteRenderer>();
 
         GameObject presenterGO;
 
@@ -49,6 +50,10 @@ public struct MusicNoteTransformBridge : IBridge
 
                 cachedNotePresenters.Add(presenterGO);
                 cachedNotePresenterSprites.Add(presenterGO.GetComponent<SpriteRenderer>());
+                cachedLongNoteFiller.Add(
+                    entityId,
+                    presenterGO.transform.GetChild(0).GetComponent<SpriteRenderer>()
+                );
             }
         }
     }
@@ -56,7 +61,8 @@ public struct MusicNoteTransformBridge : IBridge
     public void SyncNoteTransformToUnity(
         int entityId,
         ref MusicNoteTransformData musicNoteTransformData,
-        ref MusicNoteStateData musicNoteStateData
+        ref MusicNoteStateData musicNoteStateData,
+        ref MusicNoteFillerData musicNoteFillerData
     )
     {
         cachedNotePresenters.Get(entityId).transform.position =
@@ -64,5 +70,36 @@ public struct MusicNoteTransformBridge : IBridge
         cachedNotePresenters.Get(entityId).transform.localScale = musicNoteTransformData.sizes.Get(
             entityId
         );
+        if (
+            musicNoteStateData.noteTypes.Get(entityId) == MusicNoteType.ShortNote
+            && musicNoteStateData.interactiveStates.Get(entityId)
+                == MusicNoteInteractiveState.Completed
+        )
+        {
+            cachedNotePresenterSprites.Get(entityId).color = Color.black;
+        }
+        if (
+            musicNoteStateData.noteTypes.Get(entityId) == MusicNoteType.LongNote
+            && cachedLongNoteFiller.ContainsKey(entityId)
+        )
+        {
+            cachedLongNoteFiller[entityId]
+                .gameObject.SetActive(musicNoteFillerData.IsVisibles.Get(entityId));
+            float fillerPercentage = GetFillerTargetScaleYPercentage(
+                musicNoteTransformData.sizes.Get(entityId).y,
+                musicNoteFillerData.Sizes.Get(entityId).y
+            );
+
+            SpriteUtility.ScaleFromPivot(
+                cachedLongNoteFiller[entityId],
+                new Vector2(1, fillerPercentage),
+                SpriteUtility.PivotPoint2D.Bottom
+            );
+        }
+    }
+
+    private float GetFillerTargetScaleYPercentage(float longNoteScaleY, float fillerScaleY)
+    {
+        return fillerScaleY / longNoteScaleY;
     }
 }

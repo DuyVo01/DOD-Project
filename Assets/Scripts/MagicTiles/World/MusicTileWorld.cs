@@ -120,7 +120,8 @@ public struct MusicTileWorld
             bridge.SyncNoteTransformToUnity(
                 entityId,
                 ref musicNoteTransformData,
-                ref musicNoteStateData
+                ref musicNoteStateData,
+                ref musicNoteFillerData
             );
         }
     }
