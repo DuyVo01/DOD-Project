@@ -31,19 +31,4 @@ public struct TransformUpdateSystem : IGameSystem
 
         musicNoteTransformData.sizes.Set(entityId, transformScale);
     }
-
-    public void SyncNoteFiller(
-        int entityId,
-        ref MusicNoteStateData musicNoteStateData,
-        ref MusicNoteTransformData musicNoteTransformData,
-        ref MusicNoteFillerData musicNoteFillerData
-    )
-    {
-        if (musicNoteStateData.noteTypes.Get(entityId) == MusicNoteType.LongNote)
-        {
-            Vector2 size = musicNoteTransformData.sizes.Get(entityId);
-            size.y = size.y * 70 / 100;
-            musicNoteFillerData.Sizes.Set(entityId, size);
-        }
-    }
 }

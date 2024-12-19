@@ -16,9 +16,14 @@ public struct MovingTileSystem : IGameSystem
             musicNoteTransformData.positions.Get(entityId).y
             - GlobalGameSetting.Instance.generalSetting.gameSpeed * Time.deltaTime;
         musicNoteTransformData.positions.Set(entityId, newPos);
-        if (musicNoteStateData.noteTypes.Get(entityId) == MusicNoteType.LongNote)
-        {
-            musicNoteFillerData.Positions.Set(entityId, newPos);
-        }
+
+        ManualDebug
+            .CreateLog<NormalLog>(
+                "Entity {0} positions: [1]",
+                entityId,
+                musicNoteTransformData.positions.Get(entityId)
+            )
+            ?.SetNext(new LogBreak())
+            ?.Execute();
     }
 }

@@ -92,6 +92,7 @@ public struct InputCollisionSystem : IGameSystem
                     //Long note process
                     stateData.interactiveStates.Set(entityId, MusicNoteInteractiveState.Pressed);
                     musicNoteFillerData.IsVisibles.Set(entityId, true);
+                    musicNoteFillerData.FillPercent.Set(entityId, .7f);
 
                     Debug.Log($"{LOG_PREFIX} Note {entityId} pressed");
                 }

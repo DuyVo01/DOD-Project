@@ -45,12 +45,6 @@ public struct MusicTileWorld
                 ref musicNoteTransformData,
                 ref musicNoteStateData
             );
-            transfromUpdateSystem.SyncNoteFiller(
-                entityId,
-                ref musicNoteStateData,
-                ref musicNoteTransformData,
-                ref musicNoteFillerData
-            );
         }
 
         isInitialized = true;

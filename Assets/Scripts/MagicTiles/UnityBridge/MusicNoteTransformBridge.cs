@@ -85,10 +85,7 @@ public struct MusicNoteTransformBridge : IBridge
         {
             cachedLongNoteFiller[entityId]
                 .gameObject.SetActive(musicNoteFillerData.IsVisibles.Get(entityId));
-            float fillerPercentage = GetFillerTargetScaleYPercentage(
-                musicNoteTransformData.sizes.Get(entityId).y,
-                musicNoteFillerData.Sizes.Get(entityId).y
-            );
+            float fillerPercentage = musicNoteFillerData.FillPercent.Get(entityId);
 
             SpriteUtility.ScaleFromPivot(
                 cachedLongNoteFiller[entityId],
