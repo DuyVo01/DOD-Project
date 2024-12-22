@@ -9,7 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: faafd9a13cb294dad908cde414a08b4a, type: 3}
-  m_Name: InputDebuggerPresenterTemplate
+  m_Script: {fileID: 11500000, guid: 0622aa9a1ce990b4c97c15279952a78b, type: 3}
+  m_Name: LaneLineSettingSO
   m_EditorClassIdentifier: 
-  BasePrefab: {fileID: 6666608278722455570, guid: c6b4f0197f87e492d97214d8db929d87, type: 3}
+  lineWidthPercentage: 0.005
+  lineColor: {r: 1, g: 1, b: 1, a: 1}

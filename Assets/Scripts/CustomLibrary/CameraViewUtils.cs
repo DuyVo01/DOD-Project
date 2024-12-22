@@ -79,4 +79,47 @@ public static class CameraViewUtils
 
         return scale;
     }
+
+    public enum CameraBoundCheck
+    {
+        Top,
+        Bottom,
+        Right,
+        Left,
+        All,
+    }
+
+    /// <summary>
+    /// Checks if a position is out of camera bounds for the specified check type
+    /// </summary>
+    /// <param name="camera">The camera to check bounds against</param>
+    /// <param name="position">The world position to check</param>
+    /// <param name="boundCheck">The type of bound check to perform</param>
+    /// <param name="padding">Optional padding to add to the bounds (can be negative to shrink bounds)</param>
+    /// <returns>True if the position is out of bounds for the specified check</returns>
+    public static bool IsPositionOutOfBounds(
+        Camera camera,
+        Vector3 position,
+        CameraBoundCheck boundCheck,
+        float padding = 0f
+    )
+    {
+        Rect bounds = GetCameraViewBounds(camera);
+
+        // Apply padding
+        bounds.xMin += padding;
+        bounds.xMax -= padding;
+        bounds.yMin += padding;
+        bounds.yMax -= padding;
+
+        return boundCheck switch
+        {
+            CameraBoundCheck.Top => position.y > bounds.yMax,
+            CameraBoundCheck.Bottom => position.y < bounds.yMin,
+            CameraBoundCheck.Left => position.x < bounds.xMin,
+            CameraBoundCheck.Right => position.x > bounds.xMax,
+            CameraBoundCheck.All => !bounds.Contains(new Vector2(position.x, position.y)),
+            _ => false,
+        };
+    }
 }

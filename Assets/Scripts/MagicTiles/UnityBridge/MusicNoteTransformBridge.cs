@@ -4,12 +4,12 @@ using UnityEngine;
 
 public struct MusicNoteTransformBridge : IBridge
 {
-    private ChunkArray<GameObject> cachedNotePresenters;
-    private ChunkArray<SpriteRenderer> cachedNotePresenterSprites;
+    private readonly ChunkArray<GameObject> cachedNotePresenters;
+    private readonly ChunkArray<SpriteRenderer> cachedNotePresenterSprites;
 
-    private Dictionary<int, SpriteRenderer> cachedLongNoteFiller;
+    private readonly Dictionary<int, SpriteRenderer> cachedLongNoteFiller;
 
-    public void InitializeBridge()
+    private MusicNoteTransformBridge(bool fake)
     {
         ref var noteEntityGroup = ref EntityRepository.GetEGroup<
             EntityGroup<MusicNoteComponentType>
@@ -37,6 +37,11 @@ public struct MusicNoteTransformBridge : IBridge
 
         for (int entityId = 0; entityId < noteEntityGroup.EntityCount; entityId++)
         {
+            if (!noteEntityGroup.IsEntityActive(entityId))
+            {
+                continue;
+            }
+
             if (musicNoteStatedata.noteTypes.Get(entityId) == MusicNoteType.ShortNote)
             {
                 presenterGO = shortNotePresenterManager.GetOrCreatePresenter(entityId);
@@ -58,6 +63,11 @@ public struct MusicNoteTransformBridge : IBridge
         }
     }
 
+    public static MusicNoteTransformBridge Create()
+    {
+        return new MusicNoteTransformBridge(true);
+    }
+
     public void SyncNoteTransformToUnity(
         int entityId,
         ref MusicNoteTransformData musicNoteTransformData,
@@ -70,6 +80,7 @@ public struct MusicNoteTransformBridge : IBridge
         cachedNotePresenters.Get(entityId).transform.localScale = musicNoteTransformData.sizes.Get(
             entityId
         );
+
         if (
             musicNoteStateData.noteTypes.Get(entityId) == MusicNoteType.ShortNote
             && musicNoteStateData.interactiveStates.Get(entityId)
@@ -90,13 +101,8 @@ public struct MusicNoteTransformBridge : IBridge
             SpriteUtility.ScaleFromPivot(
                 cachedLongNoteFiller[entityId],
                 new Vector2(1, fillerPercentage),
-                SpriteUtility.PivotPoint2D.Bottom
+                SpriteUtility.PivotPointXY.Bottom
             );
         }
-    }
-
-    private float GetFillerTargetScaleYPercentage(float longNoteScaleY, float fillerScaleY)
-    {
-        return fillerScaleY / longNoteScaleY;
     }
 }

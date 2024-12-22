@@ -2,11 +2,11 @@ using UnityEngine;
 
 public struct PresenterManager : IPresenterManager
 {
-    private GameObject[] presenters;
-    private Transform parent;
-    private GameObject @base;
+    private readonly GameObject[] presenters;
+    private readonly Transform parent;
+    private readonly GameObject @base;
 
-    public PresenterManager(int capacity, Transform parent, GameObject @base)
+    public PresenterManager(int capacity, GameObject @base, Transform parent = null)
     {
         this.presenters = new GameObject[capacity];
         this.parent = parent;
@@ -17,7 +17,14 @@ public struct PresenterManager : IPresenterManager
     {
         if (presenters[entityId] == null)
         {
-            presenters[entityId] = GameObject.Instantiate(@base, parent);
+            if (parent == null)
+            {
+                presenters[entityId] = GameObject.Instantiate(@base);
+            }
+            else
+            {
+                presenters[entityId] = GameObject.Instantiate(@base, parent);
+            }
         }
         return presenters[entityId];
     }

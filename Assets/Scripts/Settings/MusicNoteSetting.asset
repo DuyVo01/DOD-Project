@@ -9,9 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0706e236e0a754aaa966533934b98738, type: 3}
-  m_Name: MusicNotePresenterTemplate
+  m_Script: {fileID: 11500000, guid: 1dbbc6a1909167b47bf3680a5acee7e6, type: 3}
+  m_Name: MusicNoteSetting
   m_EditorClassIdentifier: 
-  BasePrefab: {fileID: 8137537297466452066, guid: 8c1c272d019a341fa8cc13b90b199606, type: 3}
-  normalColor: {r: 0, g: 0, b: 0, a: 0}
-  pressedColor: {r: 0, g: 0, b: 0, a: 0}
+  shortNoteScaleYFactor: 1.1
+  longNoteScaleYFactor: 3

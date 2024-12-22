@@ -4,8 +4,8 @@ using UnityEngine;
 public struct EntityGroup<TDataComponentType> : IEntityGroup
     where TDataComponentType : Enum
 {
-    private ChunkArray<bool> entityStates;
-    private IDataComponent[] dataComponents;
+    private readonly ChunkArray<bool> entityStates;
+    private readonly IDataComponent[] dataComponents;
 
     public int EntityCount { get; private set; }
 

@@ -28,5 +28,7 @@ public static class BridgeRepository
         public T Data;
 
         public BridgeWrapper(T data) => Data = data;
+
+        public void InitializeBridge() { }
     }
 }

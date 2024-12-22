@@ -28,7 +28,7 @@ public class ManualDebug : MonoBehaviour
     {
         if (!enableDebugging)
             return;
-        _isTriggered = Input.GetKey(triggerKey);
+        _isTriggered = Input.GetKeyDown(triggerKey);
     }
 
     // Simple factory method for creating debug handlers

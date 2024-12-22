@@ -7,5 +7,7 @@ public enum PresenterManagerType
     MusicNotePresenterManager,
     LongNotePresenterManager,
     InputDebuggerPresenterManager,
+    LaneLinePresenterManager,
+    IntroNotePresenterManager,
     Count,
 }

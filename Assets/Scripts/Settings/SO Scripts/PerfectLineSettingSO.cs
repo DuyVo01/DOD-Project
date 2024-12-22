@@ -8,6 +8,7 @@ public class PerfectLineSettingSO : ScriptableObject
     public Vector2 TopRight;
     public Vector2 BottomLeft;
     public Vector2 BottomRight;
+    public Vector2 Position;
 
     public float PerfectLineWidth()
     {

@@ -63,7 +63,7 @@ public static class SpriteUtility
         };
     }
 
-    public enum PivotPoint2D
+    public enum PivotPointXY
     {
         Top,
         Bottom,
@@ -77,56 +77,48 @@ public static class SpriteUtility
     /// <param name="spriteRenderer">The sprite renderer to scale</param>
     /// <param name="newScale">The target scale (x,y)</param>
     /// <param name="pivot">The pivot point to scale from</param>
-    /// /// <returns>True if scaling succeeded, false otherwise</returns>
+    /// <returns>True if scaling succeeded, false otherwise</returns>
     public static bool ScaleFromPivot(
         SpriteRenderer spriteRenderer,
         Vector2 newScale,
-        PivotPoint2D pivot
+        PivotPointXY pivot
     )
     {
         if (spriteRenderer == null || spriteRenderer.sprite == null)
             return false;
 
         var transform = spriteRenderer.transform;
-
         Vector3 originalPosition = transform.position;
-        Vector2 originalScale = transform.localScale;
 
-        // Get sprite size in world space
-        Vector2 worldSize = new Vector2(spriteRenderer.bounds.size.x, spriteRenderer.bounds.size.y);
+        // Get current pivot point position in world space
+        Vector3 pivotWorldPosition = GetPivotWorldPosition(spriteRenderer, pivot);
 
-        // Calculate size after scaling
-        Vector2 newWorldSize = new Vector2(
-            worldSize.x * (newScale.x / originalScale.x),
-            worldSize.y * (newScale.y / originalScale.y)
-        );
-
-        // Calculate offset in world space
-        Vector2 offset = CalculateOffset(pivot, worldSize, newWorldSize);
-
-        // Apply changes
+        // Apply new scale
         transform.localScale = new Vector3(newScale.x, newScale.y, transform.localScale.z);
-        transform.position = originalPosition + (Vector3)offset;
+
+        // Get new pivot point position after scaling
+        Vector3 newPivotWorldPosition = GetPivotWorldPosition(spriteRenderer, pivot);
+
+        // Calculate and apply position correction
+        Vector3 correction = pivotWorldPosition - newPivotWorldPosition;
+        transform.position = originalPosition + correction;
 
         return true;
     }
 
-    private static Vector2 CalculateOffset(
-        PivotPoint2D pivot,
-        Vector2 originalSize,
-        Vector2 newSize
-    )
+    private static Vector3 GetPivotWorldPosition(SpriteRenderer spriteRenderer, PivotPointXY pivot)
     {
-        // Calculate the actual change in size
-        Vector2 sizeDiff = newSize - originalSize;
+        Bounds bounds = spriteRenderer.bounds;
+        Vector3 center = bounds.center;
+        Vector3 extents = bounds.extents;
 
         return pivot switch
         {
-            PivotPoint2D.Top => new Vector2(0, -sizeDiff.y / 2),
-            PivotPoint2D.Bottom => new Vector2(0, sizeDiff.y / 2),
-            PivotPoint2D.Left => new Vector2(-sizeDiff.x / 2, 0),
-            PivotPoint2D.Right => new Vector2(sizeDiff.x / 2, 0),
-            _ => Vector2.zero,
+            PivotPointXY.Top => center + new Vector3(0, extents.y, 0),
+            PivotPointXY.Bottom => center - new Vector3(0, extents.y, 0),
+            PivotPointXY.Left => center - new Vector3(extents.x, 0, 0),
+            PivotPointXY.Right => center + new Vector3(extents.x, 0, 0),
+            _ => center,
         };
     }
 }

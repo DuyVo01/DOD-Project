@@ -6,14 +6,25 @@ public class GlobalGameSetting : PersistentSingleton<GlobalGameSetting>
     [Header("Global Game Settings")]
     public GeneralGameSettingSO generalSetting;
     public DataSystemSettingSO dataSystemSetting;
-    public PerfectLineSettingSO perfectLineSettingSO;
+
+    [Header("Presenter Setting")]
     public PresenterSettingSO presenterSetting;
 
+    [Header("Perfect Line Setting")]
+    public PerfectLineSettingSO perfectLineSettingSO;
+
     [Header("Music Note")]
+    public MusicNoteSettingSO musicNoteSettingSO;
     public Transform notePresenterParent;
 
     [Header("Input Debugger")]
     public Transform inputPresenterParent;
+
+    [Header("Lane Line Settings")]
+    public LaneLineSettingSO laneLineSettings;
+
+    [Header("Intro Note Setting")]
+    public IntroNoteSettingSO introNoteSetting;
 
     protected override void OnAwake()
     {
@@ -25,6 +36,7 @@ public class GlobalGameSetting : PersistentSingleton<GlobalGameSetting>
         SystemRepository.RegisterSystem(new NoteStateSystem());
         SystemRepository.RegisterSystem(new InputSystem());
         SystemRepository.RegisterSystem(new InputCollisionSystem());
+        SystemRepository.RegisterSystem(new LaneLineSortingSystem());
         #endregion
 
         #region Entities and data components registration
@@ -56,16 +68,25 @@ public class GlobalGameSetting : PersistentSingleton<GlobalGameSetting>
 
         EntityRepository.RegisterEGroup(EntityType.NoteEntityGroup, ref musicNoteEntityGroup);
 
+        var landLineEntityGroup = new EntityGroup<LaneLineComponentType>(5);
+        landLineEntityGroup.RegisterComponent(
+            LaneLineComponentType.LaneLineData,
+            new LaneLineData(landLineEntityGroup.EntityCount)
+        );
+
+        EntityRepository.RegisterEGroup(EntityType.LaneLineEntityGroup, ref landLineEntityGroup);
+
         #endregion
 
-        #region Singleton registration
+        #region Singleton data registration
         SingletonComponentRepository.RegisterComponent(
             SingletonComponentType.PerfectLine,
             new PerfectLineData(
                 perfectLineSettingSO.TopLeft,
                 perfectLineSettingSO.TopRight,
                 perfectLineSettingSO.BottomLeft,
-                perfectLineSettingSO.BottomRight
+                perfectLineSettingSO.BottomRight,
+                perfectLineSettingSO.Position
             )
         );
 
@@ -73,17 +94,21 @@ public class GlobalGameSetting : PersistentSingleton<GlobalGameSetting>
             SingletonComponentType.Input,
             new InputDataComponent(2)
         );
+
+        SingletonComponentRepository.RegisterComponent(
+            SingletonComponentType.IntroNote,
+            new IntroNoteData(true)
+        );
         #endregion
 
         #region Presenters registration
-
 
         PresenterManagerRepository.RegisterManager(
             PresenterManagerType.MusicNotePresenterManager,
             new PresenterManager(
                 musicNoteEntityGroup.EntityCount,
-                notePresenterParent,
-                presenterSetting.shortMusicNotePresenterPrefab
+                presenterSetting.shortMusicNotePresenterPrefab,
+                notePresenterParent
             )
         );
 
@@ -91,8 +116,8 @@ public class GlobalGameSetting : PersistentSingleton<GlobalGameSetting>
             PresenterManagerType.LongNotePresenterManager,
             new PresenterManager(
                 musicNoteEntityGroup.EntityCount,
-                notePresenterParent,
-                presenterSetting.longMusicNotePresenterPrefab
+                presenterSetting.longMusicNotePresenterPrefab,
+                notePresenterParent
             )
         );
 
@@ -100,16 +125,40 @@ public class GlobalGameSetting : PersistentSingleton<GlobalGameSetting>
             PresenterManagerType.InputDebuggerPresenterManager,
             new PresenterManager(
                 dataSystemSetting.defaultCapacity,
-                inputPresenterParent,
-                presenterSetting.inputDebuggerPresenterPrefab
+                presenterSetting.inputDebuggerPresenterPrefab,
+                inputPresenterParent
             )
         );
+
+        PresenterManagerRepository.RegisterManager(
+            PresenterManagerType.LaneLinePresenterManager,
+            new PresenterManager(
+                landLineEntityGroup.EntityCount,
+                presenterSetting.laneLinePresenter,
+                inputPresenterParent
+            )
+        );
+
+        PresenterManagerRepository.RegisterManager(
+            PresenterManagerType.IntroNotePresenterManager,
+            new PresenterManager(1, presenterSetting.introNotePressenyer)
+        );
+
+        #endregion
+
+        #region Initialize Data
+        MusicNoteInitializer.Initialize();
+        LaneLineInitializer.Initialize();
         #endregion
 
         #region bridges registration
-        BridgeRepository.RegisterBridge(BridgeType.NoteTransform, new MusicNoteTransformBridge());
-        BridgeRepository.RegisterBridge(BridgeType.InputDebugger, new InputDebuggerBridge());
+        BridgeRepository.RegisterBridge(
+            BridgeType.NoteTransform,
+            MusicNoteTransformBridge.Create()
+        );
+        BridgeRepository.RegisterBridge(BridgeType.LaneLineBridge, LaneLineBridge.Create());
         #endregion
+
         GizmoDebugger.Instance.InitData(musicNoteEntityGroup.EntityCount);
     }
 

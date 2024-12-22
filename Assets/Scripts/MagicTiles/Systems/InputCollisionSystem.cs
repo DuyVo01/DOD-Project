@@ -14,9 +14,6 @@ public struct InputCollisionSystem : IGameSystem
         ref var inputData = ref SingletonComponentRepository.GetComponent<InputDataComponent>(
             SingletonComponentType.Input
         );
-        ref var noteEntityGroup = ref EntityRepository.GetEGroup<
-            EntityGroup<MusicNoteComponentType>
-        >(EntityType.NoteEntityGroup);
 
         // Process each active input
         for (int inputIdx = 0; inputIdx < InputDataComponent.MAX_INPUTS; inputIdx++)
@@ -27,12 +24,12 @@ public struct InputCollisionSystem : IGameSystem
             var inputState = inputData.inputStates.Get(inputIdx);
             Vector2 inputPosition = inputState.Position;
 
-            // Skip notes not in playable zone
-            if (
-                musicNoteStateData.positionStates.Get(entityId)
-                != MusicNotePositionState.InlineWithPerfectLine
-            )
-                continue;
+            // // Skip notes not in playable zone
+            // if (
+            //     musicNoteStateData.positionStates.Get(entityId)
+            //     != MusicNotePositionState.InlineWithPerfectLine
+            // )
+            //     continue;
 
             // Skip completed notes
             if (
@@ -64,7 +61,7 @@ public struct InputCollisionSystem : IGameSystem
         }
     }
 
-    private void ProcessNoteInteraction(
+    private static void ProcessNoteInteraction(
         int entityId,
         InputStateData inputState,
         ref MusicNoteStateData stateData,
@@ -80,21 +77,20 @@ public struct InputCollisionSystem : IGameSystem
             case InputState.JustPressed:
                 if (currentInteractiveState == MusicNoteInteractiveState.Normal)
                 {
-                    // For short notes, immediately complete after press
                     if (noteType == MusicNoteType.ShortNote)
                     {
-                        stateData.interactiveStates.Set(
-                            entityId,
-                            MusicNoteInteractiveState.Completed
-                        );
-                        break;
+                        CompleteNote(entityId, ref stateData);
                     }
-                    //Long note process
-                    stateData.interactiveStates.Set(entityId, MusicNoteInteractiveState.Pressed);
-                    musicNoteFillerData.IsVisibles.Set(entityId, true);
-                    musicNoteFillerData.FillPercent.Set(entityId, .7f);
-
-                    Debug.Log($"{LOG_PREFIX} Note {entityId} pressed");
+                    else
+                    {
+                        StartLongNote(
+                            entityId,
+                            inputState,
+                            ref stateData,
+                            ref transformData,
+                            ref musicNoteFillerData
+                        );
+                    }
                 }
                 break;
 
@@ -103,22 +99,16 @@ public struct InputCollisionSystem : IGameSystem
                 {
                     if (currentInteractiveState == MusicNoteInteractiveState.Pressed)
                     {
-                        stateData.interactiveStates.Set(entityId, MusicNoteInteractiveState.Hold);
-                        Debug.Log($"{LOG_PREFIX} Long note {entityId} entering hold state");
+                        EnterHoldState(entityId, ref stateData);
                     }
                     else if (currentInteractiveState == MusicNoteInteractiveState.Hold)
                     {
-                        // Temporary completion condition: Check if input is above note's top edge
-                        float noteTopY = transformData.TopLeft.Get(entityId).y;
-
-                        if (inputState.Position.y > noteTopY)
-                        {
-                            stateData.interactiveStates.Set(
-                                entityId,
-                                MusicNoteInteractiveState.Completed
-                            );
-                            Debug.Log($"{LOG_PREFIX} Long note {entityId} completed");
-                        }
+                        UpdateLongNoteFill(
+                            entityId,
+                            ref stateData,
+                            ref transformData,
+                            ref musicNoteFillerData
+                        );
                     }
                 }
                 break;
@@ -132,14 +122,71 @@ public struct InputCollisionSystem : IGameSystem
                     )
                 )
                 {
-                    stateData.interactiveStates.Set(entityId, MusicNoteInteractiveState.Completed);
-                    Debug.Log($"{LOG_PREFIX} Long note {entityId} released and completed");
+                    CompleteNote(entityId, ref stateData);
                 }
                 break;
         }
     }
 
-    private bool IsPointInNote(
+    private static void CompleteNote(int entityId, ref MusicNoteStateData stateData)
+    {
+        stateData.interactiveStates.Set(entityId, MusicNoteInteractiveState.Completed);
+        Debug.Log($"{LOG_PREFIX} Note {entityId} completed");
+    }
+
+    private static void StartLongNote(
+        int entityId,
+        InputStateData inputState,
+        ref MusicNoteStateData stateData,
+        ref MusicNoteTransformData transformData,
+        ref MusicNoteFillerData musicNoteFillerData
+    )
+    {
+        stateData.interactiveStates.Set(entityId, MusicNoteInteractiveState.Pressed);
+        musicNoteFillerData.IsVisibles.Set(entityId, true);
+
+        float sizeOfNote =
+            transformData.TopLeft.Get(entityId).y - transformData.BottomLeft.Get(entityId).y;
+        float fromTouchPositionToLowerOfNote =
+            inputState.Position.y - transformData.BottomLeft.Get(entityId).y;
+        float touchPercent = fromTouchPositionToLowerOfNote / sizeOfNote;
+        musicNoteFillerData.FillPercent.Set(entityId, touchPercent + 0.1f);
+
+        Debug.Log($"{LOG_PREFIX} Note {entityId} pressed");
+    }
+
+    private static void EnterHoldState(int entityId, ref MusicNoteStateData stateData)
+    {
+        stateData.interactiveStates.Set(entityId, MusicNoteInteractiveState.Hold);
+        Debug.Log($"{LOG_PREFIX} Long note {entityId} entering hold state");
+    }
+
+    private static void UpdateLongNoteFill(
+        int entityId,
+        ref MusicNoteStateData stateData,
+        ref MusicNoteTransformData transformData,
+        ref MusicNoteFillerData musicNoteFillerData
+    )
+    {
+        float noteLength =
+            transformData.TopLeft.Get(entityId).y - transformData.BottomLeft.Get(entityId).y;
+        float gameSpeed = GlobalGameSetting.Instance.generalSetting.gameSpeed;
+        float fillSpeed = gameSpeed / noteLength;
+
+        float currentFillPercent = musicNoteFillerData.FillPercent.Get(entityId);
+        float fillAmount = fillSpeed * Time.deltaTime;
+        float nextFillPercent = currentFillPercent + fillAmount;
+        nextFillPercent = Mathf.Min(nextFillPercent, 1f);
+
+        musicNoteFillerData.FillPercent.Set(entityId, nextFillPercent);
+
+        if (nextFillPercent >= 1f)
+        {
+            CompleteNote(entityId, ref stateData);
+        }
+    }
+
+    private static bool IsPointInNote(
         Vector2 point,
         Vector2 topLeft,
         Vector2 topRight,
@@ -172,7 +219,7 @@ public struct InputCollisionSystem : IGameSystem
         return wn != 0;
     }
 
-    private float IsLeftOf(Vector2 a, Vector2 b, Vector2 point)
+    private static float IsLeftOf(Vector2 a, Vector2 b, Vector2 point)
     {
         return (b.x - a.x) * (point.y - a.y) - (point.x - a.x) * (b.y - a.y);
     }

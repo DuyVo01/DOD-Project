@@ -4,7 +4,7 @@ using UnityEngine;
 
 public struct InputDebuggerBridge : IBridge
 {
-    private int spawnCount;
+    private readonly int spawnCount;
 
     public InputDebuggerBridge(bool fake)
     {

@@ -48,6 +48,7 @@ public class SpriteCornerDebugger : MonoBehaviour
         generalGameSettingSO.TopRight = topRight;
         generalGameSettingSO.BottomLeft = bottomLeft;
         generalGameSettingSO.BottomRight = bottomRight;
+        generalGameSettingSO.Position = transform.position;
     }
 
     private void DrawCorner(Vector2 position)

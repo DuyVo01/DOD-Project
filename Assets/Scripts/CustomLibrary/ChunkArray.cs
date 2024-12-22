@@ -7,7 +7,7 @@ public class ChunkArray<T>
     private T[][] chunks;
     private int count;
     private int capacity;
-    private Stack<(int, int)> freeIndices;
+    private readonly Stack<(int, int)> freeIndices;
 
     public int Count => count;
     public int Capacity => capacity;

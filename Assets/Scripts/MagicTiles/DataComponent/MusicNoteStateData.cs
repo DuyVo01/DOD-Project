@@ -35,6 +35,7 @@ public enum MusicNotePositionState
     AbovePerfectLine,
     InlineWithPerfectLine,
     PassedPerfectLine,
+    OutOfScreen,
 }
 
 public enum MusicNoteInteractiveState

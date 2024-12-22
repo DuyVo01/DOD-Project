@@ -9,20 +9,15 @@ public struct NoteStateSystem : IGameSystem
         ref PerfectLineData perfectLineData
     )
     {
-        float noteUpperY;
-        float noteLowerY;
+        float noteUpperY = musicNoteTransformData.TopLeft.Get(entityId).y;
+        float noteLowerY = musicNoteTransformData.BottomLeft.Get(entityId).y;
         float perfectLineUpperY = perfectLineData.TopLeft.y;
         float perfectLineLowerY = perfectLineData.BottomLeft.y;
 
-        if (
-            musicNoteStateData.positionStates.Get(entityId)
-            == MusicNotePositionState.PassedPerfectLine
-        )
+        if (musicNoteStateData.positionStates.Get(entityId) == MusicNotePositionState.OutOfScreen)
         {
             return;
         }
-        noteUpperY = musicNoteTransformData.TopLeft.Get(entityId).y;
-        noteLowerY = musicNoteTransformData.BottomLeft.Get(entityId).y;
 
         if (noteLowerY < perfectLineUpperY && noteUpperY > perfectLineLowerY)
         {
@@ -37,8 +32,25 @@ public struct NoteStateSystem : IGameSystem
                 entityId,
                 MusicNotePositionState.PassedPerfectLine
             );
+        }
+        else if (noteUpperY > perfectLineUpperY)
+        {
+            musicNoteStateData.positionStates.Set(
+                entityId,
+                MusicNotePositionState.AbovePerfectLine
+            );
+        }
 
-            //Debug.Log($"Entity {entityId} has passed perfect line");
+        Vector2 noteTop = musicNoteTransformData.TopLeft.Get(entityId);
+        if (
+            CameraViewUtils.IsPositionOutOfBounds(
+                Camera.main,
+                noteTop,
+                CameraViewUtils.CameraBoundCheck.Bottom
+            )
+        )
+        {
+            musicNoteStateData.positionStates.Set(entityId, MusicNotePositionState.OutOfScreen);
         }
     }
 

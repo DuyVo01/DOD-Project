@@ -7,8 +7,4 @@ public class GeneralGameSettingSO : ScriptableObject
     public int gameSpeed;
     public float baseScaleYForNote = 1;
     public TextAsset midiContent;
-
-    [Header("Note Configuration")]
-    public float shortNoteScaleYFactor = 1.1f;
-    public float longNoteScaleYFactor = 1.5f;
 }
