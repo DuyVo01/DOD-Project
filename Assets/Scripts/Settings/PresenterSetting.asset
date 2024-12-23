@@ -16,3 +16,4 @@ MonoBehaviour:
   longMusicNotePresenterPrefab: {fileID: 8137537297466452066, guid: 12f1ab7db8533406285c2148378e45d8, type: 3}
   inputDebuggerPresenterPrefab: {fileID: 6666608278722455570, guid: c6b4f0197f87e492d97214d8db929d87, type: 3}
   laneLinePresenter: {fileID: 856688113385644598, guid: af74a368381e1114095acf0acae2ec78, type: 3}
+  introNotePressenyer: {fileID: 8137537297466452066, guid: 3ab92a42b30f7d440901bcd50afe0d58, type: 3}

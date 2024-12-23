@@ -63,7 +63,9 @@ public struct LaneLineSortingSystem : IGameSystem
 
     private Vector2 CalculateLineSize(Camera camera, float widthPercentage)
     {
-        float cameraHeight = camera.orthographicSize * 2f;
+        // Magic number 3 to ensure that the line always fill entire screen,
+        // as camera view does not cover entire screen height on some devices
+        float cameraHeight = camera.orthographicSize * 2f + 3;
         float cameraWidth = cameraHeight * camera.aspect;
 
         return new Vector2(cameraWidth * widthPercentage, cameraHeight);

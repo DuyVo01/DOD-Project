@@ -37,6 +37,7 @@ public class GlobalGameSetting : PersistentSingleton<GlobalGameSetting>
         SystemRepository.RegisterSystem(new InputSystem());
         SystemRepository.RegisterSystem(new InputCollisionSystem());
         SystemRepository.RegisterSystem(new LaneLineSortingSystem());
+        SystemRepository.RegisterSystem(new IntroNoteInitSystem());
         #endregion
 
         #region Entities and data components registration
@@ -157,6 +158,7 @@ public class GlobalGameSetting : PersistentSingleton<GlobalGameSetting>
             MusicNoteTransformBridge.Create()
         );
         BridgeRepository.RegisterBridge(BridgeType.LaneLineBridge, LaneLineBridge.Create());
+        BridgeRepository.RegisterBridge(BridgeType.IntroNote, IntroNoteTransformBridge.Create());
         #endregion
 
         GizmoDebugger.Instance.InitData(musicNoteEntityGroup.EntityCount);

@@ -6,6 +6,10 @@ public struct MusicTileWorld
             BridgeType.NoteTransform
         );
 
+        ref var introNoteTransformBridge = ref BridgeRepository.GetBridge<IntroNoteTransformBridge>(
+            BridgeType.IntroNote
+        );
+
         SystemRepository.GetSystem<InputSystem>().ProcessInput();
 
         ref var movingTileSystem = ref SystemRepository.GetSystem<MovingTileSystem>();

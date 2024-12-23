@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "LaneLineSettingSO", menuName = "Setting/LaneLineSetting")]
+[CreateAssetMenu(fileName = "IntroNoteSettingSO", menuName = "Setting/IntroNoteSetting")]
 public class IntroNoteSettingSO : ScriptableObject
 {
     [Header("Note Configuration")]
