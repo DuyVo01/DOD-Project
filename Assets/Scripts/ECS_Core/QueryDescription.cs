@@ -1,5 +1,6 @@
 namespace ECS_Core
 {
+    public delegate void ActionRef<T1>(ref T1 item);
     public delegate void ActionRef<T1, T2>(T1 index, ref T2 item);
     public delegate void ActionRef<T1, T2, T3>(T1 index, ref T2 item1, ref T3 item2);
     public delegate void ActionRef<T1, T2, T3, T4>(
