@@ -16,16 +16,10 @@ public struct MockDebugSystem : ECS_Core.IGameSystem
         AutoUpdate = true;
     }
 
-    public void Update()
+    public void Start()
     {
-        World
-            .Active.Query<MockComponentData>()
-            .ForEach(
-                ArchetypeManager,
-                (int entity, ref MockComponentData mockdata) =>
-                {
-                    Debug.Log(mockdata.Value);
-                }
-            );
+        //
     }
+
+    public void Update() { }
 }

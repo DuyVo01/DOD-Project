@@ -95,10 +95,11 @@ namespace ECS_Core
             foreach (var type in componentArrays.Keys.ToList())
             {
                 var oldArray = componentArrays[type];
-                var elementSize = Marshal.SizeOf(type.Type);
                 var newArray = Array.CreateInstance(type.Type, newCapacity);
 
-                Buffer.BlockCopy(oldArray, 0, newArray, 0, count * elementSize);
+                // Use Array.Copy instead of Buffer.BlockCopy
+                // This properly handles copying of value types (structs)
+                Array.Copy(oldArray, 0, newArray, 0, count);
 
                 componentArrays[type] = newArray;
             }

@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class GlobalPoint : PersistentSingleton<GlobalPoint>
 {
+    public PerfectLineSettingSO perfectLineSettingSO;
+    public TextAsset midiContent;
     private World world;
 
     protected override void OnAwake()
@@ -27,6 +29,11 @@ public class GlobalPoint : PersistentSingleton<GlobalPoint>
         }
     }
 
+    private void Start()
+    {
+        SystemManager.SystemStart();
+    }
+
     private void Update()
     {
         SystemManager.UpdateSystems();
@@ -40,51 +47,40 @@ public class GlobalPoint : PersistentSingleton<GlobalPoint>
 
     private void RegisterSystems()
     {
-        SystemManager.RegisterSystem(new MockDebugSystem());
+        // SystemManager.RegisterSystem(new MockDebugSystem());
+        SystemManager.RegisterSystem(new MusicNoteCreationSystem());
     }
 
     private void CreateTemplates()
     {
         world.CreateTemplate(
-            "Mock",
+            "MusicNote",
             new Dictionary<ComponentType, object>
             {
-                {
-                    ComponentType.Of<MockComponentData>(),
-                    new MockComponentData { Value = 1 }
-                },
-
-                // Add other components
+                { ComponentType.Of<MusicNoteComponent>(), new MusicNoteComponent() },
             }
         );
     }
 
-    private void CreateEntity()
+    private void CreateEntity() { }
+
+    private void CreateSingletons()
     {
-        int entityId = world.CreateEntityFromTemplate("Mock");
-        int entityIds = world.CreateEntityFromTemplate("Mock");
-
-        world.ModifyPendingComponent(
-            entityId,
-            (ref MockComponentData value) =>
+        int perfectLineEntity = world.CreateEntity();
+        world.AddComponent(perfectLineEntity, new SingletonFlag());
+        world.AddComponent(perfectLineEntity, new PerfectLineTagComponent());
+        world.AddComponent(
+            perfectLineEntity,
+            new CornerComponent
             {
-                value.Value = 10;
+                TopLeft = perfectLineSettingSO.TopLeft,
+                TopRight = perfectLineSettingSO.TopRight,
+                BottomLeft = perfectLineSettingSO.BottomLeft,
+                BottomRight = perfectLineSettingSO.BottomRight,
             }
         );
-
-        world.ModifyPendingComponent(
-            entityIds,
-            (ref MockComponentData value) =>
-            {
-                value.Value = 12;
-            }
-        );
-
-        world.UpdateEntity(entityId);
-        world.UpdateEntity(entityIds);
+        world.UpdateEntity(perfectLineEntity);
     }
-
-    private void CreateSingletons() { }
 
     protected void OnDestroy()
     {

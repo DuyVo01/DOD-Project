@@ -7,6 +7,7 @@ namespace ECS_Core
     public interface IGameSystem
     {
         void Initialize();
+        void Start();
         void Update();
         void Cleanup();
         bool AutoUpdate { get; set; }
@@ -62,6 +63,30 @@ namespace ECS_Core
             }
 
             isInitialized = true;
+        }
+
+        public static void SystemStart()
+        {
+            if (!isInitialized)
+            {
+                Debug.LogError("Systems not initialized. Call InitializeSystems first.");
+                return;
+            }
+            foreach (var system in systems.Values)
+            {
+                // Only update systems that are enabled AND marked for auto-update
+                if (((ISystemState)system).Enabled)
+                {
+                    try
+                    {
+                        system.Start();
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError($"Error Starting system {system.GetType()}: {e}");
+                    }
+                }
+            }
         }
 
         public static void UpdateSystems()
@@ -159,6 +184,8 @@ namespace ECS_Core
             public void Update() => System.Update();
 
             public void Cleanup() => System.Cleanup();
+
+            public void Start() => System.Start();
         }
     }
 }

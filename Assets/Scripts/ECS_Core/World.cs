@@ -6,6 +6,17 @@ namespace ECS_Core
 {
     public class World
     {
+        private class SingletonCache
+        {
+            public Array[] ComponentArrays; // Array of component arrays for each type
+            public int EntityIndex; // Index in the arrays where our singleton components live
+            public int EntityId; // The singleton entity's ID
+            public bool IsValid; // Cache validity flag
+        }
+
+        // Main cache storage - we use component type ID as the key for faster lookup
+        private Dictionary<int, SingletonCache> singletonCaches = new();
+
         #region Static Access
         private static World activeWorld;
         public static World Active => activeWorld;
@@ -38,7 +49,6 @@ namespace ECS_Core
         public ArchetypeManager ArchetypeManager => archetypeManager;
 
         #region Entity Creation and Components
-        public struct SingletonFlag : IComponent { }
 
         public int CreateEntity()
         {
@@ -245,33 +255,225 @@ namespace ECS_Core
         #endregion
 
         #region Singleton Access
-        public ref T GetSingleton<T>()
-            where T : struct, IComponent
-        {
-            T[] componentArray = null;
-            int entityIndex = -1;
 
-            var query = new QueryDescription<SingletonFlag, T>();
-            query.ForEach(
-                archetypeManager,
-                (int entityId, ref SingletonFlag _, ref T component) =>
+        // Public API - TFlag is the singleton identifier, T1 is the component we want
+        public void GetSingletonComponents<TFlag, T1>(out T1 component1)
+            where TFlag : struct, IComponent
+            where T1 : struct, IComponent
+        {
+            var cache = GetOrCreateSingletonCache<TFlag, T1>();
+            component1 = ((T1[])cache.ComponentArrays[0])[cache.EntityIndex];
+        }
+
+        // Overload for two components
+        public void GetSingletonComponents<TFlag, T1, T2>(out T1 component1, out T2 component2)
+            where TFlag : struct, IComponent
+            where T1 : struct, IComponent
+            where T2 : struct, IComponent
+        {
+            var cache = GetOrCreateSingletonCache<TFlag, T1, T2>();
+            component1 = ((T1[])cache.ComponentArrays[0])[cache.EntityIndex];
+            component2 = ((T2[])cache.ComponentArrays[1])[cache.EntityIndex];
+        }
+
+        // Overload for three components
+        public void GetSingletonComponents<TFlag, T1, T2, T3>(
+            out T1 component1,
+            out T2 component2,
+            out T3 component3
+        )
+            where TFlag : struct, IComponent
+            where T1 : struct, IComponent
+            where T2 : struct, IComponent
+            where T3 : struct, IComponent
+        {
+            var cache = GetOrCreateSingletonCache<TFlag, T1, T2, T3>();
+            component1 = ((T1[])cache.ComponentArrays[0])[cache.EntityIndex];
+            component2 = ((T2[])cache.ComponentArrays[1])[cache.EntityIndex];
+            component3 = ((T3[])cache.ComponentArrays[2])[cache.EntityIndex];
+        }
+
+        // Private helper for one component
+        private SingletonCache GetOrCreateSingletonCache<TFlag, T1>()
+            where TFlag : struct, IComponent
+            where T1 : struct, IComponent
+        {
+            var flagType = ComponentType.Of<TFlag>();
+
+            // Check existing cache
+            if (
+                singletonCaches.TryGetValue(flagType.Id, out var cache)
+                && cache.IsValid
+                && EntityExists(cache.EntityId)
+            )
+            {
+                return cache;
+            }
+
+            // Cache miss - find the singleton entity
+            var matchingArchetypes = archetypeManager.GetArchetypesWithComponents(
+                new[] { ComponentType.Of<SingletonFlag>(), flagType, ComponentType.Of<T1>() }
+            );
+
+            foreach (var archetype in matchingArchetypes)
+            {
+                var entities = archetype.Entities;
+                for (int i = 0; i < archetype.Count; i++)
                 {
+                    int entityId = entities[i];
                     if (!IsMarkedForDestruction(entityId))
                     {
-                        var archetype = entityArchetypes[entityId];
-                        componentArray = archetype.GetComponentArray<T>();
-                        entityIndex = archetype.GetEntityIndex(entityId);
+                        // Create new cache entry
+                        cache = new SingletonCache
+                        {
+                            ComponentArrays = new[] { archetype.GetComponentArray<T1>() },
+                            EntityIndex = i,
+                            EntityId = entityId,
+                            IsValid = true,
+                        };
+
+                        singletonCaches[flagType.Id] = cache;
+                        return cache;
                     }
+                }
+            }
+
+            throw new InvalidOperationException(
+                $"No singleton found with flag {typeof(TFlag).Name} and component {typeof(T1).Name}"
+            );
+        }
+
+        // Private helper for one component
+        private SingletonCache GetOrCreateSingletonCache<TFlag, T1, T2>()
+            where TFlag : struct, IComponent
+            where T1 : struct, IComponent
+            where T2 : struct, IComponent
+        {
+            var flagType = ComponentType.Of<TFlag>();
+
+            // Check existing cache
+            if (
+                singletonCaches.TryGetValue(flagType.Id, out var cache)
+                && cache.IsValid
+                && EntityExists(cache.EntityId)
+            )
+            {
+                if (cache.ComponentArrays.Length == 2)
+                {
+                    return cache;
+                }
+                cache.IsValid = false;
+            }
+
+            var matchingArchetypes = archetypeManager.GetArchetypesWithComponents(
+                new[]
+                {
+                    ComponentType.Of<SingletonFlag>(),
+                    flagType,
+                    ComponentType.Of<T1>(),
+                    ComponentType.Of<T2>(),
                 }
             );
 
-            if (componentArray == null || entityIndex == -1)
-                throw new InvalidOperationException(
-                    $"No singleton found with component {typeof(T).Name}"
-                );
+            foreach (var archetype in matchingArchetypes)
+            {
+                var entities = archetype.Entities;
+                for (int i = 0; i < archetype.Count; i++)
+                {
+                    int entityId = entities[i];
+                    if (!IsMarkedForDestruction(entityId))
+                    {
+                        // Explicitly create an Array array with the correct size
+                        Array[] componentArrays = new Array[2];
+                        componentArrays[0] = archetype.GetComponentArray<T1>();
+                        componentArrays[1] = archetype.GetComponentArray<T2>();
 
-            return ref componentArray[entityIndex];
+                        cache = new SingletonCache
+                        {
+                            ComponentArrays = componentArrays,
+                            EntityIndex = i,
+                            EntityId = entityId,
+                            IsValid = true,
+                        };
+
+                        singletonCaches[flagType.Id] = cache;
+                        return cache;
+                    }
+                }
+            }
+
+            throw new InvalidOperationException(
+                $"No singleton found with flag {typeof(TFlag).Name} "
+                    + $"and components {typeof(T1).Name}, {typeof(T2).Name}"
+            );
         }
+
+        private SingletonCache GetOrCreateSingletonCache<TFlag, T1, T2, T3>()
+            where TFlag : struct, IComponent
+            where T1 : struct, IComponent
+            where T2 : struct, IComponent
+            where T3 : struct, IComponent
+        {
+            var flagType = ComponentType.Of<TFlag>();
+
+            if (
+                singletonCaches.TryGetValue(flagType.Id, out var cache)
+                && cache.IsValid
+                && EntityExists(cache.EntityId)
+            )
+            {
+                if (cache.ComponentArrays.Length == 3)
+                {
+                    return cache;
+                }
+                cache.IsValid = false;
+            }
+
+            var matchingArchetypes = archetypeManager.GetArchetypesWithComponents(
+                new[]
+                {
+                    ComponentType.Of<SingletonFlag>(),
+                    flagType,
+                    ComponentType.Of<T1>(),
+                    ComponentType.Of<T2>(),
+                    ComponentType.Of<T3>(),
+                }
+            );
+
+            foreach (var archetype in matchingArchetypes)
+            {
+                var entities = archetype.Entities;
+                for (int i = 0; i < archetype.Count; i++)
+                {
+                    int entityId = entities[i];
+                    if (!IsMarkedForDestruction(entityId))
+                    {
+                        // Explicitly create and fill the array
+                        Array[] componentArrays = new Array[3];
+                        componentArrays[0] = archetype.GetComponentArray<T1>();
+                        componentArrays[1] = archetype.GetComponentArray<T2>();
+                        componentArrays[2] = archetype.GetComponentArray<T3>();
+
+                        cache = new SingletonCache
+                        {
+                            ComponentArrays = componentArrays,
+                            EntityIndex = i,
+                            EntityId = entityId,
+                            IsValid = true,
+                        };
+
+                        singletonCaches[flagType.Id] = cache;
+                        return cache;
+                    }
+                }
+            }
+
+            throw new InvalidOperationException(
+                $"No singleton found with flag {typeof(TFlag).Name} "
+                    + $"and components {typeof(T1).Name}, {typeof(T2).Name}, {typeof(T3).Name}"
+            );
+        }
+
         #endregion
 
         #region Update System
@@ -339,4 +541,6 @@ namespace ECS_Core
             (creationBatchSize, pendingDestructions.Count);
         #endregion
     }
+
+    public struct SingletonFlag : IComponent { }
 }
