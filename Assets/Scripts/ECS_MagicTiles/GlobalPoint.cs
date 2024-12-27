@@ -14,10 +14,11 @@ public class GlobalPoint : PersistentSingleton<GlobalPoint>
         try
         {
             InitializeECS();
-            RegisterSystems();
-            SystemManager.InitializeSystems(world);
             CreateTemplates();
             CreateSingletons();
+            CreateEntity();
+            RegisterSystems();
+            SystemManager.InitializeSystems(world);
         }
         catch (Exception e)
         {

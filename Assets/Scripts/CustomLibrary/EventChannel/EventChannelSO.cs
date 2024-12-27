@@ -1,41 +1,118 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class EventChannelSO<T> : BaseEventChannelSO
+public class EventChannelSO<T> : ScriptableObject
     where T : IEventData
 {
-    private readonly List<Action<T>> onEventRaised = new();
+    [SerializeField]
+    private int maxListeners = 8;
+    private Action<T>[] listeners;
+    private T lastEventData;
+    private bool hasEventOccurred;
+    private readonly object lockObject = new object();
+
+    private void InitializeIfNeeded()
+    {
+        if (listeners == null)
+        {
+            listeners = new Action<T>[maxListeners];
+        }
+    }
 
     public void RaiseEvent(T eventData)
     {
-        CleanupListeners();
-
-        for (int i = onEventRaised.Count - 1; i >= 0; i--)
+        if (eventData == null)
         {
-            try
+            Debug.LogError($"Attempted to raise null event data in {name}");
+            return;
+        }
+
+        lock (lockObject)
+        {
+            lastEventData = eventData;
+            hasEventOccurred = true;
+
+            for (int i = 0; i < listeners.Length; i++)
             {
-                onEventRaised[i]?.Invoke(eventData);
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"Error invoking event listener: {e}");
+                if (listeners[i] != null)
+                {
+                    try
+                    {
+                        listeners[i].Invoke(eventData);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError($"Error invoking event listener in {name}: {e}");
+                    }
+                }
             }
         }
     }
 
-    public void Subscribe(Action<T> listener)
+    public bool Subscribe(Action<T> listener, bool invokeLastEvent = false)
     {
-        if (!onEventRaised.Contains(listener))
+        if (listener == null)
         {
-            onEventRaised.Add(listener);
-            listeners.Add(new WeakReference(listener.Target));
+            Debug.LogError($"Attempted to subscribe null listener to {name}");
+            return false;
+        }
+
+        lock (lockObject)
+        {
+            InitializeIfNeeded();
+
+            for (int i = 0; i < listeners.Length; i++)
+            {
+                if (listeners[i] == listener)
+                {
+                    Debug.LogWarning($"Attempted to subscribe duplicate listener to {name}");
+                    return false;
+                }
+            }
+
+            for (int i = 0; i < listeners.Length; i++)
+            {
+                if (listeners[i] == null)
+                {
+                    listeners[i] = listener;
+
+                    if (invokeLastEvent && hasEventOccurred)
+                    {
+                        try
+                        {
+                            listener.Invoke(lastEventData);
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.LogError($"Error invoking late subscriber in {name}: {e}");
+                        }
+                    }
+                    return true;
+                }
+            }
+
+            Debug.LogError(
+                $"Failed to subscribe listener to {name}: Maximum listeners ({maxListeners}) reached"
+            );
+            return false;
         }
     }
 
     public void Unsubscribe(Action<T> listener)
     {
-        onEventRaised.Remove(listener);
-        CleanupListeners();
+        if (listener == null || listeners == null)
+            return;
+
+        lock (lockObject)
+        {
+            for (int i = 0; i < listeners.Length; i++)
+            {
+                if (listeners[i] == listener)
+                {
+                    listeners[i] = null;
+                    return;
+                }
+            }
+        }
     }
 }
