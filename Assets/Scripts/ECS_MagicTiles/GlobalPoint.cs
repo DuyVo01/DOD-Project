@@ -5,8 +5,10 @@ using UnityEngine;
 
 public class GlobalPoint : PersistentSingleton<GlobalPoint>
 {
+    public PrefabSourceSO prefabSourceSO;
     public PerfectLineSettingSO perfectLineSettingSO;
     public TextAsset midiContent;
+    public float gameSpeed;
     private World world;
 
     protected override void OnAwake()
@@ -47,7 +49,6 @@ public class GlobalPoint : PersistentSingleton<GlobalPoint>
 
     private void RegisterSystems()
     {
-        // SystemManager.RegisterSystem(new MockDebugSystem());
         SystemManager.RegisterSystem(new MusicNoteCreationSystem());
     }
 
@@ -58,6 +59,7 @@ public class GlobalPoint : PersistentSingleton<GlobalPoint>
             new Dictionary<ComponentType, object>
             {
                 { ComponentType.Of<MusicNoteComponent>(), new MusicNoteComponent() },
+                { ComponentType.Of<TransformComponent>(), new TransformComponent() },
             }
         );
     }

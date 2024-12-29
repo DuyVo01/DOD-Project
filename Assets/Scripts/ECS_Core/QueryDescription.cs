@@ -22,15 +22,17 @@ namespace ECS_Core
     {
         private static readonly ComponentType[] componentTypes = new[] { ComponentType.Of<T1>() };
 
-        public void ForEach(ArchetypeManager archetypeManager, ActionRef<int, T1> action)
+        public void ForEach(World world, ActionRef<int, T1> action)
         {
-            var matchingArchetypes = archetypeManager.GetArchetypesWithComponents(componentTypes);
-            foreach (var archetype in matchingArchetypes)
-            {
-                var component1Array = archetype.GetComponentArray<T1>();
-                var entities = archetype.Entities;
+            var cache = world.GetQueryCache(componentTypes);
+            var archetypeCaches = cache.GetArchetypeCaches();
 
-                for (int i = 0; i < archetype.Count; i++)
+            foreach (var archetypeCache in archetypeCaches)
+            {
+                var component1Array = (T1[])archetypeCache.ComponentArrays[0];
+                var entities = archetypeCache.Entities;
+
+                for (int i = 0; i < archetypeCache.Count; i++)
                 {
                     action(entities[i], ref component1Array[i]);
                 }
@@ -48,16 +50,18 @@ namespace ECS_Core
             ComponentType.Of<T2>(),
         };
 
-        public void ForEach(ArchetypeManager archetypeManager, ActionRef<int, T1, T2> action)
+        public void ForEach(World world, ActionRef<int, T1, T2> action)
         {
-            var matchingArchetypes = archetypeManager.GetArchetypesWithComponents(componentTypes);
-            foreach (var archetype in matchingArchetypes)
-            {
-                var component1Array = archetype.GetComponentArray<T1>();
-                var component2Array = archetype.GetComponentArray<T2>();
-                var entities = archetype.Entities;
+            var cache = world.GetQueryCache(componentTypes);
+            var archetypeCaches = cache.GetArchetypeCaches();
 
-                for (int i = 0; i < archetype.Count; i++)
+            foreach (var archetypeCache in archetypeCaches)
+            {
+                var component1Array = (T1[])archetypeCache.ComponentArrays[0];
+                var component2Array = (T2[])archetypeCache.ComponentArrays[1];
+                var entities = archetypeCache.Entities;
+
+                for (int i = 0; i < archetypeCache.Count; i++)
                 {
                     action(entities[i], ref component1Array[i], ref component2Array[i]);
                 }
@@ -77,17 +81,19 @@ namespace ECS_Core
             ComponentType.Of<T3>(),
         };
 
-        public void ForEach(ArchetypeManager archetypeManager, ActionRef<int, T1, T2, T3> action)
+        public void ForEach(World world, ActionRef<int, T1, T2, T3> action)
         {
-            var matchingArchetypes = archetypeManager.GetArchetypesWithComponents(componentTypes);
-            foreach (var archetype in matchingArchetypes)
-            {
-                var component1Array = archetype.GetComponentArray<T1>();
-                var component2Array = archetype.GetComponentArray<T2>();
-                var component3Array = archetype.GetComponentArray<T3>();
-                var entities = archetype.Entities;
+            var cache = world.GetQueryCache(componentTypes);
+            var archetypeCaches = cache.GetArchetypeCaches();
 
-                for (int i = 0; i < archetype.Count; i++)
+            foreach (var archetypeCache in archetypeCaches)
+            {
+                var component1Array = (T1[])archetypeCache.ComponentArrays[0];
+                var component2Array = (T2[])archetypeCache.ComponentArrays[1];
+                var component3Array = (T3[])archetypeCache.ComponentArrays[2];
+                var entities = archetypeCache.Entities;
+
+                for (int i = 0; i < archetypeCache.Count; i++)
                 {
                     action(
                         entities[i],
@@ -114,21 +120,20 @@ namespace ECS_Core
             ComponentType.Of<T4>(),
         };
 
-        public void ForEach(
-            ArchetypeManager archetypeManager,
-            ActionRef<int, T1, T2, T3, T4> action
-        )
+        public void ForEach(World world, ActionRef<int, T1, T2, T3, T4> action)
         {
-            var matchingArchetypes = archetypeManager.GetArchetypesWithComponents(componentTypes);
-            foreach (var archetype in matchingArchetypes)
-            {
-                var component1Array = archetype.GetComponentArray<T1>();
-                var component2Array = archetype.GetComponentArray<T2>();
-                var component3Array = archetype.GetComponentArray<T3>();
-                var component4Array = archetype.GetComponentArray<T4>();
-                var entities = archetype.Entities;
+            var cache = world.GetQueryCache(componentTypes);
+            var archetypeCaches = cache.GetArchetypeCaches();
 
-                for (int i = 0; i < archetype.Count; i++)
+            foreach (var archetypeCache in archetypeCaches)
+            {
+                var component1Array = (T1[])archetypeCache.ComponentArrays[0];
+                var component2Array = (T2[])archetypeCache.ComponentArrays[1];
+                var component3Array = (T3[])archetypeCache.ComponentArrays[2];
+                var component4Array = (T4[])archetypeCache.ComponentArrays[3];
+                var entities = archetypeCache.Entities;
+
+                for (int i = 0; i < archetypeCache.Count; i++)
                 {
                     action(
                         entities[i],

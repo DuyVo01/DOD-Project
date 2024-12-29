@@ -1,4 +1,3 @@
-#if UNITY_EDITOR
 using UnityEngine;
 
 [RequireComponent(typeof(SpriteRenderer))]
@@ -46,4 +45,3 @@ public class SpriteResizer : MonoBehaviour
         );
     }
 }
-#endif

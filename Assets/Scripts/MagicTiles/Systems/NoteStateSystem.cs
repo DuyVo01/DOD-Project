@@ -60,7 +60,11 @@ public struct NoteStateSystem : IGameSystem
         ref MusicNoteStateData musicNoteStateData
     )
     {
-        if (musicNoteMidiData.Durations[entityId] == musicNoteMidiData.MinDuration)
+        if (
+            musicNoteMidiData
+                .Durations[entityId]
+                .IsInRange(musicNoteMidiData.MinDuration, musicNoteMidiData.MinDuration + 0.01f)
+        )
         {
             musicNoteStateData.noteTypes.Set(entityId, MusicNoteType.ShortNote);
         }

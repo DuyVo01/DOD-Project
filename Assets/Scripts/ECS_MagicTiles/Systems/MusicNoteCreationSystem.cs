@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Net;
 using ECS_Core;
 using UnityEngine;
@@ -8,11 +9,6 @@ public struct MusicNoteCreationSystem : ECS_Core.IGameSystem
 {
     public bool AutoUpdate { get; set; }
     public ArchetypeManager ArchetypeManager { get; set; }
-
-    public void Cleanup()
-    {
-        //
-    }
 
     public void Initialize()
     {
@@ -31,10 +27,15 @@ public struct MusicNoteCreationSystem : ECS_Core.IGameSystem
         var entitiesToUpdate = new List<int>();
 
         World.Active.GetSingletonComponents<PerfectLineTagComponent, CornerComponent>(
-            out CornerComponent perfectLineCorner
+            out CornerComponent perfectLine
         );
 
-        Debug.Log("Perfect Line topleft: " + perfectLineCorner.TopLeft);
+        Debug.Log("Perfect Line topleft: " + perfectLine.TopLeft);
+
+        // Calculate lane width once
+        float totalWidth = perfectLine.TopRight.x - perfectLine.TopLeft.x;
+        float laneWidth = totalWidth / 4;
+        float halfLaneWidth = laneWidth / 2f;
 
         for (int i = 0; i < musicNoteMidiData.TotalNotes; i++)
         {
@@ -46,12 +47,39 @@ public struct MusicNoteCreationSystem : ECS_Core.IGameSystem
                     component.Duration = musicNoteMidiData.Durations[i];
                     component.PostionId = musicNoteMidiData.PositionIds[i];
                     component.TimeAppear = musicNoteMidiData.TimeAppears[i];
-
-                    Debug.Log($"PosId of Entity {noteEntity}: {component.PostionId}");
-                    Debug.Log($"Duration of Entity {noteEntity}: {component.Duration}");
-                    Debug.Log($"TimeAppear of Entity {noteEntity}: {component.TimeAppear}");
                 }
             );
+
+            World.Active.ModifyPendingComponent(
+                noteEntity,
+                (ref TransformComponent component) =>
+                {
+                    float spawnX =
+                        perfectLine.TopLeft.x
+                        + (musicNoteMidiData.PositionIds[i] * laneWidth)
+                        + halfLaneWidth;
+
+                    float spawnY =
+                        perfectLine.TopLeft.y
+                        + (musicNoteMidiData.TimeAppears[i] * GlobalPoint.Instance.gameSpeed)
+                        + component.Size.y / 2f;
+
+                    component.Posision = new Vector2(spawnX, spawnY);
+                }
+            );
+
+            if (
+                musicNoteMidiData
+                    .Durations[i]
+                    .IsInRange(musicNoteMidiData.MinDuration, musicNoteMidiData.MinDuration + 0.01f)
+            )
+            {
+                World.Active.AddComponent(noteEntity, new ShortNoteTagComponent());
+            }
+            else if (musicNoteMidiData.Durations[i] > musicNoteMidiData.MinDuration)
+            {
+                World.Active.AddComponent(noteEntity, new LongNoteTagComponent());
+            }
 
             entitiesToUpdate.Add(noteEntity);
         }
@@ -60,6 +88,11 @@ public struct MusicNoteCreationSystem : ECS_Core.IGameSystem
     }
 
     public void Update()
+    {
+        //
+    }
+
+    public void Cleanup()
     {
         //
     }

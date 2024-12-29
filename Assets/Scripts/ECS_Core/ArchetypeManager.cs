@@ -5,7 +5,13 @@ namespace ECS_Core
 {
     public class ArchetypeManager
     {
-        private Dictionary<int, Archetype> archetypes = new();
+        private readonly Dictionary<int, Archetype> archetypes = new();
+        private readonly World world;
+
+        public ArchetypeManager(World world)
+        {
+            this.world = world;
+        }
 
         public Archetype GetOrCreateArchetype(ComponentType[] types)
         {
@@ -14,6 +20,8 @@ namespace ECS_Core
             {
                 archetype = new Archetype(types);
                 archetypes[hash] = archetype;
+                // Notify world that a new archetype was created
+                world.GetQueryCache(types); // This will create a cache entry for the new archetype
             }
 
             return archetype;
@@ -30,7 +38,7 @@ namespace ECS_Core
             }
         }
 
-        private bool DoesArchetypeMatchQuery(Archetype archetype, ComponentType[] queryTypes)
+        private static bool DoesArchetypeMatchQuery(Archetype archetype, ComponentType[] queryTypes)
         {
             foreach (var queryType in queryTypes)
             {
@@ -42,7 +50,7 @@ namespace ECS_Core
             return true;
         }
 
-        private int CalculateArchetypeHash(ComponentType[] types)
+        private static int CalculateArchetypeHash(ComponentType[] types)
         {
             int hash = 17;
             foreach (var type in types.OrderBy(t => t.Id))
@@ -59,9 +67,12 @@ namespace ECS_Core
                 .Select(kvp => kvp.Key)
                 .ToList();
 
-            foreach (var hash in emptyArchetypes)
+            if (emptyArchetypes.Count > 0)
             {
-                archetypes.Remove(hash);
+                foreach (var hash in emptyArchetypes)
+                {
+                    archetypes.Remove(hash);
+                }
             }
         }
     }
