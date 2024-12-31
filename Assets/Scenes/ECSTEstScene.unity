@@ -155,8 +155,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fdea83a777f7104e8ce4b38a4e25e04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gizmoColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  gizmoSize: 0.11
+  gizmoColor: {r: 1, g: 0.9203187, b: 0, a: 1}
+  gizmoSize: 0.05
   generalGameSettingSO: {fileID: 11400000, guid: a12736c430f23984f8317f2aefad4b55, type: 2}
 --- !u!114 &349202820
 MonoBehaviour:
@@ -171,7 +171,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   widthPercentage: 1
-  heightPercentage: 0.007
+  heightPercentage: 0.002
   maintainAspectRatio: 0
 --- !u!114 &349202821
 MonoBehaviour:
@@ -249,7 +249,7 @@ Transform:
   m_GameObject: {fileID: 349202818}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.83606434, y: -3.97681, z: 0}
-  m_LocalScale: {x: 4.620536, y: 0.07, z: 1}
+  m_LocalScale: {x: 4.620536, y: 0.020000001, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
