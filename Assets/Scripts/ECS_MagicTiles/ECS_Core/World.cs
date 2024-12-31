@@ -297,20 +297,24 @@ namespace ECS_Core
         #region Singleton Access
 
         // Public API - TFlag is the singleton identifier, T1 is the component we want
-        public void GetSingletonComponents<TFlag, T1>(out T1 component1)
+        public void GetSingletonComponents<TFlag, T1>(out TFlag flag, out T1 component1)
             where TFlag : struct, IComponent
             where T1 : struct, IComponent
         {
-            singletonCache.GetComponents<TFlag, T1>(out component1);
+            singletonCache.GetComponents<TFlag, T1>(out flag, out component1);
         }
 
         // Overload for two components
-        public void GetSingletonComponents<TFlag, T1, T2>(out T1 component1, out T2 component2)
+        public void GetSingletonComponents<TFlag, T1, T2>(
+            out TFlag flag,
+            out T1 component1,
+            out T2 component2
+        )
             where TFlag : struct, IComponent
             where T1 : struct, IComponent
             where T2 : struct, IComponent
         {
-            singletonCache.GetComponents<TFlag, T1, T2>(out component1, out component2);
+            singletonCache.GetComponents<TFlag, T1, T2>(out flag, out component1, out component2);
         }
 
         // Overload for three components

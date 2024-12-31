@@ -1,12 +1,16 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Net;
 using ECS_Core;
 using UnityEngine;
 
-public struct MusicNoteCreationSystem : ECS_Core.IGameSystem
+public class MusicNoteCreationSystem : ECS_Core.IGameSystem
 {
+    private MusicNoteCreationSettings musicNoteCreationSettings;
+
+    public MusicNoteCreationSystem(MusicNoteCreationSettings musicNoteCreationSettings)
+    {
+        this.musicNoteCreationSettings = musicNoteCreationSettings;
+    }
+
     public bool AutoUpdate { get; set; }
     public ArchetypeManager ArchetypeManager { get; set; }
 
@@ -25,24 +29,41 @@ public struct MusicNoteCreationSystem : ECS_Core.IGameSystem
         var entitiesToUpdate = new List<int>();
 
         World.Active.GetSingletonComponents<PerfectLineTagComponent, CornerComponent>(
-            out CornerComponent perfectLine
+            out PerfectLineTagComponent perfectLineTagComponent,
+            out CornerComponent perfectLineCorners
         );
 
-        Debug.Log("Perfect Line topleft: " + perfectLine.TopLeft);
+        Debug.Log("Perfect Line topleft: " + perfectLineCorners.TopLeft);
 
         // Calculate lane width once
-        float totalWidth = perfectLine.TopRight.x - perfectLine.TopLeft.x;
+        float totalWidth = perfectLineCorners.TopRight.x - perfectLineCorners.TopLeft.x;
         float laneWidth = totalWidth / 4;
         float halfLaneWidth = laneWidth / 2f;
 
         for (int i = 0; i < musicNoteMidiData.TotalNotes; i++)
         {
             int noteEntity = World.Active.CreateEntityFromTemplate("MusicNote");
-            Debug.Log($"Created entity {noteEntity}");
+
             World.Active.ModifyPendingComponent(
                 noteEntity,
                 (ref MusicNoteComponent component) =>
                 {
+                    if (
+                        musicNoteMidiData
+                            .Durations[i]
+                            .IsInRange(
+                                musicNoteMidiData.MinDuration,
+                                musicNoteMidiData.MinDuration + 0.01f
+                            )
+                    )
+                    {
+                        component.musicNoteType = MusicNoteType.ShortNote;
+                    }
+                    else if (musicNoteMidiData.Durations[i] > musicNoteMidiData.MinDuration)
+                    {
+                        component.musicNoteType = MusicNoteType.LongNote;
+                    }
+
                     component.Duration = musicNoteMidiData.Durations[i];
                     component.PostionId = musicNoteMidiData.PositionIds[i];
                     component.TimeAppear = musicNoteMidiData.TimeAppears[i];
@@ -54,31 +75,18 @@ public struct MusicNoteCreationSystem : ECS_Core.IGameSystem
                 (ref TransformComponent component) =>
                 {
                     float spawnX =
-                        perfectLine.TopLeft.x
+                        perfectLineCorners.TopLeft.x
                         + (musicNoteMidiData.PositionIds[i] * laneWidth)
                         + halfLaneWidth;
 
                     float spawnY =
-                        perfectLine.TopLeft.y
+                        perfectLineCorners.TopLeft.y
                         + (musicNoteMidiData.TimeAppears[i] * GlobalPoint.Instance.gameSpeed)
                         + component.Size.y / 2f;
 
                     component.Posision = new Vector2(spawnX, spawnY);
                 }
             );
-
-            if (
-                musicNoteMidiData
-                    .Durations[i]
-                    .IsInRange(musicNoteMidiData.MinDuration, musicNoteMidiData.MinDuration + 0.01f)
-            )
-            {
-                World.Active.AddComponent(noteEntity, new ShortNoteTagComponent());
-            }
-            else if (musicNoteMidiData.Durations[i] > musicNoteMidiData.MinDuration)
-            {
-                World.Active.AddComponent(noteEntity, new LongNoteTagComponent());
-            }
 
             entitiesToUpdate.Add(noteEntity);
         }
@@ -90,12 +98,42 @@ public struct MusicNoteCreationSystem : ECS_Core.IGameSystem
             .ForEach(
                 World.Active,
                 (
-                    int entityId,
+                    int entity,
                     ref MusicNoteComponent musicNoteComponent,
                     ref TransformComponent transformComponent
                 ) =>
                 {
-                    Debug.Log("entityId: " + entityId);
+                    float scaleX = perfectLineTagComponent.perfectLineWidth / 4;
+                    float scaleY = 0f;
+
+                    if (musicNoteComponent.musicNoteType == MusicNoteType.ShortNote)
+                    {
+                        scaleY = MagicTileHelper.CalculateScaleY(
+                            musicNoteCreationSettings.shortNoteScaleYFactor,
+                            scaleX
+                        );
+                    }
+                    else
+                    {
+                        scaleY = MagicTileHelper.CalculateScaleY(
+                            musicNoteCreationSettings.longNoteScaleYFactor,
+                            scaleX,
+                            musicNoteComponent.Duration
+                        );
+                    }
+
+                    transformComponent.Size = new Vector2(scaleX, scaleY);
+                    Debug.Log($"Setting entity {entity} size to: {transformComponent.Size}");
+                }
+            );
+
+        World
+            .Query<TransformComponent>()
+            .ForEach(
+                World.Active,
+                (int entity, ref TransformComponent transformComponent) =>
+                {
+                    Debug.Log($"Entity {entity} Size: {transformComponent.Size}");
                 }
             );
     }

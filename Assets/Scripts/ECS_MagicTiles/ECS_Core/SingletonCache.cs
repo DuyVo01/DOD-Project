@@ -9,6 +9,7 @@ namespace ECS_Core
     {
         private struct CachedComponents
         {
+            public Array FlagArray;
             public Array[] ComponentArrays;
             public int EntityIndex;
             public int EntityId;
@@ -24,7 +25,7 @@ namespace ECS_Core
             this.world = world;
         }
 
-        public void GetComponents<TFlag, T1>(out T1 component1)
+        public void GetComponents<TFlag, T1>(out TFlag flag, out T1 component1)
             where TFlag : struct, IComponent
             where T1 : struct, IComponent
         {
@@ -33,15 +34,20 @@ namespace ECS_Core
 
             if (!TryGetCachedComponents(flagType, out var cached))
             {
-                // Cache miss - find the singleton
                 cached = FindAndCacheSingleton<TFlag>(new[] { comp1Type });
             }
 
-            // Direct array access with type safety
+            // Get both flag and component
+            flag = ((TFlag[])cached.FlagArray)[cached.EntityIndex];
             component1 = ((T1[])cached.ComponentArrays[0])[cached.EntityIndex];
         }
 
-        public void GetComponents<TFlag, T1, T2>(out T1 component1, out T2 component2)
+        // Same for two components
+        public void GetComponents<TFlag, T1, T2>(
+            out TFlag flag,
+            out T1 component1,
+            out T2 component2
+        )
             where TFlag : struct, IComponent
             where T1 : struct, IComponent
             where T2 : struct, IComponent
@@ -54,6 +60,7 @@ namespace ECS_Core
                 cached = FindAndCacheSingleton<TFlag>(compTypes);
             }
 
+            flag = ((TFlag[])cached.FlagArray)[cached.EntityIndex];
             component1 = ((T1[])cached.ComponentArrays[0])[cached.EntityIndex];
             component2 = ((T2[])cached.ComponentArrays[1])[cached.EntityIndex];
         }
@@ -109,7 +116,6 @@ namespace ECS_Core
                 .Concat(componentTypes)
                 .ToArray();
 
-            // Find matching archetype and entity
             var matchingArchetypes = world.ArchetypeManager.GetArchetypesWithComponents(allTypes);
             foreach (var archetype in matchingArchetypes)
             {
@@ -119,7 +125,10 @@ namespace ECS_Core
                     int entityId = entities[i];
                     if (!world.IsMarkedForDestruction(entityId))
                     {
-                        // Create cache entry
+                        // Get flag component array
+                        var flagArray = archetype.GetComponentArrayRaw(flagType);
+
+                        // Get data component arrays
                         var arrays = new Array[componentTypes.Length];
                         for (int j = 0; j < componentTypes.Length; j++)
                         {
@@ -128,6 +137,7 @@ namespace ECS_Core
 
                         var cached = new CachedComponents
                         {
+                            FlagArray = flagArray, // Store flag array
                             ComponentArrays = arrays,
                             EntityIndex = i,
                             EntityId = entityId,
