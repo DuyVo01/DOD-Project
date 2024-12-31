@@ -22,8 +22,6 @@ public struct MusicNoteCreationSystem : ECS_Core.IGameSystem
             GlobalPoint.Instance.midiContent.text
         );
 
-        Debug.Log($"Total Notes; {musicNoteMidiData.TotalNotes}");
-
         var entitiesToUpdate = new List<int>();
 
         World.Active.GetSingletonComponents<PerfectLineTagComponent, CornerComponent>(
@@ -40,6 +38,7 @@ public struct MusicNoteCreationSystem : ECS_Core.IGameSystem
         for (int i = 0; i < musicNoteMidiData.TotalNotes; i++)
         {
             int noteEntity = World.Active.CreateEntityFromTemplate("MusicNote");
+            Debug.Log($"Created entity {noteEntity}");
             World.Active.ModifyPendingComponent(
                 noteEntity,
                 (ref MusicNoteComponent component) =>
@@ -85,6 +84,20 @@ public struct MusicNoteCreationSystem : ECS_Core.IGameSystem
         }
 
         World.Active.UpdateEntities(entitiesToUpdate);
+
+        World
+            .Query<MusicNoteComponent, TransformComponent>()
+            .ForEach(
+                World.Active,
+                (
+                    int entityId,
+                    ref MusicNoteComponent musicNoteComponent,
+                    ref TransformComponent transformComponent
+                ) =>
+                {
+                    Debug.Log("entityId: " + entityId);
+                }
+            );
     }
 
     public void Update()

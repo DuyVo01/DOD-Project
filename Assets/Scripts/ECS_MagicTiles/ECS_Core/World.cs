@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace ECS_Core
 {
@@ -33,6 +34,8 @@ namespace ECS_Core
         private readonly Queue<(string template, Action<int> modifier)> pendingCreations = new();
         private readonly QueryCacheManager queryCacheManager;
         private readonly SingletonCache singletonCache;
+        private StructuralChangeVersion StructuralVersion;
+        private uint currentFrame;
 
         private int nextEntityId = FIRST_NORMAL_ENTITY_ID;
         private int pendingOperationCount = 0;
@@ -41,11 +44,25 @@ namespace ECS_Core
 
         public ArchetypeManager ArchetypeManager => archetypeManager;
 
+        public StructuralChangeVersion GetStructuralVersion() => StructuralVersion;
+
         public World()
         {
             archetypeManager = new ArchetypeManager(this);
-            queryCacheManager = new QueryCacheManager(archetypeManager);
+            queryCacheManager = new QueryCacheManager(this, archetypeManager);
             singletonCache = new SingletonCache(this);
+        }
+
+        public void IncrementChange()
+        {
+            currentFrame++;
+            StructuralVersion.FrameNumber = currentFrame;
+        }
+
+        private void NotifyStructuralChange()
+        {
+            StructuralVersion.IncrementVersion();
+            queryCacheManager.MarkAllDirty();
         }
 
         #region Entity Creation and Components
@@ -67,6 +84,7 @@ namespace ECS_Core
             }
 
             components[ComponentType.Of<T>()] = component;
+            NotifyStructuralChange();
         }
 
         public void UpdateEntity(int entityId)
@@ -123,7 +141,9 @@ namespace ECS_Core
                     string,
                     List<(int id, Dictionary<ComponentType, object> components)>
                 >();
-
+            // Debug count of entities to update
+            int totalEntities = entityIds.Count();
+            Debug.Log($"UpdateEntities called with {totalEntities} entities");
             foreach (var entityId in entityIds)
             {
                 if (!pendingComponents.TryGetValue(entityId, out var components))
@@ -138,18 +158,24 @@ namespace ECS_Core
                 list.Add((entityId, components));
             }
 
+            Debug.Log($"Grouped into {entitiesByArchetype.Count} archetypes");
+
             foreach (var group in entitiesByArchetype)
             {
                 Archetype archetype;
                 if (!archetypeCache.TryGetValue(group.Key, out archetype))
                 {
                     var types = group.Value[0].components.Keys.ToArray();
+                    Debug.Log(
+                        $"Creating new archetype with types: {string.Join(", ", types.Select(t => t.Type.Name))}"
+                    ); // Add this
                     archetype = archetypeManager.GetOrCreateArchetype(types);
                     archetypeCache[group.Key] = archetype;
                 }
 
                 foreach (var (entityId, components) in group.Value)
                 {
+                    Debug.Log($"Adding entity {entityId} to archetype"); // Add this
                     archetype.Add(entityId, components);
                     entityArchetypes[entityId] = archetype;
                     pendingComponents.Remove(entityId);
@@ -216,8 +242,8 @@ namespace ECS_Core
             {
                 pendingDestructions.Enqueue(entityId);
                 markedForDestruction.Add(entityId);
+                NotifyStructuralChange();
             }
-            queryCacheManager.MarkAllDirty();
             singletonCache.MarkDirty();
         }
 

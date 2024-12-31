@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace ECS_Core
@@ -22,22 +23,25 @@ namespace ECS_Core
             data = new T[initialCapacity];
             count = 0;
 
-            for (int i = 0; i < initialCapacity; i++)
-            {
-                sparse[i] = -1;
-            }
+            Array.Fill(sparse, -1);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Add(int entityId, in T value)
         {
             if (entityId >= sparse.Length)
             {
-                GrowSparse(entityId);
+                int newCapacity = Mathf.Max(sparse.Length * 2, entityId + 1);
+                Array.Resize(ref sparse, newCapacity);
+
+                Array.Fill(sparse, -1, sparse.Length / 2, newCapacity - sparse.Length / 2);
             }
 
-            if (entityId >= dense.Length)
+            if (count >= dense.Length)
             {
-                GrowDense();
+                int newCapacity = (int)(dense.Length * GROWTH_FACTOR);
+                Array.Resize(ref dense, newCapacity);
+                Array.Resize(ref data, newCapacity);
             }
 
             // Add to sparse set
@@ -47,6 +51,7 @@ namespace ECS_Core
             count++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Remove(int entityId)
         {
             if (!Contains(entityId))
@@ -68,6 +73,18 @@ namespace ECS_Core
             count--;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ref T Get(int entityId)
+        {
+            if (!Contains(entityId))
+            {
+                throw new ArgumentException($"Entity {entityId} not found in sparse set");
+            }
+
+            return ref data[sparse[entityId]];
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryGet(int entityId, out T value)
         {
             if (Contains(entityId))
@@ -87,25 +104,7 @@ namespace ECS_Core
             }
         }
 
-        private void GrowSparse(int minCapacity)
-        {
-            int newCapacity = Mathf.Max(sparse.Length * 2, minCapacity + 1);
-            Array.Resize(ref sparse, newCapacity);
-
-            // Initialize new elements with invalid indices
-            for (int i = sparse.Length / 2; i < newCapacity; i++)
-            {
-                sparse[i] = -1;
-            }
-        }
-
-        private void GrowDense()
-        {
-            int newCapacity = (int)(dense.Length * GROWTH_FACTOR);
-            Array.Resize(ref dense, newCapacity);
-            Array.Resize(ref data, newCapacity);
-        }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Contains(int entityId)
         {
             return entityId < sparse.Length && sparse[entityId] != -1 && sparse[entityId] < count;
@@ -116,12 +115,20 @@ namespace ECS_Core
 
         public Span<int> GetEntitySpan() => new Span<int>(dense, 0, count);
 
+        // New method to get dense array of entity IDs
+        public ReadOnlySpan<int> GetEntityIds()
+        {
+            return new ReadOnlySpan<int>(dense, 0, count);
+        }
+
+        public int GetEntityIndex(int entityId)
+        {
+            return Contains(entityId) ? sparse[entityId] : -1;
+        }
+
         public void Clear()
         {
-            for (int i = 0; i < count; i++)
-            {
-                sparse[dense[i]] = -1;
-            }
+            Array.Fill(sparse, -1);
             count = 0;
         }
 

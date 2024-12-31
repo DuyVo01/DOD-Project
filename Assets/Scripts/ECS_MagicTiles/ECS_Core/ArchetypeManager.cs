@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace ECS_Core
 {
@@ -29,8 +30,15 @@ namespace ECS_Core
 
         public IEnumerable<Archetype> GetArchetypesWithComponents(ComponentType[] types)
         {
+            Debug.Log(
+                $"Searching archetypes for types: {string.Join(", ", types.Select(t => t.Type.Name))}"
+            );
+            Debug.Log($"Total archetypes: {archetypes.Count}"); // Add this debug
             foreach (var archetype in archetypes.Values)
             {
+                Debug.Log(
+                    $"Checking archetype with components: {string.Join(", ", archetype.ComponentTypes.Select(t => t.Type.Name))}"
+                ); // Add this
                 if (DoesArchetypeMatchQuery(archetype, types))
                 {
                     yield return archetype;
@@ -44,6 +52,7 @@ namespace ECS_Core
             {
                 if (!archetype.HasComponent(queryType))
                 {
+                    Debug.Log($"Archetype missing component: {queryType.Type.Name}");
                     return false;
                 }
             }
