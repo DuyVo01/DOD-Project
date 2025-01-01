@@ -5,7 +5,10 @@ using UnityEngine;
 
 public class GlobalPoint : PersistentSingleton<GlobalPoint>
 {
-    public PrefabSourceSO prefabSourceSO;
+    [Header("System settings")]
+    [SerializeField]
+    private MusicNoteCreationSettings musicNoteCreationSettings; //
+
     public PerfectLineSettingSO perfectLineSettingSO;
     public TextAsset midiContent;
     public float gameSpeed;
@@ -49,7 +52,7 @@ public class GlobalPoint : PersistentSingleton<GlobalPoint>
 
     private void RegisterSystems()
     {
-        SystemManager.RegisterSystem(new MusicNoteCreationSystem());
+        SystemManager.RegisterSystem(new MusicNoteCreationSystem(musicNoteCreationSettings));
     }
 
     private void CreateTemplates()
@@ -70,7 +73,13 @@ public class GlobalPoint : PersistentSingleton<GlobalPoint>
     {
         int perfectLineEntity = world.CreateEntity();
         world.AddComponent(perfectLineEntity, new SingletonFlag());
-        world.AddComponent(perfectLineEntity, new PerfectLineTagComponent());
+        world.AddComponent(
+            perfectLineEntity,
+            new PerfectLineTagComponent
+            {
+                perfectLineWidth = perfectLineSettingSO.PerfectLineWidth(),
+            }
+        );
         world.AddComponent(
             perfectLineEntity,
             new CornerComponent

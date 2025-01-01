@@ -29,12 +29,12 @@ namespace ECS_Core
 
             foreach (var archetypeCache in archetypeCaches)
             {
-                var component1Array = (T1[])archetypeCache.ComponentArrays[0];
+                var components1 = (T1[])archetypeCache.ComponentArrays[0];
                 var entities = archetypeCache.Entities;
 
                 for (int i = 0; i < archetypeCache.Count; i++)
                 {
-                    action(entities[i], ref component1Array[i]);
+                    action(entities[i], ref components1[i]);
                 }
             }
         }
@@ -57,13 +57,13 @@ namespace ECS_Core
 
             foreach (var archetypeCache in archetypeCaches)
             {
-                var component1Array = (T1[])archetypeCache.ComponentArrays[0];
-                var component2Array = (T2[])archetypeCache.ComponentArrays[1];
+                var components1 = (T1[])archetypeCache.ComponentArrays[0];
+                var components2 = (T2[])archetypeCache.ComponentArrays[1];
                 var entities = archetypeCache.Entities;
 
                 for (int i = 0; i < archetypeCache.Count; i++)
                 {
-                    action(entities[i], ref component1Array[i], ref component2Array[i]);
+                    action(entities[i], ref components1[i], ref components2[i]);
                 }
             }
         }
@@ -88,19 +88,14 @@ namespace ECS_Core
 
             foreach (var archetypeCache in archetypeCaches)
             {
-                var component1Array = (T1[])archetypeCache.ComponentArrays[0];
-                var component2Array = (T2[])archetypeCache.ComponentArrays[1];
-                var component3Array = (T3[])archetypeCache.ComponentArrays[2];
+                var components1 = (T1[])archetypeCache.ComponentArrays[0];
+                var components2 = (T2[])archetypeCache.ComponentArrays[1];
+                var components3 = (T3[])archetypeCache.ComponentArrays[2];
                 var entities = archetypeCache.Entities;
 
                 for (int i = 0; i < archetypeCache.Count; i++)
                 {
-                    action(
-                        entities[i],
-                        ref component1Array[i],
-                        ref component2Array[i],
-                        ref component3Array[i]
-                    );
+                    action(entities[i], ref components1[i], ref components2[i], ref components3[i]);
                 }
             }
         }

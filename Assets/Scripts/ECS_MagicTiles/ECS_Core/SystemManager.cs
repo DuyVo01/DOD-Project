@@ -20,7 +20,7 @@ namespace ECS_Core
         private static bool isInitialized;
 
         public static void RegisterSystem<T>(T system)
-            where T : struct, IGameSystem
+            where T : IGameSystem
         {
             if (systems.ContainsKey(typeof(T)))
             {
@@ -32,7 +32,7 @@ namespace ECS_Core
         }
 
         public static ref T GetSystem<T>()
-            where T : struct, IGameSystem
+            where T : IGameSystem
         {
             if (systems.TryGetValue(typeof(T), out var wrapper))
             {

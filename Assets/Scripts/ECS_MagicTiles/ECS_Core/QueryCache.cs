@@ -12,13 +12,21 @@ namespace ECS_Core
         public IReadOnlyList<int> Entities => Archetype.Entities;
         public int Count => Archetype.Count;
         private readonly ComponentType[] queryTypes;
+        private readonly int[] componentIndices;
 
         public QueryArchetypeCache(Archetype archetype, ComponentType[] types)
         {
             Archetype = archetype;
             queryTypes = types;
+            componentIndices = new int[types.Length];
             ComponentArrays = new Array[types.Length];
             UpdateArrays();
+
+            // Precalculate component indices for faster access
+            for (int i = 0; i < types.Length; i++)
+            {
+                componentIndices[i] = Array.IndexOf(archetype.ComponentTypes.ToArray(), types[i]);
+            }
         }
 
         public void UpdateArrays()
@@ -28,6 +36,19 @@ namespace ECS_Core
                 ComponentArrays[i] = Archetype.GetComponentArrayRaw(queryTypes[i]);
             }
         }
+
+        public ReadOnlySpan<T> GetComponents<T>()
+            where T : struct, IComponent
+        {
+            var type = ComponentType.Of<T>();
+            int index = Array.IndexOf(queryTypes, type);
+            if (index < 0)
+                throw new ArgumentException($"Type {typeof(T)} not in query");
+
+            return Archetype.GetComponentArray<T>();
+        }
+
+        public ReadOnlySpan<int> GetEntities() => Archetype.GetEntities();
     }
 
     // Main cache for a specific query type combination
@@ -35,35 +56,50 @@ namespace ECS_Core
     {
         private readonly ComponentType[] queryTypes;
         private readonly List<QueryArchetypeCache> archetypeCaches = new();
-        private readonly ArchetypeManager archetypeManager;
+        private readonly World world;
+        private QueryVersionInfo versionInfo;
         public bool IsDirty { get; set; } = true;
-
-        public QueryCache(ArchetypeManager archetypeManager, ComponentType[] types)
+        public uint lastProcessedVersion
         {
-            this.archetypeManager = archetypeManager;
+            get => versionInfo.lastProcessedVersion;
+            set => versionInfo.lastProcessedVersion = value;
+        }
+
+        public ComponentType[] QueryTypes => queryTypes;
+
+        public QueryCache(World world, ComponentType[] types)
+        {
+            this.world = world;
             this.queryTypes = types;
         }
 
         public IReadOnlyList<QueryArchetypeCache> GetArchetypeCaches()
         {
-            if (IsDirty)
+            var worldVersion = world.GetStructuralVersion();
+            if (!versionInfo.IsValid(worldVersion))
             {
-                UpdateCache();
+                UpdateCache(worldVersion);
             }
+
             return archetypeCaches;
         }
 
-        private void UpdateCache()
+        private void UpdateCache(in StructuralChangeVersion worldVersion)
         {
             archetypeCaches.Clear();
-            var matchingArchetypes = archetypeManager.GetArchetypesWithComponents(queryTypes);
+            var matchingArchetypes = world.ArchetypeManager.GetArchetypesWithComponents(queryTypes);
 
             foreach (var archetype in matchingArchetypes)
             {
-                archetypeCaches.Add(new QueryArchetypeCache(archetype, queryTypes));
+                if (archetype.Count > 0)
+                {
+                    archetypeCaches.Add(new QueryArchetypeCache(archetype, queryTypes));
+                }
             }
 
-            IsDirty = false;
+            // Update version info
+            versionInfo.lastProcessedVersion = worldVersion.GlobalVersion;
+            versionInfo.lastUpdatedFrame = worldVersion.FrameNumber;
         }
     }
 
@@ -72,9 +108,11 @@ namespace ECS_Core
     {
         private readonly Dictionary<int, QueryCache> queryCaches = new();
         private readonly ArchetypeManager archetypeManager;
+        private readonly World world;
 
-        public QueryCacheManager(ArchetypeManager archetypeManager)
+        public QueryCacheManager(World world, ArchetypeManager archetypeManager)
         {
+            this.world = world;
             this.archetypeManager = archetypeManager;
         }
 
@@ -84,7 +122,7 @@ namespace ECS_Core
 
             if (!queryCaches.TryGetValue(hash, out var cache))
             {
-                cache = new QueryCache(archetypeManager, types);
+                cache = new QueryCache(world, types);
                 queryCaches[hash] = cache;
             }
 
@@ -107,6 +145,21 @@ namespace ECS_Core
             {
                 cache.IsDirty = true;
             }
+        }
+    }
+
+    // Helper extension for QueryCache
+    public static class QueryCacheExtensions
+    {
+        public static void MarkDirty(this QueryCache cache)
+        {
+            // Forces the cache to update on next use
+            cache.lastProcessedVersion = 0;
+        }
+
+        public static bool UsesComponent(this QueryCache cache, ComponentType type)
+        {
+            return cache.QueryTypes.Contains(type);
         }
     }
 }
