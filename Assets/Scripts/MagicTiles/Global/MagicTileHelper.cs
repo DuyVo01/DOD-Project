@@ -38,12 +38,10 @@ public static class MagicTileHelper
     public static float CalculateScaleY(
         float scaleX,
         float scaleFactor,
-        float longNoteDuration = 0f // this mean the note is short note
+        float longNoteDuration = 0f
     )
     {
-        float scaleY;
-
-        scaleY = (scaleX + longNoteDuration) * scaleFactor;
+        float scaleY = (scaleX + longNoteDuration) * scaleFactor;
 
         return scaleY;
     }

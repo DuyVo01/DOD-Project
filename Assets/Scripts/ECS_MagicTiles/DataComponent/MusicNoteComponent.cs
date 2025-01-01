@@ -1,4 +1,4 @@
-using ECS_Core;
+using ECS_MagicTile;
 
 public struct MusicNoteComponent : IComponent
 {

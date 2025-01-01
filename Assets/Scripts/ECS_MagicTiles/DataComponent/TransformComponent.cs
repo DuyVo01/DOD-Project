@@ -1,4 +1,4 @@
-using ECS_Core;
+using ECS_MagicTile;
 using UnityEngine;
 
 public struct TransformComponent : IComponent

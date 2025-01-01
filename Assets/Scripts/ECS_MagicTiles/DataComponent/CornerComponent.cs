@@ -1,6 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using ECS_Core;
+using ECS_MagicTile;
 using UnityEngine;
 
 public struct CornerComponent : IComponent
