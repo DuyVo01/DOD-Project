@@ -41,7 +41,7 @@ public class SpriteResizer : MonoBehaviour
             targetCamera,
             widthPercentage,
             heightPercentage,
-            maintainAspectRatio
+            maintainAspectRatio 
         );
     }
 }
