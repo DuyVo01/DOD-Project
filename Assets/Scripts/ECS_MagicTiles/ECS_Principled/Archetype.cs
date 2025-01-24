@@ -41,12 +41,14 @@ namespace ECS_MagicTile
             // Note archetypes
 
 
-            public static readonly Archetype MusicNote =
-                new(new[] { ComponentType.Registry.Transform, ComponentType.Registry.MusicNote });
+            public static readonly Archetype MusicNote = new(
+                new[] { ComponentType.Registry.Transform, ComponentType.Registry.MusicNote }
+            );
 
             // Game setup archetypes
-            public static readonly Archetype PerfectLine =
-                new(new[] { ComponentType.Registry.PerfectLine, ComponentType.Registry.Corner });
+            public static readonly Archetype PerfectLine = new(
+                new[] { ComponentType.Registry.PerfectLine, ComponentType.Registry.Corner }
+            );
 
             // Keep track of all archetypes for initialization
             private static readonly Archetype[] AllArchetypes = { MusicNote, PerfectLine };

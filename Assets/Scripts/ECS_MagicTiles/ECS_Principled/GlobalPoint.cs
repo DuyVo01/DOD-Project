@@ -32,6 +32,17 @@ namespace ECS_MagicTile
             SystemRegistry.AddSystem(
                 new MusicNoteCreationSystem_(musicNoteCreationSettings, generalGameSetting)
             );
+
+            SystemRegistry.AddSystem(new MovingNoteSystem(generalGameSetting));
+
+            //Syncer systems
+            SystemRegistry.AddSystem(
+                new MusicNoteSyncer(
+                    musicNoteCreationSettings.ShortTilePrefab,
+                    musicNoteCreationSettings.LongTilePrefab,
+                    transform
+                )
+            );
         }
 
         private void CreateSingletonComponent()
