@@ -39,10 +39,15 @@ namespace ECS_MagicTile
         public static class Registry
         {
             // Note archetypes
-
-
             public static readonly Archetype MusicNote = new(
-                new[] { ComponentType.Registry.Transform, ComponentType.Registry.MusicNote }
+                new[]
+                {
+                    ComponentType.Registry.Transform,
+                    ComponentType.Registry.MusicNote,
+                    ComponentType.Registry.Corner, // Added CornerComponent
+                    ComponentType.Registry.MusicNoteInteraction,
+                    ComponentType.Registry.MusicNoteFiller,
+                }
             );
 
             // Game setup archetypes
@@ -50,8 +55,10 @@ namespace ECS_MagicTile
                 new[] { ComponentType.Registry.PerfectLine, ComponentType.Registry.Corner }
             );
 
+            public static readonly Archetype Input = new(new[] { ComponentType.Registry.Input });
+
             // Keep track of all archetypes for initialization
-            private static readonly Archetype[] AllArchetypes = { MusicNote, PerfectLine };
+            private static readonly Archetype[] AllArchetypes = { MusicNote, PerfectLine, Input };
 
             public static ReadOnlySpan<Archetype> GetAllArchetypes() => AllArchetypes;
         }

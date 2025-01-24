@@ -1,3 +1,4 @@
+using ECS_MagicTile.Components;
 using UnityEngine;
 
 namespace ECS_MagicTile
@@ -60,6 +61,9 @@ namespace ECS_MagicTile
                         TimeAppear = musicNoteMidiData.TimeAppears[i],
                         musicNoteType = musicNoteType,
                     },
+                    new CornerComponent { },
+                    new MusicNoteInteractionComponent { },
+                    new MusicNoteFillerComponent { },
                 };
 
                 World.CreateEntityWithComponents(Archetype.Registry.MusicNote, components);

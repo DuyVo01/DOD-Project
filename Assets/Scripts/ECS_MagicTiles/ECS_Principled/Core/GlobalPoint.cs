@@ -29,11 +29,13 @@ namespace ECS_MagicTile
 
         private void RegisterSystems()
         {
+            //Handling Data system
             SystemRegistry.AddSystem(
                 new MusicNoteCreationSystem_(musicNoteCreationSettings, generalGameSetting)
             );
-
             SystemRegistry.AddSystem(new MovingNoteSystem(generalGameSetting));
+            SystemRegistry.AddSystem(new InputSystem());
+            SystemRegistry.AddSystem(new InputCollisionSystem(generalGameSetting));
 
             //Syncer systems
             SystemRegistry.AddSystem(
