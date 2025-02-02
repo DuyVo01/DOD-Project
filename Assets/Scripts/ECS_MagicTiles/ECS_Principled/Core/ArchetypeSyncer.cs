@@ -6,11 +6,13 @@ namespace ECS_MagicTile
 {
     public abstract class ArchetypeSyncer : IGameSystem
     {
-        public bool IsEnabled { get; set; }
+        public bool IsEnabled { get; set; } = true;
         public World World { get; set; }
 
         protected ArchetypeStorage DedicatedStorage => World.GetStorage(Archetype);
         protected abstract Archetype Archetype { get; }
+
+        public abstract EGameState GameStateToExecute { get; }
 
         public void SetWorld(World world)
         {
@@ -22,7 +24,5 @@ namespace ECS_MagicTile
         public virtual void Update(float deltaTime) { }
 
         public virtual void Cleanup() { }
-
-        protected abstract void SyncEntityToView(int entityId, GameObject view);
     }
 }

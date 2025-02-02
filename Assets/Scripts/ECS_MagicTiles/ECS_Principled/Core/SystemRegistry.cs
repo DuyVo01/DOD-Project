@@ -4,26 +4,14 @@ using UnityEngine;
 
 namespace ECS_MagicTile
 {
-    public interface IGameSystem
-    {
-        void SetWorld(World world);
-        void Initialize(); // Called when system is first created
-        void Update(float deltaTime); // Called every frame
-        void Cleanup();
-        bool IsEnabled { get; set; } // Controls if system should be updated
-        World World { get; set; }
-    }
-
     // Our central system management class
     public static class SystemRegistry
     {
-        // Interface that all our game systems will implement
-
-
         // Store systems in order of execution priority
         private static readonly List<IGameSystem> updateSystems = new();
         private static World world;
         private static bool isInitialized;
+        private static EGameState currentGameState = EGameState.WaitingToStart;
 
         // Initialize our registry with a world reference
         public static void Initialize(World gameWorld)
@@ -64,7 +52,13 @@ namespace ECS_MagicTile
 
             foreach (var system in updateSystems)
             {
-                if (system.IsEnabled)
+                if (
+                    system.IsEnabled
+                    && (
+                        system.GameStateToExecute == currentGameState
+                        || system.GameStateToExecute == EGameState.All
+                    )
+                )
                 {
                     try
                     {
@@ -88,6 +82,11 @@ namespace ECS_MagicTile
             updateSystems.Clear();
             isInitialized = false;
             world = null;
+        }
+
+        public static void SetGameState(EGameState newState)
+        {
+            currentGameState = newState;
         }
     }
 }

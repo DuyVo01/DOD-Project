@@ -2,35 +2,41 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EntityViewFactory
+namespace ECS_MagicTile
 {
-    private readonly Dictionary<int, GameObject> entityViews = new();
-    private readonly GameObject prefabSource;
-    private readonly Transform viewRoot;
-
-    public EntityViewFactory(GameObject prefabSource, Transform viewRoot)
+    public class EntityViewFactory
     {
-        this.prefabSource = prefabSource;
-        this.viewRoot = viewRoot;
-    }
+        private readonly Dictionary<int, GameObject> entityViews = new();
+        private readonly GameObject prefabSource;
+        private readonly Transform viewRoot;
 
-    public GameObject GetOrCreateView(int entityId, string nameOnCreation = "")
-    {
-        if (entityViews.TryGetValue(entityId, out var existing))
+        public EntityViewFactory() { }
+
+        public EntityViewFactory(GameObject prefabSource, Transform viewRoot)
         {
-            return existing;
+            this.prefabSource = prefabSource;
+            this.viewRoot = viewRoot;
         }
 
-        var prefab = prefabSource;
+        public GameObject GetOrCreateView(int entityId, string nameOnCreation = "")
+        {
+            if (entityViews.TryGetValue(entityId, out var existing))
+            {
+                return existing;
+            }
 
-        var view = GameObject.Instantiate(prefab, viewRoot);
-        view.name = $"{entityId}_{nameOnCreation}";
-        entityViews[entityId] = view;
-        return view;
-    }
+            var prefab = prefabSource;
 
-    public GameObject GetView(int entityId)
-    {
-        return entityViews.TryGetValue(entityId, out var view) ? view : null;
+            GameObject view = GameObject.Instantiate(prefab, viewRoot);
+            EntityIdHolder viewEntityIdHolder = view.AddComponent<EntityIdHolder>();
+            viewEntityIdHolder.SetEntityId(entityId);
+            entityViews[entityId] = view;
+            return view;
+        }
+
+        public GameObject GetView(int entityId)
+        {
+            return entityViews.TryGetValue(entityId, out var view) ? view : null;
+        }
     }
 }

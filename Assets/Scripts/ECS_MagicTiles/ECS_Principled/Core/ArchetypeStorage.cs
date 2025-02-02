@@ -9,6 +9,7 @@ namespace ECS_MagicTile
         // Store component arrays indexed by their ComponentType
         private readonly Dictionary<ComponentType, Array> componentArrays;
         private int[] entityIds; // Tracks which entities are in this storage
+        private readonly Dictionary<int, int> entityToIndex = new Dictionary<int, int>();
         private int count; // Number of active entities
 
         private const int DEFAULT_CAPACITY = 64; // Starting size for our arrays
@@ -29,6 +30,7 @@ namespace ECS_MagicTile
             }
 
             entityIds = new int[initialCapacity];
+
             count = 0;
         }
 
@@ -65,6 +67,7 @@ namespace ECS_MagicTile
 
             // Track the entity
             entityIds[count] = entityId;
+            entityToIndex[entityId] = count;
             count++;
         }
 
@@ -85,8 +88,10 @@ namespace ECS_MagicTile
                     Array.Copy(array, lastIndex, array, index, 1);
                 }
                 entityIds[index] = entityIds[lastIndex];
+                entityToIndex[entityIds[lastIndex]] = index;
             }
 
+            entityToIndex.Remove(entityId);
             count--;
         }
 
@@ -117,6 +122,11 @@ namespace ECS_MagicTile
                 );
             }
             return array;
+        }
+
+        public int GetEntityIndex(int entityId)
+        {
+            return entityToIndex.TryGetValue(entityId, out int index) ? index : -1;
         }
 
         // Properties for accessing storage information

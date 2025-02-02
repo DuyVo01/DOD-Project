@@ -1,3 +1,6 @@
+using ECS_MagicTile.Components;
+using EventChannel;
+using TMPro;
 using UnityEngine;
 
 namespace ECS_MagicTile
@@ -5,14 +8,17 @@ namespace ECS_MagicTile
     public class GlobalPoint : MonoBehaviour
     {
         [Header("Game Settings")]
-        [SerializeField]
-        private GeneralGameSetting generalGameSetting;
+        public GeneralGameSetting generalGameSetting;
 
-        [SerializeField]
-        private MusicNoteCreationSetting musicNoteCreationSettings;
+        public MusicNoteCreationSetting musicNoteCreationSettings;
 
-        [SerializeField]
-        private PerfectLineSettingSO perfectLineSettingSO;
+        public PerfectLineSettingSO perfectLineSettingSO;
+
+        [Header("Event Channel")]
+        public IntEventChannel entityIdChannel;
+
+        [Header("UI references")]
+        public TextMeshProUGUI scoreText;
 
         private World world;
 
@@ -21,50 +27,33 @@ namespace ECS_MagicTile
             // Initialize our ECS world
             world = new World();
 
-            CreateSingletonComponent();
-
             SystemRegistry.Initialize(world);
             RegisterSystems();
         }
 
         private void RegisterSystems()
         {
-            //Handling Data system
+            //Singleton Creation system
+            SystemRegistry.AddSystem(new SingletonCreationSystem(this));
+
+            //Creation System
             SystemRegistry.AddSystem(
-                new MusicNoteCreationSystem_(musicNoteCreationSettings, generalGameSetting)
+                new MusicNoteCreationSystem(musicNoteCreationSettings, generalGameSetting)
             );
+
+            //Handling Data system
             SystemRegistry.AddSystem(new MovingNoteSystem(generalGameSetting));
             SystemRegistry.AddSystem(new InputSystem());
             SystemRegistry.AddSystem(new InputCollisionSystem(generalGameSetting));
+            SystemRegistry.AddSystem(new ScoringSystem());
 
             //Syncer systems
-            SystemRegistry.AddSystem(
-                new MusicNoteSyncer(
-                    musicNoteCreationSettings.ShortTilePrefab,
-                    musicNoteCreationSettings.LongTilePrefab,
-                    transform
-                )
-            );
-        }
+            SystemRegistry.AddSystem(new MusicNoteSyncer(this));
+            SystemRegistry.AddSystem(new StartingNoteSyncer(this));
+            SystemRegistry.AddSystem(new ScoreUISyncer(this));
 
-        private void CreateSingletonComponent()
-        {
-            var components = new object[] { new PerfectLineTagComponent(), new CornerComponent() };
-            world.CreateEntityWithComponents(Archetype.Registry.PerfectLine, components);
-
-            ArchetypeStorage perfectLineStorage = world.GetStorage(Archetype.Registry.PerfectLine);
-
-            ref PerfectLineTagComponent PerfectLine =
-                ref perfectLineStorage.GetComponents<PerfectLineTagComponent>()[0];
-
-            ref CornerComponent perfectLineCorner =
-                ref perfectLineStorage.GetComponents<CornerComponent>()[0];
-
-            PerfectLine.PerfectLineWidth = perfectLineSettingSO.PerfectLineWidth();
-            perfectLineCorner.TopLeft = perfectLineSettingSO.TopLeft;
-            perfectLineCorner.TopRight = perfectLineSettingSO.TopRight;
-            perfectLineCorner.BottomLeft = perfectLineSettingSO.BottomLeft;
-            perfectLineCorner.BottomRight = perfectLineSettingSO.BottomRight;
+            //Game State system
+            SystemRegistry.AddSystem(new GameStateSystem(this));
         }
 
         private void Update()

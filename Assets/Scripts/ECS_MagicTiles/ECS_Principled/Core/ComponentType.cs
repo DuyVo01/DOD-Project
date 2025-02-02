@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using ECS_MagicTile.Components;
+using NUnit.Framework.Constraints;
 
 namespace ECS_MagicTile
 {
@@ -23,29 +24,26 @@ namespace ECS_MagicTile
             public static readonly ComponentType Transform = new(typeof(TransformComponent), 0);
             public static readonly ComponentType MusicNote = new(typeof(MusicNoteComponent), 1);
 
-            public static readonly ComponentType PerfectLine = new(
-                typeof(PerfectLineTagComponent),
-                3
-            );
+            public static readonly ComponentType PerfectLine =
+                new(typeof(PerfectLineTagComponent), 3);
             public static readonly ComponentType Corner = new(typeof(CornerComponent), 4);
 
             public static readonly ComponentType Input = new(typeof(InputStateComponent), 5);
-            public static readonly ComponentType MusicNoteInteraction = new(
-                typeof(MusicNoteInteractionComponent),
-                6
-            );
-            public static readonly ComponentType MusicNoteFiller = new(
-                typeof(MusicNoteFillerComponent),
-                7
-            );
+            public static readonly ComponentType MusicNoteInteraction =
+                new(typeof(MusicNoteInteractionComponent), 6);
+            public static readonly ComponentType MusicNoteFiller =
+                new(typeof(MusicNoteFillerComponent), 7);
+
+            public static readonly ComponentType ActiveState = new(typeof(ActiveStateComponent), 8);
+            public static readonly ComponentType StartingNote =
+                new(typeof(StartingNoteTagComponent), 9);
+            public static readonly ComponentType GameScore = new(typeof(ScoreComponent), 10);
+            public static readonly ComponentType NoteScoreState =
+                new(typeof(ScoreStateComponent), 11);
 
             // A lookup dictionary to quickly find ComponentType by Type
-            private static readonly Dictionary<Type, ComponentType> typeToComponentType;
-
-            // Initialize our lookup dictionary when the class is first used
-            static Registry()
-            {
-                typeToComponentType = new Dictionary<Type, ComponentType>
+            private static readonly Dictionary<Type, ComponentType> typeToComponentType =
+                new Dictionary<Type, ComponentType>
                 {
                     { typeof(TransformComponent), Transform },
                     { typeof(MusicNoteComponent), MusicNote },
@@ -54,8 +52,11 @@ namespace ECS_MagicTile
                     { typeof(InputStateComponent), Input },
                     { typeof(MusicNoteInteractionComponent), MusicNoteInteraction },
                     { typeof(MusicNoteFillerComponent), MusicNoteFiller },
+                    { typeof(ActiveStateComponent), ActiveState },
+                    { typeof(StartingNoteTagComponent), StartingNote },
+                    { typeof(ScoreComponent), GameScore },
+                    { typeof(ScoreStateComponent), NoteScoreState },
                 };
-            }
 
             // This is our new generic lookup method
             public static ComponentType GetComponentType<T>()
