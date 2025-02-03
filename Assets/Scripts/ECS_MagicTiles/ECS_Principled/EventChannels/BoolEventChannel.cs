@@ -6,5 +6,5 @@ namespace EventChannel
         fileName = "SO_ScoreSignalEffectChannel",
         menuName = "Event Channels/Score Signal Effect Channel"
     )]
-    public class ScoreSignalEffectChannel : EventChannelSO<EmptyData> { }
+    public class BoolEventChannel : EventChannelSO<bool> { }
 }

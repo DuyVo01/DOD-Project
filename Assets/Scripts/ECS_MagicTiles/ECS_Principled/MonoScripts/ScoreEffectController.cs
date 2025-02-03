@@ -1,190 +1,70 @@
-using System.Collections.Generic;
+using EventChannel;
 using PrimeTween;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ScoreEffectController : MonoBehaviour
+namespace ECS_MagicTile
 {
-    [System.Serializable]
-    private struct SatelliteConfig
+    public class ScoreEffectController : MonoBehaviour
     {
-        public float angleOffset; // Direction angle from center
-        public float initialSpeed; // Initial burst speed
-        public float driftSpeed; // Final slow drift speed
-        public float speedDecayRate; // How quickly initial speed decays to drift
-        public float scale; // Size relative to main image
-    }
+        [Header("Event Channels")]
+        [SerializeField]
+        private BoolEventChannel scoreSignalEffectChannel;
 
-    [Header("Sprites")]
-    [SerializeField]
-    private Sprite perfectSprite;
+        [Header("Main Image")]
+        [SerializeField]
+        private RectTransform mainImageRect;
 
-    [SerializeField]
-    private Sprite greatSprite;
+        [Header("Satellite Images")]
+        [SerializeField]
+        private SatelliteImages[] satelliteImages;
 
-    [Header("Main Image Settings")]
-    [SerializeField]
-    private Image mainImage;
+        private Sequence sequence;
+        private Image mainImage;
 
-    [SerializeField]
-    private float mainScaleDuration = 0.2f;
-
-    [SerializeField]
-    private float holdDuration = 0.3f;
-
-    [SerializeField]
-    private float fadeOutDuration = 0.5f;
-
-    [SerializeField]
-    private float targetScale = 1.2f;
-
-    [Header("Satellite Settings")]
-    [SerializeField]
-    private Image satellitePrefab;
-
-    [SerializeField]
-    private SatelliteConfig[] satelliteConfigs; // Configure each satellite's behavior
-
-    [SerializeField]
-    private float rotationMin = 0f;
-
-    [SerializeField]
-    private float rotationMax = 360f;
-
-    private readonly List<Image> satelliteInstances = new();
-    private Sequence currentAnimation;
-
-    private void Awake()
-    {
-        // Create satellite instances at startup
-        foreach (var _ in satelliteConfigs)
+        void Awake()
         {
-            var satellite = Instantiate(satellitePrefab, transform);
-            satellite.gameObject.SetActive(false);
-            satelliteInstances.Add(satellite);
+            mainImage = mainImageRect.GetComponent<Image>();
         }
-    }
 
-    public void PlayEffect(bool isPerfect)
-    {
-        // Kill any ongoing animation
-        currentAnimation.Stop();
-
-        // Reset state
-        ResetEffectState(isPerfect);
-
-        // Create new animation sequence
-        currentAnimation = CreateEffectSequence();
-    }
-
-    private void ResetEffectState(bool isPerfect)
-    {
-        // Reset main image
-        mainImage.sprite = isPerfect ? perfectSprite : greatSprite;
-        mainImage.transform.localScale = Vector3.zero;
-        mainImage.color = Color.white;
-
-        // Reset and position satellites
-        for (int i = 0; i < satelliteInstances.Count; i++)
+        void OnEnable()
         {
-            var satellite = satelliteInstances[i];
-            var config = satelliteConfigs[i];
-
-            // Set size based on effect type
-            float baseScale = isPerfect ? config.scale : config.scale * 0.1f;
-            satellite.transform.localScale = Vector3.one * baseScale;
-
-            // Reset position and set random rotation
-            satellite.transform.localPosition = Vector3.zero;
-            satellite.transform.rotation = Quaternion.Euler(
-                0,
-                0,
-                Random.Range(rotationMin, rotationMax)
-            );
-            satellite.color = Color.white;
-            satellite.gameObject.SetActive(true);
+            scoreSignalEffectChannel.Subscribe(PlayEffect);
+            sequence = Sequence.Create();
         }
-    }
 
-    private Sequence CreateEffectSequence()
-    {
-        var sequence = new Sequence();
-
-        // Main image scale animation
-        // PrimeTween uses a different approach for scale animations
-        sequence.Group(
-            Tween.Scale(
-                mainImage.transform,
-                targetScale * Vector3.one,
-                mainScaleDuration,
-                Ease.OutBack
-            )
-        );
-
-        // Animate each satellite
-        for (int i = 0; i < satelliteInstances.Count; i++)
+        void OnDisable()
         {
-            var satellite = satelliteInstances[i];
-            var config = satelliteConfigs[i];
+            scoreSignalEffectChannel.Unsubscribe(PlayEffect);
+        }
 
-            // Calculate movement direction
-            var direction = Quaternion.Euler(0, 0, config.angleOffset) * Vector3.right;
-            var targetPosition = direction * config.driftSpeed;
+        private void PlayEffect(bool isPerfect)
+        {
+            sequence.Stop();
 
-            // Create custom movement animation using our explosive motion
-            sequence.Group(
-                Tween.Custom(
-                    0f,
-                    1f,
-                    fadeOutDuration,
-                    onValueChange: progress =>
-                    {
-                        // Apply our custom easing for explosive movement
-                        float easedProgress = CustomExplosiveEase(
-                            progress,
-                            config.initialSpeed,
-                            config.speedDecayRate
-                        );
-                        satellite.transform.localPosition = Vector3.Lerp(
-                            Vector3.zero,
-                            targetPosition,
-                            easedProgress
-                        );
-                    }
+            Color color = mainImage.color;
+            color.a = 1;
+            mainImage.color = color;
+
+            sequence = Tween
+                .Scale(
+                    target: mainImageRect,
+                    startValue: Vector3.zero,
+                    endValue: Vector3.one,
+                    duration: 0.2f,
+                    ease: Ease.OutSine
                 )
-            );
+                .Chain(Tween.Delay(duration: .5f))
+                .Chain(Tween.Alpha(target: mainImage, startValue: 1, endValue: 0, duration: 3));
         }
 
-        // Add hold time then fade everything
-        sequence.Chain(Tween.Delay(holdDuration));
-
-        // Fade main image
-        sequence.Group(Tween.Alpha(mainImage, 0f, fadeOutDuration));
-
-        // Fade satellites
-        sequence.Group(
-            Tween.Custom(
-                1f,
-                0f,
-                fadeOutDuration,
-                onValueChange: alpha =>
-                {
-                    foreach (var satellite in satelliteInstances)
-                    {
-                        satellite.color = new Color(1, 1, 1, alpha);
-                    }
-                }
-            )
-        );
-
-        return sequence;
-    }
-
-    // Custom easing function for explosive movement
-    private float CustomExplosiveEase(float progress, float initialSpeed, float decayRate)
-    {
-        // Creates an exponential decay curve that starts fast and settles to a drift
-        return (initialSpeed * progress)
-            - ((initialSpeed - 1) * (1 - Mathf.Exp(-decayRate * progress)));
+        [System.Serializable]
+        public class SatelliteImages
+        {
+            public RectTransform satelliteRect;
+            public Vector2 startAnchoredPos;
+            public float moveSpeed;
+            public float rotation;
+        }
     }
 }

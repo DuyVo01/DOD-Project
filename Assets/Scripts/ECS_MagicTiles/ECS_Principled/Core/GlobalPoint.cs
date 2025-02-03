@@ -16,6 +16,7 @@ namespace ECS_MagicTile
 
         [Header("Event Channel")]
         public IntEventChannel entityIdChannel;
+        public BoolEventChannel scoreSignalEffectChannel;
 
         [Header("UI references")]
         public TextMeshProUGUI scoreText;
@@ -45,7 +46,7 @@ namespace ECS_MagicTile
             SystemRegistry.AddSystem(new MovingNoteSystem(generalGameSetting));
             SystemRegistry.AddSystem(new InputSystem());
             SystemRegistry.AddSystem(new InputCollisionSystem(generalGameSetting));
-            SystemRegistry.AddSystem(new ScoringSystem());
+            SystemRegistry.AddSystem(new ScoringSystem(this));
 
             //Syncer systems
             SystemRegistry.AddSystem(new MusicNoteSyncer(this));

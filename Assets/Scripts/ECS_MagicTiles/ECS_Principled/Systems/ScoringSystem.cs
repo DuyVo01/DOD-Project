@@ -1,5 +1,6 @@
 using System;
 using ECS_MagicTile.Components;
+using EventChannel;
 using UnityEngine;
 
 namespace ECS_MagicTile
@@ -25,6 +26,13 @@ namespace ECS_MagicTile
         TransformComponent[] musicNoteTransformComponents;
         ScoreStateComponent[] musicScoreStateComponents;
         MusicNoteComponent[] musicNoteComponents;
+
+        BoolEventChannel scoreSignalEffectChannel;
+
+        public ScoringSystem(GlobalPoint globalPoint)
+        {
+            this.scoreSignalEffectChannel = globalPoint.scoreSignalEffectChannel;
+        }
 
         public void Cleanup()
         {
@@ -112,10 +120,12 @@ namespace ECS_MagicTile
             if (distanceFromPerfect <= PERFECT_THRESHOLD)
             {
                 scoreToAdd = PERFECT_SCORE;
+                scoreSignalEffectChannel.RaiseEvent(true);
             }
             else
             {
                 scoreToAdd = GREAT_SCORE;
+                scoreSignalEffectChannel.RaiseEvent(false);
             }
 
             gameScore.TotalScore += scoreToAdd;
