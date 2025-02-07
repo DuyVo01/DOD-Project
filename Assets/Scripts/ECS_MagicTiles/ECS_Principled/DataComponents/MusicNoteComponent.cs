@@ -8,5 +8,6 @@ namespace ECS_MagicTile.Components
         public float TimeAppear;
         public float Duration;
         public MusicNoteType musicNoteType;
+        public MusicNotePositionState musicNotePositionState;
     }
 }

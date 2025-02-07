@@ -1,3 +1,4 @@
+using System;
 using EventChannel;
 using PrimeTween;
 using UnityEngine;
@@ -11,26 +12,29 @@ namespace ECS_MagicTile
         [SerializeField]
         private BoolEventChannel scoreSignalEffectChannel;
 
-        [Header("Main Image")]
+        [Header("Main Effect components")]
         [SerializeField]
-        private RectTransform mainImageRect;
+        private CanvasGroup perfectScorePrefab;
 
-        [Header("Satellite Images")]
         [SerializeField]
-        private SatelliteImages[] satelliteImages;
+        private CanvasGroup greatScorePrefab;
 
-        private Sequence sequence;
-        private Image mainImage;
+        [Header("Burst Movement Setup")]
+        [SerializeField]
+        private BurstMovementUIController burstMovementUIController;
+
+        [SerializeField]
+        private BurstMovementUIController.BurstMovementElement[] burstMovementElements;
+        private Sequence effectSequence;
 
         void Awake()
         {
-            mainImage = mainImageRect.GetComponent<Image>();
+            burstMovementUIController.InitializeElement(burstMovementElements);
         }
 
         void OnEnable()
         {
             scoreSignalEffectChannel.Subscribe(PlayEffect);
-            sequence = Sequence.Create();
         }
 
         void OnDisable()
@@ -40,31 +44,47 @@ namespace ECS_MagicTile
 
         private void PlayEffect(bool isPerfect)
         {
-            sequence.Stop();
+            effectSequence.Stop();
 
-            Color color = mainImage.color;
-            color.a = 1;
-            mainImage.color = color;
+            burstMovementUIController?.ResetAll();
+            burstMovementUIController?.StartAll();
+            perfectScorePrefab.alpha = 1;
 
-            sequence = Tween
+            for (int i = 1; i < burstMovementElements.Length; i++)
+            {
+                burstMovementElements[i].target.rotation = Quaternion.Euler(
+                    0,
+                    0,
+                    UnityEngine.Random.Range(0, 360)
+                );
+            }
+
+            effectSequence = Tween
                 .Scale(
-                    target: mainImageRect,
+                    target: perfectScorePrefab.transform,
                     startValue: Vector3.zero,
                     endValue: Vector3.one,
                     duration: 0.2f,
-                    ease: Ease.OutSine
+                    ease: Ease.Linear
                 )
-                .Chain(Tween.Delay(duration: .5f))
-                .Chain(Tween.Alpha(target: mainImage, startValue: 1, endValue: 0, duration: 3));
-        }
-
-        [System.Serializable]
-        public class SatelliteImages
-        {
-            public RectTransform satelliteRect;
-            public Vector2 startAnchoredPos;
-            public float moveSpeed;
-            public float rotation;
+                .Chain(
+                    Tween
+                        .Delay(duration: 0.5f)
+                        .Chain(
+                            Tween
+                                .Alpha(
+                                    target: perfectScorePrefab,
+                                    startValue: 1f,
+                                    endValue: 0f,
+                                    duration: 0.5f,
+                                    ease: Ease.Linear
+                                )
+                                .OnComplete(() =>
+                                {
+                                    burstMovementUIController.StopAll();
+                                })
+                        )
+                );
         }
     }
 }

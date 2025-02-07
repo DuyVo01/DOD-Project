@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using ECS_MagicTile.Components;
 using UnityEngine;
 
@@ -14,6 +12,8 @@ namespace ECS_MagicTile
 
         private readonly GeneralGameSetting generalGameSetting;
 
+        ArchetypeStorage musicNoteStorage;
+
         public MovingNoteSystem(GeneralGameSetting generalGameSetting)
         {
             this.generalGameSetting = generalGameSetting;
@@ -21,7 +21,10 @@ namespace ECS_MagicTile
 
         public void Cleanup() { }
 
-        public void Initialize() { }
+        public void Initialize()
+        {
+            musicNoteStorage = World.GetStorage(Archetype.Registry.MusicNote);
+        }
 
         public void SetWorld(World world)
         {
@@ -30,15 +33,23 @@ namespace ECS_MagicTile
 
         public void Update(float deltaTime)
         {
-            ArchetypeStorage musicNoteStorage = World.GetStorage(Archetype.Registry.MusicNote);
-
             TransformComponent[] transforms = musicNoteStorage.GetComponents<TransformComponent>();
             CornerComponent[] corners = musicNoteStorage.GetComponents<CornerComponent>();
+            MusicNoteComponent[] musicNoteComponents =
+                musicNoteStorage.GetComponents<MusicNoteComponent>();
 
             float gameSpeed = generalGameSetting.GameSpeed;
 
             for (int i = 0; i < musicNoteStorage.Count; i++)
             {
+                if (
+                    musicNoteComponents[i].musicNotePositionState
+                    == MusicNotePositionState.OutOfScreen
+                )
+                {
+                    continue;
+                }
+
                 // Update position
                 Vector2 newPos = transforms[i].Posision;
                 newPos.y -= gameSpeed * Time.deltaTime;
@@ -50,6 +61,18 @@ namespace ECS_MagicTile
                 corners[i].TopRight = new Vector2(newPos.x + halfSize.x, newPos.y + halfSize.y);
                 corners[i].BottomLeft = new Vector2(newPos.x - halfSize.x, newPos.y - halfSize.y);
                 corners[i].BottomRight = new Vector2(newPos.x + halfSize.x, newPos.y - halfSize.y);
+
+                if (
+                    CameraViewUtils.IsPositionOutOfBounds(
+                        Camera.main,
+                        corners[i].TopLeft,
+                        CameraViewUtils.CameraBoundCheck.Bottom
+                    )
+                )
+                {
+                    musicNoteComponents[i].musicNotePositionState =
+                        MusicNotePositionState.OutOfScreen;
+                }
             }
         }
     }

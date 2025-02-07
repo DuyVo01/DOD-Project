@@ -1,7 +1,9 @@
 using ECS_MagicTile.Components;
+using ECS_MagicTile.Settings;
 using EventChannel;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace ECS_MagicTile
 {
@@ -13,13 +15,15 @@ namespace ECS_MagicTile
         public MusicNoteCreationSetting musicNoteCreationSettings;
 
         public PerfectLineSettingSO perfectLineSettingSO;
+        public ECS_MagicTile.Settings.ScoreEffectSettings scoreEffectSettings;
 
         [Header("Event Channel")]
         public IntEventChannel entityIdChannel;
-        public BoolEventChannel scoreSignalEffectChannel;
+        public BoolEventChannel scoreEffectChannel;
 
         [Header("UI references")]
         public TextMeshProUGUI scoreText;
+        public Slider progressSlider;
 
         private World world;
 
@@ -41,12 +45,15 @@ namespace ECS_MagicTile
             SystemRegistry.AddSystem(
                 new MusicNoteCreationSystem(musicNoteCreationSettings, generalGameSetting)
             );
+            SystemRegistry.AddSystem(new ScoreEffectCreationSystem(this));
 
             //Handling Data system
             SystemRegistry.AddSystem(new MovingNoteSystem(generalGameSetting));
             SystemRegistry.AddSystem(new InputSystem());
             SystemRegistry.AddSystem(new InputCollisionSystem(generalGameSetting));
             SystemRegistry.AddSystem(new ScoringSystem(this));
+            SystemRegistry.AddSystem(new ScoreEffectSystem(this));
+            SystemRegistry.AddSystem(new ProgressSystem(this));
 
             //Syncer systems
             SystemRegistry.AddSystem(new MusicNoteSyncer(this));

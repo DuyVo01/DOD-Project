@@ -62,6 +62,7 @@ namespace ECS_MagicTile
                         PostionId = musicNoteMidiData.PositionIds[i],
                         TimeAppear = musicNoteMidiData.TimeAppears[i],
                         musicNoteType = musicNoteType,
+                        musicNotePositionState = MusicNotePositionState.AbovePerfectLine,
                     },
                     new CornerComponent { },
                     new MusicNoteInteractionComponent { },

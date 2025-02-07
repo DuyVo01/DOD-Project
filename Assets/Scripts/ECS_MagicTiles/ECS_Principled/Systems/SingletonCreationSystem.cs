@@ -1,5 +1,4 @@
 using ECS_MagicTile.Components;
-using UnityEditor.Tilemaps;
 using UnityEngine;
 
 namespace ECS_MagicTile
@@ -30,6 +29,7 @@ namespace ECS_MagicTile
             CreatePerfectLine();
             CreateStartingNote();
             CreateGameScore();
+            CreateProgress();
         }
 
         public void SetWorld(World world)
@@ -113,6 +113,23 @@ namespace ECS_MagicTile
         {
             var components = new object[] { new ScoreComponent { TotalScore = 0 } };
             World.CreateEntityWithComponents(Archetype.Registry.GameScore, components);
+        }
+
+        private void CreateProgress()
+        {
+            MusicNoteMidiData musicNoteMidiData = MidiNoteParser.ParseFromText(
+                musicNoteCreationSetting.MidiContent.text
+            );
+            var components = new object[]
+            {
+                new ProgressComponent
+                {
+                    CurrentProgressRawValue = 0,
+                    currentProgressPercent = 0,
+                    MaxProgressRawValue = musicNoteMidiData.TotalNotes,
+                },
+            };
+            World.CreateEntityWithComponents(Archetype.Registry.SongProgress, components);
         }
     }
 }
