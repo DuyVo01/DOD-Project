@@ -14,7 +14,7 @@ namespace ECS_MagicTile
 
         public ProgressSystem(GlobalPoint globalPoint)
         {
-            this.scoreEventChannel = globalPoint.scoreEffectChannel;
+            this.scoreEventChannel = globalPoint.OnScoreHitChannel;
         }
 
         private ArchetypeStorage progressArchetype;

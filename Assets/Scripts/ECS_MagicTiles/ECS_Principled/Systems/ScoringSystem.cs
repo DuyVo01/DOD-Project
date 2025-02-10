@@ -31,7 +31,7 @@ namespace ECS_MagicTile
 
         public ScoringSystem(GlobalPoint globalPoint)
         {
-            this.scoreSignalEffectChannel = globalPoint.scoreEffectChannel;
+            this.scoreSignalEffectChannel = globalPoint.OnScoreHitChannel;
         }
 
         public void Cleanup()

@@ -7,9 +7,12 @@ namespace ECS_MagicTile
     {
         protected override Archetype Archetype => Archetype.Registry.StartingNote;
 
-        public override EGameState GameStateToExecute => EGameState.Ingame;
+        public override EGameState GameStateToExecute => EGameState.All;
 
         private readonly EntityViewFactory startingNoteFactory;
+
+        ActiveStateComponent[] startingNoteActiveStateComponents;
+        TransformComponent[] startingNoteTransformComponents;
 
         private GameObject startingNoteViewObject;
 
@@ -26,22 +29,26 @@ namespace ECS_MagicTile
             base.Initialize();
             IsEnabled = true;
 
-            TransformComponent startingNoteTransform =
-                DedicatedStorage.GetComponents<TransformComponent>()[0];
+            startingNoteActiveStateComponents =
+                DedicatedStorage.GetComponents<ActiveStateComponent>();
+
+            startingNoteTransformComponents = DedicatedStorage.GetComponents<TransformComponent>();
 
             int entityId_ = DedicatedStorage.EntityIds[0];
 
             startingNoteViewObject = startingNoteFactory.GetOrCreateView(entityId_, "StartingNote");
-
-            startingNoteViewObject.transform.position = startingNoteTransform.Posision;
-            startingNoteViewObject.transform.localScale = startingNoteTransform.Size;
+            startingNoteViewObject.transform.localScale = startingNoteTransformComponents[0].Size;
         }
 
         public override void Update(float deltaTime)
         {
-            ActiveStateComponent activeStateComponent =
-                DedicatedStorage.GetComponents<ActiveStateComponent>()[0];
-            startingNoteViewObject.SetActive(activeStateComponent.isActive);
+            startingNoteViewObject.SetActive(startingNoteActiveStateComponents[0].isActive);
+            // if (!startingNoteViewObject.activeSelf)
+            // {
+            //     IsEnabled = false;
+            // }
+
+            startingNoteViewObject.transform.position = startingNoteTransformComponents[0].Posision;
         }
     }
 }

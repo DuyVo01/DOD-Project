@@ -10,13 +10,16 @@ namespace ECS_MagicTile
 
         public EGameState GameStateToExecute => EGameState.WaitingToStart;
 
-        private readonly PerfectLineSettingSO perfectLineSettingSO;
         private readonly MusicNoteCreationSetting musicNoteCreationSetting;
+
+        private ArchetypeStorage perfectLineStorage;
+
+        private SpriteRenderer perfectLineSprite;
 
         public SingletonCreationSystem(GlobalPoint globalPoint)
         {
-            this.perfectLineSettingSO = globalPoint.perfectLineSettingSO;
             this.musicNoteCreationSetting = globalPoint.musicNoteCreationSettings;
+            perfectLineSprite = globalPoint.perfectLineObject.GetComponent<SpriteRenderer>();
         }
 
         public void Cleanup()
@@ -48,7 +51,7 @@ namespace ECS_MagicTile
             var components = new object[] { new PerfectLineTagComponent(), new CornerComponent() };
             World.CreateEntityWithComponents(Archetype.Registry.PerfectLine, components);
 
-            ArchetypeStorage perfectLineStorage = World.GetStorage(Archetype.Registry.PerfectLine);
+            perfectLineStorage ??= World.GetStorage(Archetype.Registry.PerfectLine);
 
             ref PerfectLineTagComponent PerfectLine =
                 ref perfectLineStorage.GetComponents<PerfectLineTagComponent>()[0];
@@ -56,11 +59,17 @@ namespace ECS_MagicTile
             ref CornerComponent perfectLineCorner =
                 ref perfectLineStorage.GetComponents<CornerComponent>()[0];
 
-            PerfectLine.PerfectLineWidth = perfectLineSettingSO.PerfectLineWidth();
-            perfectLineCorner.TopLeft = perfectLineSettingSO.TopLeft;
-            perfectLineCorner.TopRight = perfectLineSettingSO.TopRight;
-            perfectLineCorner.BottomLeft = perfectLineSettingSO.BottomLeft;
-            perfectLineCorner.BottomRight = perfectLineSettingSO.BottomRight;
+            SpriteUtility.SpriteCorners spriteCorners = SpriteUtility.GetSpriteCorners(
+                perfectLineSprite
+            );
+
+            PerfectLine.PerfectLineWidth = Mathf.Abs(
+                spriteCorners.TopLeft.x - spriteCorners.TopRight.x
+            );
+            perfectLineCorner.TopLeft = spriteCorners.TopLeft;
+            perfectLineCorner.TopRight = spriteCorners.TopRight;
+            perfectLineCorner.BottomLeft = spriteCorners.BottomLeft;
+            perfectLineCorner.BottomRight = spriteCorners.BottomRight;
         }
 
         private void CreateStartingNote()
@@ -72,41 +81,6 @@ namespace ECS_MagicTile
                 new StartingNoteTagComponent(),
             };
             World.CreateEntityWithComponents(Archetype.Registry.StartingNote, components);
-
-            ArchetypeStorage storage = World.GetStorage(Archetype.Registry.StartingNote);
-            ArchetypeStorage perfectLineStorage = World.GetStorage(Archetype.Registry.PerfectLine);
-
-            ref ActiveStateComponent activeState =
-                ref storage.GetComponents<ActiveStateComponent>()[0];
-            ref TransformComponent transform = ref storage.GetComponents<TransformComponent>()[0];
-
-            ref CornerComponent perfectLineCorners =
-                ref perfectLineStorage.GetComponents<CornerComponent>()[0];
-
-            // Calculate lane width
-            float totalWidth = perfectLineCorners.TopRight.x - perfectLineCorners.TopLeft.x;
-            float laneWidth = totalWidth / 4;
-            float halfLaneWidth = laneWidth / 2f;
-
-            activeState.isActive = true;
-
-            // Calculate spawn position
-            float spawnX = perfectLineCorners.TopLeft.x + (0 * laneWidth) + halfLaneWidth;
-            float spawnY = perfectLineCorners.TopLeft.y;
-
-            transform.Posision = new Vector2(spawnX, spawnY);
-
-            ref PerfectLineTagComponent PerfectLine =
-                ref perfectLineStorage.GetComponents<PerfectLineTagComponent>()[0];
-
-            float scaleX = PerfectLine.PerfectLineWidth / 4;
-
-            float scaleY = MagicTileHelper.CalculateScaleY(
-                musicNoteCreationSetting.ShortNoteScaleYFactor,
-                scaleX
-            );
-
-            transform.Size = new Vector2(scaleX, scaleY);
         }
 
         private void CreateGameScore()

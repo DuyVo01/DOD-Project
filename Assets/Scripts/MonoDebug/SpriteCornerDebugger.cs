@@ -15,6 +15,8 @@ public class SpriteCornerDebugger : MonoBehaviour
     [SerializeField]
     PerfectLineSettingSO generalGameSettingSO;
 
+    private SpriteUtility.SpriteCorners spriteCorners;
+
     private void OnDrawGizmos()
     {
         if (spriteRenderer == null)
@@ -22,6 +24,8 @@ public class SpriteCornerDebugger : MonoBehaviour
 
         if (spriteRenderer == null || spriteRenderer.sprite == null)
             return;
+
+        spriteCorners = SpriteUtility.GetSpriteCorners(spriteRenderer);
 
         // Cache sprite properties
         Vector2 position = transform.position;
@@ -32,10 +36,15 @@ public class SpriteCornerDebugger : MonoBehaviour
         float halfHeight = spriteSize.y / 2f;
 
         // Calculate corners
-        Vector2 topLeft = position + new Vector2(-halfWidth, halfHeight);
-        Vector2 topRight = position + new Vector2(halfWidth, halfHeight);
-        Vector2 bottomLeft = position + new Vector2(-halfWidth, -halfHeight);
-        Vector2 bottomRight = position + new Vector2(halfWidth, -halfHeight);
+        // Vector2 topLeft = position + new Vector2(-halfWidth, halfHeight);
+        // Vector2 topRight = position + new Vector2(halfWidth, halfHeight);
+        // Vector2 bottomLeft = position + new Vector2(-halfWidth, -halfHeight);
+        // Vector2 bottomRight = position + new Vector2(halfWidth, -halfHeight);
+
+        Vector2 topLeft = spriteCorners.TopLeft;
+        Vector2 topRight = spriteCorners.TopRight;
+        Vector2 bottomLeft = spriteCorners.BottomLeft;
+        Vector2 bottomRight = spriteCorners.BottomRight;
 
         // Draw corners
         Gizmos.color = gizmoColor;
