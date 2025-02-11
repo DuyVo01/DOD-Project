@@ -53,7 +53,12 @@ namespace ECS_MagicTile
 
             // Game setup archetypes
             public static readonly Archetype PerfectLine = new(
-                new[] { ComponentType.Registry.PerfectLine, ComponentType.Registry.Corner }
+                new[]
+                {
+                    ComponentType.Registry.Transform,
+                    ComponentType.Registry.PerfectLine,
+                    ComponentType.Registry.Corner,
+                }
             );
 
             public static readonly Archetype Input = new(new[] { ComponentType.Registry.Input });

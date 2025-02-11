@@ -6,21 +6,24 @@ namespace ECS_MagicTile
 {
     public class StartingNoteSystem : IGameSystem
     {
-        public bool IsEnabled { get; set; }
+        public bool IsEnabled { get; set; } = true;
         public World World { get; set; }
 
         public EGameState GameStateToExecute => EGameState.All;
 
         private readonly MusicNoteCreationSetting musicNoteCreationSetting;
-        private readonly BoolEventChannel OnOrientationChangedChannel;
 
         private ArchetypeStorage startingNoteStorage;
         private ArchetypeStorage perfectLineStorage;
 
+        private TransformComponent[] startingNoteTransforms;
+        private CornerComponent[] perfectLineCorners;
+
+        float lastPerfectLineTopLeftY;
+
         public StartingNoteSystem(GlobalPoint globalPoint)
         {
             musicNoteCreationSetting = globalPoint.musicNoteCreationSettings;
-            OnOrientationChangedChannel = globalPoint.OnOrientationChangedChannel;
         }
 
         public void Cleanup() { }
@@ -30,9 +33,14 @@ namespace ECS_MagicTile
             startingNoteStorage ??= World.GetStorage(Archetype.Registry.StartingNote);
             perfectLineStorage ??= World.GetStorage(Archetype.Registry.PerfectLine);
 
-            SetupStartingNote();
+            perfectLineCorners = perfectLineStorage.GetComponents<CornerComponent>();
+            startingNoteTransforms = startingNoteStorage.GetComponents<TransformComponent>();
 
-            OnOrientationChangedChannel.Subscribe(OnOrientationChanged);
+            ref ActiveStateComponent activeState =
+                ref startingNoteStorage.GetComponents<ActiveStateComponent>()[0];
+            activeState.isActive = true;
+
+            SetupStartingNote();
         }
 
         public void SetWorld(World world)
@@ -40,33 +48,31 @@ namespace ECS_MagicTile
             World = world;
         }
 
-        public void Update(float deltaTime) { }
-
-        private void OnOrientationChanged(bool isPortrait)
+        public void Update(float deltaTime)
         {
-            SetupStartingNote();
+            if (lastPerfectLineTopLeftY != perfectLineCorners[0].TopLeft.y)
+            {
+                lastPerfectLineTopLeftY = perfectLineCorners[0].TopLeft.y;
+                SetupStartingNote();
+            }
+
+            //Debug.Log($"PerfectLine Topleft: {perfectLineCorners[0].TopLeft.x}");
         }
 
         private void SetupStartingNote()
         {
-            ref ActiveStateComponent activeState =
-                ref startingNoteStorage.GetComponents<ActiveStateComponent>()[0];
-            ref TransformComponent transform =
-                ref startingNoteStorage.GetComponents<TransformComponent>()[0];
+            ref TransformComponent transform = ref startingNoteTransforms[0];
 
-            ref CornerComponent perfectLineCorners =
-                ref perfectLineStorage.GetComponents<CornerComponent>()[0];
+            ref CornerComponent perfectLineCorner = ref perfectLineCorners[0];
 
             // Calculate lane width
-            float totalWidth = perfectLineCorners.TopRight.x - perfectLineCorners.TopLeft.x;
+            float totalWidth = perfectLineCorner.TopRight.x - perfectLineCorner.TopLeft.x;
             float laneWidth = totalWidth / 4;
             float halfLaneWidth = laneWidth / 2f;
 
-            activeState.isActive = true;
-
             // Calculate spawn position
-            float spawnX = perfectLineCorners.TopLeft.x + (0 * laneWidth) + halfLaneWidth;
-            float spawnY = perfectLineCorners.TopLeft.y;
+            float spawnX = perfectLineCorner.TopLeft.x + (0 * laneWidth) + halfLaneWidth;
+            float spawnY = perfectLineCorner.TopLeft.y;
 
             transform.Posision = new Vector2(spawnX, spawnY);
 

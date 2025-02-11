@@ -11,6 +11,7 @@ namespace ECS_MagicTile
         public EGameState GameStateToExecute => EGameState.WaitingToStart;
 
         private readonly MusicNoteCreationSetting musicNoteCreationSetting;
+        private readonly PerfectLineSetting perfectLineSetting;
 
         private ArchetypeStorage perfectLineStorage;
 
@@ -18,7 +19,9 @@ namespace ECS_MagicTile
 
         public SingletonCreationSystem(GlobalPoint globalPoint)
         {
-            this.musicNoteCreationSetting = globalPoint.musicNoteCreationSettings;
+            musicNoteCreationSetting = globalPoint.musicNoteCreationSettings;
+            perfectLineSetting = globalPoint.perfectLineSetting;
+
             perfectLineSprite = globalPoint.perfectLineObject.GetComponent<SpriteRenderer>();
         }
 
@@ -48,28 +51,13 @@ namespace ECS_MagicTile
         private void CreatePerfectLine()
         {
             //The perfect line singleton
-            var components = new object[] { new PerfectLineTagComponent(), new CornerComponent() };
+            var components = new object[]
+            {
+                new TransformComponent(),
+                new PerfectLineTagComponent(),
+                new CornerComponent(),
+            };
             World.CreateEntityWithComponents(Archetype.Registry.PerfectLine, components);
-
-            perfectLineStorage ??= World.GetStorage(Archetype.Registry.PerfectLine);
-
-            ref PerfectLineTagComponent PerfectLine =
-                ref perfectLineStorage.GetComponents<PerfectLineTagComponent>()[0];
-
-            ref CornerComponent perfectLineCorner =
-                ref perfectLineStorage.GetComponents<CornerComponent>()[0];
-
-            SpriteUtility.SpriteCorners spriteCorners = SpriteUtility.GetSpriteCorners(
-                perfectLineSprite
-            );
-
-            PerfectLine.PerfectLineWidth = Mathf.Abs(
-                spriteCorners.TopLeft.x - spriteCorners.TopRight.x
-            );
-            perfectLineCorner.TopLeft = spriteCorners.TopLeft;
-            perfectLineCorner.TopRight = spriteCorners.TopRight;
-            perfectLineCorner.BottomLeft = spriteCorners.BottomLeft;
-            perfectLineCorner.BottomRight = spriteCorners.BottomRight;
         }
 
         private void CreateStartingNote()

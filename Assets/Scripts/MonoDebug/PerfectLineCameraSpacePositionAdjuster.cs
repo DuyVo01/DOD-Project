@@ -1,31 +1,24 @@
-using EventChannel;
+using ECS_MagicTile;
 using UnityEngine;
 
-public class CameraSpacePositionAdjuster : MonoBehaviour
+public class PerfectLineCameraSpacePositionAdjuster : MonoBehaviour
 {
-    [Header("Event Channels")]
-    [SerializeField]
-    private BoolEventChannel OnOrientationChangedChannel;
-
     [Space(10)]
     [SerializeField]
     private Camera targetCamera;
 
-    [Header(" Normalize Positions")]
     [SerializeField]
-    private PositionPreset portraitNormalizedPos;
+    private PerfectLineSetting perfectLineSetting;
 
     [SerializeField]
-    private PositionPreset landscapeNormalizePos;
+    private PerfectLineSetting.PositionPreset portraitNormalizedPos;
 
-    void OnEnable()
-    {
-        OnOrientationChangedChannel.Subscribe(OnOrientationChanged);
-    }
+    [SerializeField]
+    private PerfectLineSetting.PositionPreset landscapeNormalizedPos;
 
-    void OnDisable()
+    void Start()
     {
-        OnOrientationChangedChannel.Unsubscribe(OnOrientationChanged);
+        this.enabled = false;
     }
 
     public void OnValidate()
@@ -66,19 +59,12 @@ public class CameraSpacePositionAdjuster : MonoBehaviour
             // Position object within camera view
             transform.position = CameraViewUtils.GetPositionInCameraView(
                 targetCamera,
-                landscapeNormalizePos.normalizedX,
-                landscapeNormalizePos.normalizedY
+                landscapeNormalizedPos.normalizedX,
+                landscapeNormalizedPos.normalizedY
             );
         }
-    }
 
-    [System.Serializable]
-    private struct PositionPreset
-    {
-        [Range(0, 1)]
-        public float normalizedX;
-
-        [Range(0, 1)]
-        public float normalizedY;
+        perfectLineSetting.landscapeNormalizedPos = landscapeNormalizedPos;
+        perfectLineSetting.portraitNormalizedPos = portraitNormalizedPos;
     }
 }

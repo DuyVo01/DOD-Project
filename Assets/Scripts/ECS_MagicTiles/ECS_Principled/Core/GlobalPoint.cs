@@ -14,6 +14,8 @@ namespace ECS_MagicTile
 
         public ECS_MagicTile.Settings.ScoreEffectSettings scoreEffectSettings;
 
+        public PerfectLineSetting perfectLineSetting;
+
         [Header("Event Channel")]
         public IntEventChannel entityIdChannel;
         public BoolEventChannel OnScoreHitChannel;
@@ -25,6 +27,7 @@ namespace ECS_MagicTile
 
         [Header("Object references")]
         public GameObject perfectLineObject;
+        public Camera mainCamera;
 
         private World world;
 
@@ -43,11 +46,10 @@ namespace ECS_MagicTile
             SystemRegistry.AddSystem(new SingletonCreationSystem(this));
 
             //Creation System
+            SystemRegistry.AddSystem(new PerfectLineSystem(this));
             SystemRegistry.AddSystem(
                 new MusicNoteCreationSystem(musicNoteCreationSettings, generalGameSetting)
             );
-            SystemRegistry.AddSystem(new ScoreEffectCreationSystem(this));
-
             SystemRegistry.AddSystem(new StartingNoteSystem(this));
 
             //Handling Data system
@@ -55,13 +57,13 @@ namespace ECS_MagicTile
             SystemRegistry.AddSystem(new InputSystem());
             SystemRegistry.AddSystem(new InputCollisionSystem(generalGameSetting));
             SystemRegistry.AddSystem(new ScoringSystem(this));
-            SystemRegistry.AddSystem(new ScoreEffectSystem(this));
             SystemRegistry.AddSystem(new ProgressSystem(this));
 
             //Syncer systems
             SystemRegistry.AddSystem(new MusicNoteSyncer(this));
             SystemRegistry.AddSystem(new StartingNoteSyncer(this));
             SystemRegistry.AddSystem(new ScoreUISyncer(this));
+            SystemRegistry.AddSystem(new PerfectLineSyncer(this));
 
             //Game State system
             SystemRegistry.AddSystem(new GameStateSystem(this));

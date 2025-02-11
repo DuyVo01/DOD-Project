@@ -354,12 +354,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58867b88740e4d247b80eb0a9d77da2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OnOrientationChangedChannel: {fileID: 11400000, guid: 2ceeecf601ad944f699e78a3f56a522e, type: 2}
   targetCamera: {fileID: 1965127783}
+  perfectLineSetting: {fileID: 11400000, guid: d1a21492714ea480f9449e5933a8acd1, type: 2}
   portraitNormalizedPos:
     normalizedX: 0.5
     normalizedY: 0.3
-  landscapeNormalizePos:
+  landscapeNormalizedPos:
     normalizedX: 0.5
     normalizedY: 0.3
 --- !u!212 &349202822
@@ -484,12 +484,14 @@ MonoBehaviour:
   generalGameSetting: {fileID: 11400000, guid: cc747aeaca6f5864099880016a577e56, type: 2}
   musicNoteCreationSettings: {fileID: 11400000, guid: 5d1ed20f8d24fbd4f95a64d2f692fb66, type: 2}
   scoreEffectSettings: {fileID: 11400000, guid: 0fc1bf2a08ee74502af5a8c06e294b7f, type: 2}
+  perfectLineSetting: {fileID: 11400000, guid: d1a21492714ea480f9449e5933a8acd1, type: 2}
   entityIdChannel: {fileID: 11400000, guid: 44439b2ecef163c4e8e6b70a713339a8, type: 2}
   OnScoreHitChannel: {fileID: 11400000, guid: ea0ef8d03bdeb4c4784bc02c8a47c318, type: 2}
   OnOrientationChangedChannel: {fileID: 11400000, guid: 2ceeecf601ad944f699e78a3f56a522e, type: 2}
   scoreText: {fileID: 1043838896}
   progressSlider: {fileID: 1796105110}
   perfectLineObject: {fileID: 349202818}
+  mainCamera: {fileID: 1965127783}
 --- !u!1 &957956266
 GameObject:
   m_ObjectHideFlags: 0
