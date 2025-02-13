@@ -22,6 +22,11 @@ namespace EventChannel
 
         public void RaiseEvent(T eventData)
         {
+            if (listeners == null)
+            {
+                return;
+            }
+
             if (eventData == null)
             {
                 Debug.LogError($"Attempted to raise null event data in {name}");

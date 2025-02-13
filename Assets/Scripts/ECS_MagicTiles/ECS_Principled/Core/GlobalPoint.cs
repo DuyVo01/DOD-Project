@@ -1,5 +1,3 @@
-using ECS_MagicTile.Components;
-using ECS_MagicTile.Settings;
 using EventChannel;
 using TMPro;
 using UnityEngine;
@@ -14,18 +12,34 @@ namespace ECS_MagicTile
 
         public MusicNoteCreationSetting musicNoteCreationSettings;
 
-        public PerfectLineSettingSO perfectLineSettingSO;
         public ECS_MagicTile.Settings.ScoreEffectSettings scoreEffectSettings;
+
+        public PerfectLineSetting perfectLineSetting;
 
         [Header("Event Channel")]
         public IntEventChannel entityIdChannel;
-        public BoolEventChannel scoreEffectChannel;
+        public BoolEventChannel OnScoreHitChannel;
+        public BoolEventChannel OnOrientationChangedChannel;
 
         [Header("UI references")]
         public TextMeshProUGUI scoreText;
         public Slider progressSlider;
 
+        [Header("Object references")]
+        public GameObject perfectLineObject;
+        public Camera mainCamera;
+
         private World world;
+
+        public World World
+        {
+            get => world;
+        }
+
+        public MusicNoteViewSyncTool musicNoteViewSyncTool { get; private set; }
+        public PerfectLineSyncTool perfectLineSyncTool { get; private set; }
+        public StartingNoteSyncTool startingNoteSyncTool { get; private set; }
+        public GameScoreSyncTool gameScoreSyncTool { get; private set; }
 
         private void Awake()
         {
@@ -33,7 +47,16 @@ namespace ECS_MagicTile
             world = new World();
 
             SystemRegistry.Initialize(world);
+            InitializeSyncTools();
             RegisterSystems();
+        }
+
+        private void InitializeSyncTools()
+        {
+            musicNoteViewSyncTool = new MusicNoteViewSyncTool(this);
+            perfectLineSyncTool = new PerfectLineSyncTool(this);
+            startingNoteSyncTool = new StartingNoteSyncTool(this);
+            gameScoreSyncTool = new GameScoreSyncTool(this);
         }
 
         private void RegisterSystems()
@@ -42,22 +65,20 @@ namespace ECS_MagicTile
             SystemRegistry.AddSystem(new SingletonCreationSystem(this));
 
             //Creation System
+            SystemRegistry.AddSystem(new PerfectLineSystem(this));
             SystemRegistry.AddSystem(
                 new MusicNoteCreationSystem(musicNoteCreationSettings, generalGameSetting)
             );
-            SystemRegistry.AddSystem(new ScoreEffectCreationSystem(this));
+            SystemRegistry.AddSystem(new StartingNoteSystem(this));
 
             //Handling Data system
-            SystemRegistry.AddSystem(new MovingNoteSystem(generalGameSetting));
+            SystemRegistry.AddSystem(new MovingNoteSystem(this));
             SystemRegistry.AddSystem(new InputSystem());
-            SystemRegistry.AddSystem(new InputCollisionSystem(generalGameSetting));
+            SystemRegistry.AddSystem(new InputCollisionSystem(this));
             SystemRegistry.AddSystem(new ScoringSystem(this));
-            SystemRegistry.AddSystem(new ScoreEffectSystem(this));
             SystemRegistry.AddSystem(new ProgressSystem(this));
 
             //Syncer systems
-            SystemRegistry.AddSystem(new MusicNoteSyncer(this));
-            SystemRegistry.AddSystem(new StartingNoteSyncer(this));
             SystemRegistry.AddSystem(new ScoreUISyncer(this));
             SystemRegistry.AddSystem(new ProgressSyncer(this));
 

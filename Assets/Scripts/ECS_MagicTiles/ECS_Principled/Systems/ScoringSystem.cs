@@ -29,9 +29,11 @@ namespace ECS_MagicTile
 
         BoolEventChannel scoreSignalEffectChannel;
 
+        private GameScoreSyncTool gameScoreSyncTool;
+
         public ScoringSystem(GlobalPoint globalPoint)
         {
-            this.scoreSignalEffectChannel = globalPoint.scoreEffectChannel;
+            this.scoreSignalEffectChannel = globalPoint.OnScoreHitChannel;
         }
 
         public void Cleanup()

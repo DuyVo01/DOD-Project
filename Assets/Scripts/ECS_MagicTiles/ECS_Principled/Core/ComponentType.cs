@@ -56,7 +56,6 @@ namespace ECS_MagicTile
                 12
             );
 
-            public static readonly ComponentType Graphics = new(typeof(GraphicComponent), 13);
             public static readonly ComponentType Progress = new(typeof(ProgressComponent), 14);
 
             // A lookup dictionary to quickly find ComponentType by Type
@@ -75,7 +74,6 @@ namespace ECS_MagicTile
                     { typeof(ScoreComponent), GameScore },
                     { typeof(ScoreStateComponent), NoteScoreState },
                     { typeof(TransformComponentGroup), TransformGroup },
-                    { typeof(GraphicComponent), Graphics },
                     { typeof(ProgressComponent), Progress },
                 };
 

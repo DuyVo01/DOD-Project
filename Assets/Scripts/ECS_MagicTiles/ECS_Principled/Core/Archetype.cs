@@ -53,7 +53,12 @@ namespace ECS_MagicTile
 
             // Game setup archetypes
             public static readonly Archetype PerfectLine = new(
-                new[] { ComponentType.Registry.PerfectLine, ComponentType.Registry.Corner }
+                new[]
+                {
+                    ComponentType.Registry.Transform,
+                    ComponentType.Registry.PerfectLine,
+                    ComponentType.Registry.Corner,
+                }
             );
 
             public static readonly Archetype Input = new(new[] { ComponentType.Registry.Input });
@@ -76,15 +81,6 @@ namespace ECS_MagicTile
                 }
             );
 
-            public static readonly Archetype ScoreEffect = new(
-                new[]
-                {
-                    ComponentType.Registry.Transform,
-                    ComponentType.Registry.TransformGroup,
-                    ComponentType.Registry.Graphics,
-                }
-            );
-
             public static readonly Archetype SongProgress = new(
                 new[] { ComponentType.Registry.Progress }
             );
@@ -97,7 +93,6 @@ namespace ECS_MagicTile
                 Input,
                 StartingNote,
                 GameScore,
-                ScoreEffect,
                 SongProgress,
             };
 

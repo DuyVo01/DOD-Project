@@ -22,7 +22,7 @@ namespace ECS_MagicTile
         public override void Update(float deltaTime)
         {
             // Get score data from storage
-            var scoreComponent = DedicatedStorage.GetComponents<ScoreComponent>()[0];
+            ScoreComponent scoreComponent = DedicatedStorage.GetComponents<ScoreComponent>()[0];
 
             // Update UI
             scoreText.text = $"Score: {scoreComponent.TotalScore}";

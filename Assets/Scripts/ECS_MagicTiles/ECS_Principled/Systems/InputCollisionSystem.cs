@@ -17,9 +17,21 @@ namespace ECS_MagicTile
 
         private GeneralGameSetting generalGameSetting;
 
-        public InputCollisionSystem(GeneralGameSetting generalGameSetting)
+        ArchetypeStorage inputStorage;
+        ArchetypeStorage musicNoteStorage;
+
+        InputStateComponent[] inputStates;
+        CornerComponent[] musicNoteCorners;
+        MusicNoteInteractionComponent[] musicNoteInteractions;
+        MusicNoteFillerComponent[] musicNoteFillers;
+        MusicNoteComponent[] musicNotes;
+
+        private readonly MusicNoteViewSyncTool musicNoteViewSyncTool;
+
+        public InputCollisionSystem(GlobalPoint globalPoint)
         {
-            this.generalGameSetting = generalGameSetting;
+            this.generalGameSetting = globalPoint.generalGameSetting;
+            musicNoteViewSyncTool = globalPoint.musicNoteViewSyncTool;
         }
 
         public void SetWorld(World world)
@@ -27,44 +39,46 @@ namespace ECS_MagicTile
             World = world;
         }
 
-        public void Initialize() { }
+        public void Initialize()
+        {
+            musicNoteStorage = World.GetStorage(Archetype.Registry.MusicNote);
+            inputStorage = World.GetStorage(Archetype.Registry.Input);
+
+            inputStates = inputStorage.GetComponents<InputStateComponent>();
+            musicNoteCorners = musicNoteStorage.GetComponents<CornerComponent>();
+            musicNoteInteractions = musicNoteStorage.GetComponents<MusicNoteInteractionComponent>();
+            musicNoteFillers = musicNoteStorage.GetComponents<MusicNoteFillerComponent>();
+            musicNotes = musicNoteStorage.GetComponents<MusicNoteComponent>();
+        }
 
         public void Update(float deltaTime)
         {
-            ArchetypeStorage inputStorage = World.GetStorage(Archetype.Registry.Input);
-            ArchetypeStorage noteStorage = World.GetStorage(Archetype.Registry.MusicNote);
-
-            var inputStates = inputStorage.GetComponents<InputStateComponent>();
-            var transforms = noteStorage.GetComponents<TransformComponent>();
-            var corners = noteStorage.GetComponents<CornerComponent>();
-            var interactions = noteStorage.GetComponents<MusicNoteInteractionComponent>();
-            var fillers = noteStorage.GetComponents<MusicNoteFillerComponent>();
-            var notes = noteStorage.GetComponents<MusicNoteComponent>();
-
             for (int inputIdx = 0; inputIdx < MAX_INPUTS; inputIdx++)
             {
                 if (!inputStates[inputIdx].IsActive)
                     continue;
 
-                for (int noteIdx = 0; noteIdx < noteStorage.Count; noteIdx++)
+                for (int noteIdx = 0; noteIdx < musicNoteStorage.Count; noteIdx++)
                 {
                     ProcessNoteCollision(
-                        noteStorage.EntityIds[noteIdx],
                         inputStates[inputIdx],
-                        ref transforms[noteIdx],
-                        ref corners[noteIdx],
-                        ref interactions[noteIdx],
-                        ref fillers[noteIdx],
-                        notes[noteIdx]
+                        ref musicNoteCorners[noteIdx],
+                        ref musicNoteInteractions[noteIdx],
+                        ref musicNoteFillers[noteIdx],
+                        musicNotes[noteIdx]
                     );
                 }
             }
+
+            musicNoteViewSyncTool.SyncNoteState(
+                musicNoteInteractions,
+                musicNoteFillers,
+                musicNotes
+            );
         }
 
         private void ProcessNoteCollision(
-            int entityId,
             InputStateComponent input,
-            ref TransformComponent transform,
             ref CornerComponent corners,
             ref MusicNoteInteractionComponent interaction,
             ref MusicNoteFillerComponent filler,
@@ -86,22 +100,12 @@ namespace ECS_MagicTile
             if (!isInsideNote)
                 return;
 
-            ProcessNoteInteraction(
-                entityId,
-                input,
-                ref interaction,
-                ref transform,
-                ref corners,
-                ref filler,
-                note
-            );
+            ProcessNoteInteraction(input, ref interaction, ref corners, ref filler, note);
         }
 
         private void ProcessNoteInteraction(
-            int entityId,
             InputStateComponent input,
             ref MusicNoteInteractionComponent interaction,
-            ref TransformComponent transform,
             ref CornerComponent corners,
             ref MusicNoteFillerComponent filler,
             MusicNoteComponent note

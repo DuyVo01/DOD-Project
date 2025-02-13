@@ -3,8 +3,8 @@ using UnityEngine;
 namespace EventChannel
 {
     [CreateAssetMenu(
-        fileName = "SO_ScoreSignalEffectChannel",
-        menuName = "Event Channels/Score Signal Effect Channel"
+        fileName = "sO_BoolEventChannel",
+        menuName = "Event Channels/BoolEventChannel"
     )]
     public class BoolEventChannel : EventChannelSO<bool> { }
 }

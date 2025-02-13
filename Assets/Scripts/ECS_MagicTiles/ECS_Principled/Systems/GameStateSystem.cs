@@ -13,9 +13,15 @@ namespace ECS_MagicTile
 
         private readonly IntEventChannel startNoteEntityIdChannel;
 
+        ArchetypeStorage startingNoteStorage;
+        ActiveStateComponent[] startingNoteActiveState;
+        private StartingNoteSyncTool startingNoteSyncTool;
+
         public GameStateSystem(GlobalPoint globalPoint)
         {
             startNoteEntityIdChannel = globalPoint.entityIdChannel;
+
+            startingNoteSyncTool = globalPoint.startingNoteSyncTool;
         }
 
         public void Cleanup()
@@ -25,6 +31,10 @@ namespace ECS_MagicTile
 
         public void Initialize()
         {
+            startingNoteStorage = World.GetStorage(Archetype.Registry.StartingNote);
+
+            startingNoteActiveState = startingNoteStorage.GetComponents<ActiveStateComponent>();
+
             startNoteEntityIdChannel.Subscribe(OnStartNoteInteraction);
         }
 
@@ -40,9 +50,9 @@ namespace ECS_MagicTile
 
         private void OnStartNoteInteraction(int startNoteId)
         {
-            ArchetypeStorage storage = World.GetStorage(Archetype.Registry.StartingNote);
-            storage.GetComponents<ActiveStateComponent>()[0].isActive = false;
             SystemRegistry.SetGameState(EGameState.Ingame);
+            startingNoteActiveState[0].isActive = false;
+            startingNoteSyncTool.SyncStartNoteState(startingNoteActiveState[0]);
         }
     }
 }
