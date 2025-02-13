@@ -13,6 +13,9 @@ namespace ECS_MagicTile
         private readonly GeneralGameSetting generalGameSetting;
 
         ArchetypeStorage musicNoteStorage;
+        TransformComponent[] transforms;
+        CornerComponent[] corners;
+        MusicNoteComponent[] musicNoteComponents;
 
         public MovingNoteSystem(GeneralGameSetting generalGameSetting)
         {
@@ -24,6 +27,10 @@ namespace ECS_MagicTile
         public void Initialize()
         {
             musicNoteStorage = World.GetStorage(Archetype.Registry.MusicNote);
+
+            transforms = musicNoteStorage.GetComponents<TransformComponent>();
+            corners = musicNoteStorage.GetComponents<CornerComponent>();
+            musicNoteComponents = musicNoteStorage.GetComponents<MusicNoteComponent>();
         }
 
         public void SetWorld(World world)
@@ -33,11 +40,6 @@ namespace ECS_MagicTile
 
         public void Update(float deltaTime)
         {
-            TransformComponent[] transforms = musicNoteStorage.GetComponents<TransformComponent>();
-            CornerComponent[] corners = musicNoteStorage.GetComponents<CornerComponent>();
-            MusicNoteComponent[] musicNoteComponents =
-                musicNoteStorage.GetComponents<MusicNoteComponent>();
-
             float gameSpeed = generalGameSetting.GameSpeed;
 
             for (int i = 0; i < musicNoteStorage.Count; i++)

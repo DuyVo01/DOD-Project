@@ -59,6 +59,7 @@ namespace ECS_MagicTile
             SystemRegistry.AddSystem(new MusicNoteSyncer(this));
             SystemRegistry.AddSystem(new StartingNoteSyncer(this));
             SystemRegistry.AddSystem(new ScoreUISyncer(this));
+            SystemRegistry.AddSystem(new ProgressSyncer(this));
 
             //Game State system
             SystemRegistry.AddSystem(new GameStateSystem(this));
