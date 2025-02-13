@@ -81,15 +81,6 @@ namespace ECS_MagicTile
                 }
             );
 
-            public static readonly Archetype ScoreEffect = new(
-                new[]
-                {
-                    ComponentType.Registry.Transform,
-                    ComponentType.Registry.TransformGroup,
-                    ComponentType.Registry.Graphics,
-                }
-            );
-
             public static readonly Archetype SongProgress = new(
                 new[] { ComponentType.Registry.Progress }
             );
@@ -102,7 +93,6 @@ namespace ECS_MagicTile
                 Input,
                 StartingNote,
                 GameScore,
-                ScoreEffect,
                 SongProgress,
             };
 

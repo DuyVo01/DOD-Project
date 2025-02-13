@@ -2,6 +2,8 @@ using UnityEngine;
 
 public static class CameraViewUtils
 {
+    public const int CAMERA_ORTHOGRAPHIC_SIZE = 5;
+
     /// <summary>
     /// Gets the camera view boundaries in world units
     /// </summary>
@@ -60,7 +62,7 @@ public static class CameraViewUtils
         Vector2 spriteSize = sprite.bounds.size;
 
         // Calculate camera view size in world units
-        float cameraHeight = camera.orthographicSize * 2f;
+        float cameraHeight = CAMERA_ORTHOGRAPHIC_SIZE * 2f;
         float cameraWidth = cameraHeight * camera.aspect;
 
         // Calculate target size in world units

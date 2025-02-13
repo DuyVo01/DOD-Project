@@ -12,6 +12,19 @@ namespace ECS_MagicTile
 
         public EGameState GameStateToExecute => EGameState.WaitingToStart;
 
+        MusicNoteMidiData musicNoteMidiData;
+
+        ArchetypeStorage perfectLineStorage;
+        PerfectLineTagComponent[] perfectLineTag;
+        CornerComponent[] perfectLineCorners;
+
+        ArchetypeStorage musicNoteStorage;
+        TransformComponent[] musicNoteTransforms;
+        MusicNoteComponent[] musicNotes;
+
+        float lastPerfectLineTopLeftY;
+        float lastPerfectLineTopLeftX;
+
         public MusicNoteCreationSystem(
             MusicNoteCreationSetting musicNoteCreationSetting,
             GeneralGameSetting generalGameSetting
@@ -28,22 +41,13 @@ namespace ECS_MagicTile
 
         public void Initialize()
         {
-            MusicNoteMidiData musicNoteMidiData = MidiNoteParser.ParseFromText(
+            musicNoteMidiData = MidiNoteParser.ParseFromText(
                 musicNoteCreationSetting.MidiContent.text
             );
 
-            ArchetypeStorage perfectLineStorage = World.GetStorage(Archetype.Registry.PerfectLine);
-
-            ref PerfectLineTagComponent PerfectLine =
-                ref perfectLineStorage.GetComponents<PerfectLineTagComponent>()[0];
-
-            ref CornerComponent perfectLineCorners =
-                ref perfectLineStorage.GetComponents<CornerComponent>()[0];
-
-            // Calculate lane width once
-            float totalWidth = perfectLineCorners.TopRight.x - perfectLineCorners.TopLeft.x;
-            float laneWidth = totalWidth / 4;
-            float halfLaneWidth = laneWidth / 2f;
+            perfectLineStorage = World.GetStorage(Archetype.Registry.PerfectLine);
+            perfectLineTag = perfectLineStorage.GetComponents<PerfectLineTagComponent>();
+            perfectLineCorners = perfectLineStorage.GetComponents<CornerComponent>();
 
             for (int i = 0; i < musicNoteMidiData.TotalNotes; i++)
             {
@@ -73,24 +77,53 @@ namespace ECS_MagicTile
                 World.CreateEntityWithComponents(Archetype.Registry.MusicNote, components);
             }
 
-            ArchetypeStorage musicNoteStorage = World.GetStorage(Archetype.Registry.MusicNote);
+            musicNoteStorage = World.GetStorage(Archetype.Registry.MusicNote);
 
-            TransformComponent[] transforms = musicNoteStorage.GetComponents<TransformComponent>();
-            MusicNoteComponent[] musicNotes = musicNoteStorage.GetComponents<MusicNoteComponent>();
+            musicNoteTransforms = musicNoteStorage.GetComponents<TransformComponent>();
+            musicNotes = musicNoteStorage.GetComponents<MusicNoteComponent>();
+        }
 
+        public void Update(float deltaTime)
+        {
+            if (
+                lastPerfectLineTopLeftY != perfectLineCorners[0].TopLeft.y
+                || lastPerfectLineTopLeftX != perfectLineCorners[0].TopLeft.x
+            )
+            {
+                lastPerfectLineTopLeftY = perfectLineCorners[0].TopLeft.y;
+                lastPerfectLineTopLeftX = perfectLineCorners[0].TopLeft.x;
+                PrepareMusicNoteData();
+            }
+        }
+
+        public void Cleanup()
+        {
+            //
+        }
+
+        private void PrepareMusicNoteData()
+        {
+            ref PerfectLineTagComponent PerfectLine = ref perfectLineTag[0];
+
+            ref CornerComponent perfectLineCorner = ref perfectLineCorners[0];
+
+            // Calculate lane width once
+            float totalWidth = perfectLineCorner.TopRight.x - perfectLineCorner.TopLeft.x;
+            float laneWidth = totalWidth / 4;
+            float halfLaneWidth = laneWidth / 2f;
             for (int i = 0; i < musicNoteStorage.Count; i++)
             {
                 float spawnX =
-                    perfectLineCorners.TopLeft.x
+                    perfectLineCorner.TopLeft.x
                     + (musicNoteMidiData.PositionIds[i] * laneWidth)
                     + halfLaneWidth;
 
                 float spawnY =
-                    perfectLineCorners.TopLeft.y
+                    perfectLineCorner.TopLeft.y
                     + (musicNoteMidiData.TimeAppears[i] * generalGameSetting.GameSpeed)
-                    + transforms[i].Size.y / 2f;
+                    + musicNoteTransforms[i].Size.y / 2f;
 
-                transforms[i].Posision = new Vector2(spawnX, spawnY);
+                musicNoteTransforms[i].Posision = new Vector2(spawnX, spawnY);
 
                 float scaleX = PerfectLine.PerfectLineWidth / 4;
 
@@ -112,18 +145,8 @@ namespace ECS_MagicTile
                     );
                 }
 
-                transforms[i].Size = new Vector2(scaleX, scaleY);
+                musicNoteTransforms[i].Size = new Vector2(scaleX, scaleY);
             }
-        }
-
-        public void Update(float deltaTime)
-        {
-            //
-        }
-
-        public void Cleanup()
-        {
-            //
         }
     }
 }

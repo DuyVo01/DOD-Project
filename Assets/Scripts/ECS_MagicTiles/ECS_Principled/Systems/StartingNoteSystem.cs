@@ -1,5 +1,4 @@
 using ECS_MagicTile.Components;
-using EventChannel;
 using UnityEngine;
 
 namespace ECS_MagicTile
@@ -13,6 +12,8 @@ namespace ECS_MagicTile
 
         private readonly MusicNoteCreationSetting musicNoteCreationSetting;
 
+        private readonly StartingNoteSyncTool startingNoteSyncTool;
+
         private ArchetypeStorage startingNoteStorage;
         private ArchetypeStorage perfectLineStorage;
 
@@ -20,16 +21,20 @@ namespace ECS_MagicTile
         private CornerComponent[] perfectLineCorners;
 
         float lastPerfectLineTopLeftY;
+        float lastPerfectLineTopLeftX;
 
         public StartingNoteSystem(GlobalPoint globalPoint)
         {
             musicNoteCreationSetting = globalPoint.musicNoteCreationSettings;
+            startingNoteSyncTool = globalPoint.startingNoteSyncTool;
         }
 
         public void Cleanup() { }
 
         public void Initialize()
         {
+            startingNoteSyncTool.InitializeTool();
+
             startingNoteStorage ??= World.GetStorage(Archetype.Registry.StartingNote);
             perfectLineStorage ??= World.GetStorage(Archetype.Registry.PerfectLine);
 
@@ -50,9 +55,13 @@ namespace ECS_MagicTile
 
         public void Update(float deltaTime)
         {
-            if (lastPerfectLineTopLeftY != perfectLineCorners[0].TopLeft.y)
+            if (
+                lastPerfectLineTopLeftY != perfectLineCorners[0].TopLeft.y
+                || lastPerfectLineTopLeftX != perfectLineCorners[0].TopLeft.x
+            )
             {
                 lastPerfectLineTopLeftY = perfectLineCorners[0].TopLeft.y;
+                lastPerfectLineTopLeftX = perfectLineCorners[0].TopLeft.x;
                 SetupStartingNote();
             }
 
@@ -87,6 +96,8 @@ namespace ECS_MagicTile
             );
 
             transform.Size = new Vector2(scaleX, scaleY);
+
+            startingNoteSyncTool.SyncStartNoteTransform(transform);
         }
     }
 }

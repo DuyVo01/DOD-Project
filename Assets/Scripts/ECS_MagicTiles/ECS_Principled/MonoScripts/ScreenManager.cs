@@ -1,10 +1,9 @@
 using EventChannel;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace ECS_MagicTile
 {
-    public class ScreenManager : MonoBehaviour
+    public class ScreenManager : PersistentSingleton<ScreenManager>
     {
         [SerializeField]
         private BoolEventChannel OnOrientationChange;

@@ -11,10 +11,10 @@ public class PerfectLineCameraSpacePositionAdjuster : MonoBehaviour
     private PerfectLineSetting perfectLineSetting;
 
     [SerializeField]
-    private PerfectLineSetting.PositionPreset portraitNormalizedPos;
+    private PerfectLineSetting.NormalizedFloatPreset portraitNormalizedPos;
 
     [SerializeField]
-    private PerfectLineSetting.PositionPreset landscapeNormalizedPos;
+    private PerfectLineSetting.NormalizedFloatPreset landscapeNormalizedPos;
 
     void Start()
     {
@@ -50,8 +50,8 @@ public class PerfectLineCameraSpacePositionAdjuster : MonoBehaviour
             // Position object within camera view
             transform.position = CameraViewUtils.GetPositionInCameraView(
                 targetCamera,
-                portraitNormalizedPos.normalizedX,
-                portraitNormalizedPos.normalizedY
+                portraitNormalizedPos.normalizedX.Value,
+                portraitNormalizedPos.normalizedY.Value
             );
         }
         else
@@ -59,8 +59,8 @@ public class PerfectLineCameraSpacePositionAdjuster : MonoBehaviour
             // Position object within camera view
             transform.position = CameraViewUtils.GetPositionInCameraView(
                 targetCamera,
-                landscapeNormalizedPos.normalizedX,
-                landscapeNormalizedPos.normalizedY
+                landscapeNormalizedPos.normalizedX.Value,
+                landscapeNormalizedPos.normalizedY.Value
             );
         }
 

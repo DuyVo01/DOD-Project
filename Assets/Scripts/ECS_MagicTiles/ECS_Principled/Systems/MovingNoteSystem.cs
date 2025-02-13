@@ -14,9 +14,16 @@ namespace ECS_MagicTile
 
         ArchetypeStorage musicNoteStorage;
 
-        public MovingNoteSystem(GeneralGameSetting generalGameSetting)
+        TransformComponent[] musicNoteTransforms;
+        CornerComponent[] musicNoteCornsers;
+        MusicNoteComponent[] musicNoteComponents;
+
+        private readonly MusicNoteViewSyncTool musicNoteViewSyncTool;
+
+        public MovingNoteSystem(GlobalPoint globalPoint)
         {
-            this.generalGameSetting = generalGameSetting;
+            this.generalGameSetting = globalPoint.generalGameSetting;
+            musicNoteViewSyncTool = globalPoint.musicNoteViewSyncTool;
         }
 
         public void Cleanup() { }
@@ -24,6 +31,10 @@ namespace ECS_MagicTile
         public void Initialize()
         {
             musicNoteStorage = World.GetStorage(Archetype.Registry.MusicNote);
+
+            musicNoteTransforms = musicNoteStorage.GetComponents<TransformComponent>();
+            musicNoteCornsers = musicNoteStorage.GetComponents<CornerComponent>();
+            musicNoteComponents = musicNoteStorage.GetComponents<MusicNoteComponent>();
         }
 
         public void SetWorld(World world)
@@ -33,11 +44,6 @@ namespace ECS_MagicTile
 
         public void Update(float deltaTime)
         {
-            TransformComponent[] transforms = musicNoteStorage.GetComponents<TransformComponent>();
-            CornerComponent[] corners = musicNoteStorage.GetComponents<CornerComponent>();
-            MusicNoteComponent[] musicNoteComponents =
-                musicNoteStorage.GetComponents<MusicNoteComponent>();
-
             float gameSpeed = generalGameSetting.GameSpeed;
 
             for (int i = 0; i < musicNoteStorage.Count; i++)
@@ -51,21 +57,33 @@ namespace ECS_MagicTile
                 }
 
                 // Update position
-                Vector2 newPos = transforms[i].Posision;
+                Vector2 newPos = musicNoteTransforms[i].Posision;
                 newPos.y -= gameSpeed * Time.deltaTime;
-                transforms[i].Posision = newPos;
+                musicNoteTransforms[i].Posision = newPos;
 
                 // Update corners based on new position and size
-                Vector2 halfSize = transforms[i].Size * 0.5f;
-                corners[i].TopLeft = new Vector2(newPos.x - halfSize.x, newPos.y + halfSize.y);
-                corners[i].TopRight = new Vector2(newPos.x + halfSize.x, newPos.y + halfSize.y);
-                corners[i].BottomLeft = new Vector2(newPos.x - halfSize.x, newPos.y - halfSize.y);
-                corners[i].BottomRight = new Vector2(newPos.x + halfSize.x, newPos.y - halfSize.y);
+                Vector2 halfSize = musicNoteTransforms[i].Size * 0.5f;
+                musicNoteCornsers[i].TopLeft = new Vector2(
+                    newPos.x - halfSize.x,
+                    newPos.y + halfSize.y
+                );
+                musicNoteCornsers[i].TopRight = new Vector2(
+                    newPos.x + halfSize.x,
+                    newPos.y + halfSize.y
+                );
+                musicNoteCornsers[i].BottomLeft = new Vector2(
+                    newPos.x - halfSize.x,
+                    newPos.y - halfSize.y
+                );
+                musicNoteCornsers[i].BottomRight = new Vector2(
+                    newPos.x + halfSize.x,
+                    newPos.y - halfSize.y
+                );
 
                 if (
                     CameraViewUtils.IsPositionOutOfBounds(
                         Camera.main,
-                        corners[i].TopLeft,
+                        musicNoteCornsers[i].TopLeft,
                         CameraViewUtils.CameraBoundCheck.Bottom
                     )
                 )
@@ -74,6 +92,8 @@ namespace ECS_MagicTile
                         MusicNotePositionState.OutOfScreen;
                 }
             }
+
+            musicNoteViewSyncTool.SyncNoteTransforms(musicNoteTransforms, musicNoteComponents);
         }
     }
 }

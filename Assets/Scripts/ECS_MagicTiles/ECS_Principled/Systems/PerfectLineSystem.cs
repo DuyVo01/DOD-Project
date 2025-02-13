@@ -1,7 +1,5 @@
 using ECS_MagicTile.Components;
 using EventChannel;
-using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace ECS_MagicTile
@@ -27,9 +25,9 @@ namespace ECS_MagicTile
         SpriteRenderer perfectLineSprite;
         Camera mainCamera;
 
-        float lastNormalizeYInCamSpacePortrait;
-        float lastNormalizeYInCamSpaceLandscape;
         SpriteUtility.SpriteCorners perfectLineCornersInCamSpace;
+
+        private PerfectLineSyncTool perfectLineSyncTool;
 
         public PerfectLineSystem(GlobalPoint globalPoint)
         {
@@ -37,6 +35,8 @@ namespace ECS_MagicTile
             perfectLineSetting = globalPoint.perfectLineSetting;
             mainCamera = globalPoint.mainCamera;
             OnOrientationChangedChannel = globalPoint.OnOrientationChangedChannel;
+
+            perfectLineSyncTool = globalPoint.perfectLineSyncTool;
         }
 
         public EGameState GameStateToExecute => EGameState.All;
@@ -44,14 +44,36 @@ namespace ECS_MagicTile
         public void Initialize()
         {
             perfectLineStorage = World.GetStorage(Archetype.Registry.PerfectLine);
+
             perfectLineTagComponents = perfectLineStorage.GetComponents<PerfectLineTagComponent>();
             perfectLineCorners = perfectLineStorage.GetComponents<CornerComponent>();
             perfectLineTransforms = perfectLineStorage.GetComponents<TransformComponent>();
 
-            UpdatePerfectLineData(true);
-            UpdatePerfectLineData(false);
+            //
+            perfectLineSetting.portraitNormalizedPos.normalizedX.Subscribe(UpdatePerfectLinePos);
+            perfectLineSetting.portraitNormalizedPos.normalizedY.Subscribe(UpdatePerfectLinePos);
 
-            OnOrientationChangedChannel.Subscribe(UpdatePerfectLineData);
+            //
+            perfectLineSetting.landscapeNormalizedPos.normalizedX.Subscribe(UpdatePerfectLinePos);
+            perfectLineSetting.landscapeNormalizedPos.normalizedY.Subscribe(UpdatePerfectLinePos);
+
+            //
+            perfectLineSetting.portraitNormalizedSize.normalizedX.Subscribe(
+                UpdatePerfectLineSizeData
+            );
+            perfectLineSetting.portraitNormalizedSize.normalizedY.Subscribe(
+                UpdatePerfectLineSizeData
+            );
+
+            //
+            perfectLineSetting.landscapeNormalizedSize.normalizedX.Subscribe(
+                UpdatePerfectLineSizeData
+            );
+            perfectLineSetting.landscapeNormalizedSize.normalizedY.Subscribe(
+                UpdatePerfectLineSizeData
+            );
+
+            OnOrientationChangedChannel.Subscribe(OnOrientationChanged);
         }
 
         public void Cleanup() { }
@@ -61,62 +83,62 @@ namespace ECS_MagicTile
             World = world;
         }
 
-        public void Update(float deltaTime)
+        public void Update(float deltaTime) { }
+
+        private void UpdatePerfectLinePos(float value)
         {
-            if (
-                perfectLineSetting.portraitNormalizedPos.normalizedY
-                != lastNormalizeYInCamSpacePortrait
-            )
-            {
-                lastNormalizeYInCamSpacePortrait = perfectLineSetting
-                    .portraitNormalizedPos
-                    .normalizedY;
-
-                UpdatePerfectLineData(
-                    Screen.currentResolution.height > Screen.currentResolution.width
-                );
-
-                Debug.Log($"PerfectLine Topleft: {perfectLineCorners[0].TopLeft.x}");
-
-                return;
-            }
-
-            if (
-                perfectLineSetting.landscapeNormalizedPos.normalizedY
-                != lastNormalizeYInCamSpaceLandscape
-            )
-            {
-                lastNormalizeYInCamSpaceLandscape = perfectLineSetting
-                    .landscapeNormalizedPos
-                    .normalizedY;
-
-                UpdatePerfectLineData(
-                    Screen.currentResolution.height > Screen.currentResolution.width
-                );
-
-                return;
-            }
-        }
-
-        private void UpdatePerfectLineData(bool isPortrait)
-        {
-            if (isPortrait)
+            if (ScreenManager.Instance.IsPortrait)
             {
                 perfectLineTransforms[0].Posision = CameraViewUtils.GetPositionInCameraView(
                     mainCamera,
-                    perfectLineSetting.portraitNormalizedPos.normalizedX,
-                    perfectLineSetting.portraitNormalizedPos.normalizedY
+                    perfectLineSetting.portraitNormalizedPos.normalizedX.Value,
+                    perfectLineSetting.portraitNormalizedPos.normalizedY.Value
                 );
             }
             else
             {
                 perfectLineTransforms[0].Posision = CameraViewUtils.GetPositionInCameraView(
                     mainCamera,
-                    perfectLineSetting.landscapeNormalizedPos.normalizedX,
-                    perfectLineSetting.landscapeNormalizedPos.normalizedY
+                    perfectLineSetting.landscapeNormalizedPos.normalizedX.Value,
+                    perfectLineSetting.landscapeNormalizedPos.normalizedY.Value
                 );
             }
 
+            perfectLineSyncTool.SyncPerfectLineTransform(perfectLineTransforms[0]);
+
+            UpdatePerfectLineCornersData();
+        }
+
+        private void UpdatePerfectLineSizeData(float value)
+        {
+            if (ScreenManager.Instance.IsPortrait)
+            {
+                perfectLineTransforms[0].Size = SpriteUtility.ResizeInCameraView(
+                    perfectLineSprite,
+                    mainCamera,
+                    perfectLineSetting.portraitNormalizedSize.normalizedX.Value,
+                    perfectLineSetting.portraitNormalizedSize.normalizedY.Value,
+                    false
+                );
+            }
+            else
+            {
+                perfectLineTransforms[0].Size = SpriteUtility.ResizeInCameraView(
+                    perfectLineSprite,
+                    mainCamera,
+                    perfectLineSetting.landscapeNormalizedSize.normalizedX.Value,
+                    perfectLineSetting.landscapeNormalizedSize.normalizedY.Value,
+                    false
+                );
+            }
+
+            perfectLineSyncTool.SyncPerfectLineTransform(perfectLineTransforms[0]);
+
+            UpdatePerfectLineCornersData();
+        }
+
+        private void UpdatePerfectLineCornersData()
+        {
             perfectLineCornersInCamSpace = SpriteUtility.GetSpriteCorners(perfectLineSprite);
 
             perfectLineCorners[0].TopLeft = perfectLineCornersInCamSpace.TopLeft;
@@ -127,6 +149,19 @@ namespace ECS_MagicTile
             perfectLineTagComponents[0].PerfectLineWidth = Mathf.Abs(
                 perfectLineCornersInCamSpace.TopLeft.x - perfectLineCornersInCamSpace.TopRight.x
             );
+        }
+
+        private void OnOrientationChanged(bool isPortrait)
+        {
+            if (isPortrait)
+            {
+                UpdatePerfectLinePos(0f);
+            }
+            else
+            {
+                UpdatePerfectLinePos(0f);
+            }
+            UpdatePerfectLineSizeData(0f);
         }
     }
 }

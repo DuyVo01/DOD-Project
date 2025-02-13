@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace ECS_MagicTile
@@ -9,18 +10,43 @@ namespace ECS_MagicTile
     public class PerfectLineSetting : ScriptableObject
     {
         [Header(" Normalize Positions")]
-        public PositionPreset portraitNormalizedPos;
+        public NormalizedFloatPreset portraitNormalizedPos;
 
-        public PositionPreset landscapeNormalizedPos;
+        public NormalizedFloatPreset landscapeNormalizedPos;
+
+        [Header("Normalized Size")]
+        public NormalizedFloatPreset portraitNormalizedSize;
+
+        public NormalizedFloatPreset landscapeNormalizedSize;
 
         [System.Serializable]
-        public struct PositionPreset
+        public struct NormalizedFloatPreset
+        {
+            public RangeReactiveFloat normalizedX;
+
+            public RangeReactiveFloat normalizedY;
+        }
+
+        [Serializable]
+        public class RangeReactiveFloat : ReactiveValue<float>
         {
             [Range(0, 1)]
-            public float normalizedX;
+            protected new float _value;
+        }
 
-            [Range(0, 1)]
-            public float normalizedY;
+        private void OnValidate()
+        {
+            portraitNormalizedPos.normalizedX.OnChangeValidatedInInpsector();
+            portraitNormalizedPos.normalizedY.OnChangeValidatedInInpsector();
+
+            landscapeNormalizedPos.normalizedX.OnChangeValidatedInInpsector();
+            landscapeNormalizedPos.normalizedY.OnChangeValidatedInInpsector();
+
+            portraitNormalizedSize.normalizedX.OnChangeValidatedInInpsector();
+            portraitNormalizedSize.normalizedY.OnChangeValidatedInInpsector();
+
+            landscapeNormalizedSize.normalizedX.OnChangeValidatedInInpsector();
+            landscapeNormalizedSize.normalizedY.OnChangeValidatedInInpsector();
         }
     }
 }

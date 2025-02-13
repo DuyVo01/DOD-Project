@@ -121,4 +121,29 @@ public static class SpriteUtility
             _ => center,
         };
     }
+
+    /// <summary>
+    /// Resize sprite to fill percentage of camera view
+    /// </summary>
+    public static Vector3 ResizeInCameraView(
+        SpriteRenderer spriteRenderer,
+        Camera camera,
+        float widthPercentage,
+        float heightPercentage,
+        bool maintainAspectRatio = true
+    )
+    {
+        if (spriteRenderer == null || spriteRenderer.sprite == null)
+            return Vector3.zero;
+
+        Vector2 scale = CameraViewUtils.CalculateScaleInCameraView(
+            camera,
+            spriteRenderer.sprite,
+            widthPercentage,
+            heightPercentage,
+            maintainAspectRatio
+        );
+
+        return new Vector3(scale.x, scale.y, 1f);
+    }
 }
