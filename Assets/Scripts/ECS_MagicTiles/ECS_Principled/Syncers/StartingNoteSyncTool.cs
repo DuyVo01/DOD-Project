@@ -29,7 +29,7 @@ namespace ECS_MagicTile
 
         public void SyncStartNoteTransform(TransformComponent startNoteTransform)
         {
-            startingNoteViewObject.transform.position = startNoteTransform.Posision;
+            startingNoteViewObject.transform.position = startNoteTransform.Position;
             startingNoteViewObject.transform.localScale = startNoteTransform.Size;
         }
 

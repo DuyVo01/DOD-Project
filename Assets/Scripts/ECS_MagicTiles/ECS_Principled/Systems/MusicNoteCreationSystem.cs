@@ -111,6 +111,7 @@ namespace ECS_MagicTile
             float totalWidth = perfectLineCorner.TopRight.x - perfectLineCorner.TopLeft.x;
             float laneWidth = totalWidth / 4;
             float halfLaneWidth = laneWidth / 2f;
+
             for (int i = 0; i < musicNoteStorage.Count; i++)
             {
                 float spawnX =
@@ -123,7 +124,7 @@ namespace ECS_MagicTile
                     + (musicNoteMidiData.TimeAppears[i] * generalGameSetting.GameSpeed)
                     + musicNoteTransforms[i].Size.y / 2f;
 
-                musicNoteTransforms[i].Posision = new Vector2(spawnX, spawnY);
+                musicNoteTransforms[i].Position = new Vector2(spawnX, spawnY);
 
                 float scaleX = PerfectLine.PerfectLineWidth / 4;
 

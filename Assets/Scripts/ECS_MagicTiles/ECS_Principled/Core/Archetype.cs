@@ -85,6 +85,10 @@ namespace ECS_MagicTile
                 new[] { ComponentType.Registry.Progress }
             );
 
+            public static readonly Archetype LaneLines = new(
+                new[] { ComponentType.Registry.Transform }
+            );
+
             // Keep track of all archetypes for initialization
             private static readonly Archetype[] AllArchetypes =
             {
@@ -94,6 +98,7 @@ namespace ECS_MagicTile
                 StartingNote,
                 GameScore,
                 SongProgress,
+                LaneLines,
             };
 
             public static ReadOnlySpan<Archetype> GetAllArchetypes() => AllArchetypes;

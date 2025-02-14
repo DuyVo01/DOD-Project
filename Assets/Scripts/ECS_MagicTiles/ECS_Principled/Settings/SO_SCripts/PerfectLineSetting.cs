@@ -27,13 +27,6 @@ namespace ECS_MagicTile
             public RangeReactiveFloat normalizedY;
         }
 
-        [Serializable]
-        public class RangeReactiveFloat : ReactiveValue<float>
-        {
-            [Range(0, 1)]
-            protected new float _value;
-        }
-
         private void OnValidate()
         {
             portraitNormalizedPos.normalizedX.OnChangeValidatedInInpsector();
@@ -48,5 +41,12 @@ namespace ECS_MagicTile
             landscapeNormalizedSize.normalizedX.OnChangeValidatedInInpsector();
             landscapeNormalizedSize.normalizedY.OnChangeValidatedInInpsector();
         }
+    }
+
+    [Serializable]
+    public class RangeReactiveFloat : ReactiveValue<float>
+    {
+        [Range(0, 1)]
+        protected new float _value;
     }
 }

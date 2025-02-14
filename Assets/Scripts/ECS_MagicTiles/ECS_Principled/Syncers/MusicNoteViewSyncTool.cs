@@ -41,7 +41,7 @@ namespace ECS_MagicTile
                 int entityId = DedicatedStorage.EntityIds[i];
                 GameObject view = GetOrCreateNoteView(entityId, notes[i].musicNoteType);
 
-                view.transform.position = transforms[i].Posision;
+                view.transform.position = transforms[i].Position;
                 view.transform.localScale = transforms[i].Size;
             }
         }

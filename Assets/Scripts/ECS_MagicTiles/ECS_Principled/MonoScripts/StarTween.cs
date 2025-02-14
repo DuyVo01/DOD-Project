@@ -18,6 +18,14 @@ namespace ECS_MagicTile
         {
             this.stars = stars;
             currentStarIndexToProcess = 0;
+            Color color;
+            for (int i = 0; i < stars.Length; i++)
+            {
+                color = stars[i].starAwakenedImg.color;
+                color.a = 0;
+                ;
+                stars[i].starAwakenedImg.color = color;
+            }
         }
 
         public void PlayEffect()

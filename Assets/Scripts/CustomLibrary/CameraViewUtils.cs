@@ -44,6 +44,12 @@ public static class CameraViewUtils
         return new Vector3(x, y, z);
     }
 
+    public static float GetPositionYInCameraView(Camera camera, float normalizedY)
+    {
+        Rect bounds = GetCameraViewBounds(camera);
+        return Mathf.Lerp(bounds.yMin, bounds.yMax, normalizedY);
+    }
+
     /// <summary>
     /// Calculates scale needed to make sprite fill specified portion of camera view
     /// </summary>

@@ -16,7 +16,7 @@ namespace ECS_MagicTile
 
         public void SyncPerfectLineTransform(TransformComponent perfectLineTransform)
         {
-            perfectLineSprite.transform.position = perfectLineTransform.Posision;
+            perfectLineSprite.transform.position = perfectLineTransform.Position;
             perfectLineSprite.transform.localScale = perfectLineTransform.Size;
         }
     }

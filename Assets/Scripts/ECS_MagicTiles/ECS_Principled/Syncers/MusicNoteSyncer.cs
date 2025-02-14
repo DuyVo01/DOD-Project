@@ -70,7 +70,7 @@ namespace ECS_MagicTile
                 // Get or create view based on note type
                 GameObject view = GetOrCreateNoteView(entityId, notes[i].musicNoteType);
 
-                view.transform.position = transforms[i].Posision;
+                view.transform.position = transforms[i].Position;
                 view.transform.localScale = transforms[i].Size;
 
                 SyncNoteState(entityId, view, notes[i], interactions[i], fillers[i]);

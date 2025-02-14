@@ -57,9 +57,9 @@ namespace ECS_MagicTile
                 }
 
                 // Update position
-                Vector2 newPos = musicNoteTransforms[i].Posision;
+                Vector2 newPos = musicNoteTransforms[i].Position;
                 newPos.y -= gameSpeed * Time.deltaTime;
-                musicNoteTransforms[i].Posision = newPos;
+                musicNoteTransforms[i].Position = newPos;
 
                 // Update corners based on new position and size
                 Vector2 halfSize = musicNoteTransforms[i].Size * 0.5f;

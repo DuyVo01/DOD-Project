@@ -34,6 +34,7 @@ namespace ECS_MagicTile
         public ScoringSystem(GlobalPoint globalPoint)
         {
             this.scoreSignalEffectChannel = globalPoint.OnScoreHitChannel;
+            this.gameScoreSyncTool = globalPoint.gameScoreSyncTool;
         }
 
         public void Cleanup()
@@ -114,7 +115,7 @@ namespace ECS_MagicTile
         )
         {
             float distanceFromPerfect = Mathf.Abs(
-                musicTransform.Posision.y - perfectLineCorners.TopLeft.y
+                musicTransform.Position.y - perfectLineCorners.TopLeft.y
             );
 
             int scoreToAdd;
@@ -132,6 +133,8 @@ namespace ECS_MagicTile
 
             gameScore.TotalScore += scoreToAdd;
             scoreStateComponent.HasBeenScored = true;
+
+            gameScoreSyncTool.SyncGameScore(gameScore);
         }
     }
 }

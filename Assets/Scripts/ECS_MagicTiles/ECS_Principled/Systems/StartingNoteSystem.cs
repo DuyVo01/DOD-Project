@@ -83,7 +83,7 @@ namespace ECS_MagicTile
             float spawnX = perfectLineCorner.TopLeft.x + (0 * laneWidth) + halfLaneWidth;
             float spawnY = perfectLineCorner.TopLeft.y;
 
-            transform.Posision = new Vector2(spawnX, spawnY);
+            transform.Position = new Vector2(spawnX, spawnY);
 
             ref PerfectLineTagComponent PerfectLine =
                 ref perfectLineStorage.GetComponents<PerfectLineTagComponent>()[0];

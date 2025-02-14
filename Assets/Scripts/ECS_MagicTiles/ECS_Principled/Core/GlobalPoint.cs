@@ -12,9 +12,8 @@ namespace ECS_MagicTile
 
         public MusicNoteCreationSetting musicNoteCreationSettings;
 
-        public ECS_MagicTile.Settings.ScoreEffectSettings scoreEffectSettings;
-
         public PerfectLineSetting perfectLineSetting;
+        public LaneLineSettings laneLineSettings;
 
         [Header("Event Channel")]
         public IntEventChannel entityIdChannel;
@@ -40,6 +39,8 @@ namespace ECS_MagicTile
         public PerfectLineSyncTool perfectLineSyncTool { get; private set; }
         public StartingNoteSyncTool startingNoteSyncTool { get; private set; }
         public GameScoreSyncTool gameScoreSyncTool { get; private set; }
+        public ProgressSyncTool progressSyncTool { get; private set; }
+        public LaneLineSyncTool laneLineSyncTool { get; private set; }
 
         private void Awake()
         {
@@ -57,6 +58,8 @@ namespace ECS_MagicTile
             perfectLineSyncTool = new PerfectLineSyncTool(this);
             startingNoteSyncTool = new StartingNoteSyncTool(this);
             gameScoreSyncTool = new GameScoreSyncTool(this);
+            progressSyncTool = new ProgressSyncTool(this);
+            laneLineSyncTool = new LaneLineSyncTool(this);
         }
 
         private void RegisterSystems()
@@ -77,10 +80,7 @@ namespace ECS_MagicTile
             SystemRegistry.AddSystem(new InputCollisionSystem(this));
             SystemRegistry.AddSystem(new ScoringSystem(this));
             SystemRegistry.AddSystem(new ProgressSystem(this));
-
-            //Syncer systems
-            SystemRegistry.AddSystem(new ScoreUISyncer(this));
-            SystemRegistry.AddSystem(new ProgressSyncer(this));
+            SystemRegistry.AddSystem(new LaneLineSystem(this));
 
             //Game State system
             SystemRegistry.AddSystem(new GameStateSystem(this));

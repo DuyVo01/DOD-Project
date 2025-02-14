@@ -16,6 +16,15 @@ namespace ECS_MagicTile
         {
             this.crowns = crownProperties;
             currentCrownIndexToProcess = 0;
+            Color color;
+
+            for (int i = 0; i < crowns.Length; i++)
+            {
+                color = crowns[i].crownAwakenedImg.color;
+                color.a = 0;
+                ;
+                crowns[i].crownAwakenedImg.color = color;
+            }
         }
 
         public void PlayEffect()
@@ -87,7 +96,7 @@ namespace ECS_MagicTile
         [System.Serializable]
         public class CrownProperties
         {
-            [Header("Star")]
+            [Header("Crown")]
             public RectTransform crownRect;
             public Image crownAwakenedImg;
 

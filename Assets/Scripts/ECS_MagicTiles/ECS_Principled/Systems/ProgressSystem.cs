@@ -12,9 +12,12 @@ namespace ECS_MagicTile
 
         private BoolEventChannel scoreEventChannel;
 
+        private ProgressSyncTool progressSyncTool;
+
         public ProgressSystem(GlobalPoint globalPoint)
         {
             this.scoreEventChannel = globalPoint.OnScoreHitChannel;
+            progressSyncTool = globalPoint.progressSyncTool;
         }
 
         private ArchetypeStorage progressArchetype;
@@ -44,6 +47,8 @@ namespace ECS_MagicTile
                 progress.CurrentProgressRawValue / progress.MaxProgressRawValue;
 
             Debug.Log($"Current Progress: {progress.currentProgressPercent}");
+
+            progressSyncTool.SycnProgress(progress);
         }
     }
 }

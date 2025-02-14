@@ -89,7 +89,7 @@ namespace ECS_MagicTile
         {
             if (ScreenManager.Instance.IsPortrait)
             {
-                perfectLineTransforms[0].Posision = CameraViewUtils.GetPositionInCameraView(
+                perfectLineTransforms[0].Position = CameraViewUtils.GetPositionInCameraView(
                     mainCamera,
                     perfectLineSetting.portraitNormalizedPos.normalizedX.Value,
                     perfectLineSetting.portraitNormalizedPos.normalizedY.Value
@@ -97,7 +97,7 @@ namespace ECS_MagicTile
             }
             else
             {
-                perfectLineTransforms[0].Posision = CameraViewUtils.GetPositionInCameraView(
+                perfectLineTransforms[0].Position = CameraViewUtils.GetPositionInCameraView(
                     mainCamera,
                     perfectLineSetting.landscapeNormalizedPos.normalizedX.Value,
                     perfectLineSetting.landscapeNormalizedPos.normalizedY.Value

@@ -48,7 +48,7 @@ namespace ECS_MagicTile
             //     IsEnabled = false;
             // }
 
-            startingNoteViewObject.transform.position = startingNoteTransformComponents[0].Posision;
+            startingNoteViewObject.transform.position = startingNoteTransformComponents[0].Position;
             startingNoteViewObject.transform.localScale = startingNoteTransformComponents[0].Size;
         }
     }

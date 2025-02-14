@@ -17,7 +17,7 @@ namespace ECS_MagicTile
 
         public ProgressSyncer(GlobalPoint globalPoint)
         {
-            scoreEventChannel = globalPoint.scoreEffectChannel;
+            scoreEventChannel = globalPoint.OnScoreHitChannel;
             progressSlider = globalPoint.progressSlider;
         }
 

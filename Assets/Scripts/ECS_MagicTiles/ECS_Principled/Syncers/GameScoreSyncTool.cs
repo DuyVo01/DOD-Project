@@ -15,7 +15,7 @@ namespace ECS_MagicTile
         protected override Archetype Archetype => Archetype.Registry.GameScore;
         private readonly TextMeshProUGUI scoreText;
 
-        public void UpdateScore(ScoreComponent scoreComponent)
+        public void SyncGameScore(ScoreComponent scoreComponent)
         {
             scoreText.text = $"Score: {scoreComponent.TotalScore}";
         }
