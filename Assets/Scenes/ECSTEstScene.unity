@@ -707,7 +707,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.8360646, y: -3.47681, z: 0}
-  m_LocalScale: {x: 2.3104265, y: 0.040000003, z: 1}
+  m_LocalScale: {x: 4.620853, y: 0.040000003, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -1066,8 +1066,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   generalGameSetting: {fileID: 11400000, guid: cc747aeaca6f5864099880016a577e56, type: 2}
   musicNoteCreationSettings: {fileID: 11400000, guid: 5d1ed20f8d24fbd4f95a64d2f692fb66, type: 2}
-  scoreEffectSettings: {fileID: 11400000, guid: 0fc1bf2a08ee74502af5a8c06e294b7f, type: 2}
   perfectLineSetting: {fileID: 11400000, guid: d1a21492714ea480f9449e5933a8acd1, type: 2}
+  laneLineSettings: {fileID: 11400000, guid: 6a5958e8da5e84e76b82907765c02fbe, type: 2}
   entityIdChannel: {fileID: 11400000, guid: 44439b2ecef163c4e8e6b70a713339a8, type: 2}
   OnScoreHitChannel: {fileID: 11400000, guid: ea0ef8d03bdeb4c4784bc02c8a47c318, type: 2}
   OnOrientationChangedChannel: {fileID: 11400000, guid: 2ceeecf601ad944f699e78a3f56a522e, type: 2}

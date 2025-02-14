@@ -8,10 +8,14 @@ namespace ECS_MagicTile
     )]
     public class MusicNoteCreationSetting : ScriptableObject
     {
+        [Header("Note Calculation Mode")]
+        public bool UsePreciseNoteCalculation;
+
         [Header("Song Data")]
         public TextAsset MidiContent;
 
         [Header("Note Configuration")]
+        [Header("Portrait")]
         public float ShortNoteScaleYFactor;
         public float LongNoteScaleYFactor;
         public float startingNoteLane;
