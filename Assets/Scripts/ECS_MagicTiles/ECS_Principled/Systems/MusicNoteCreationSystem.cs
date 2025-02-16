@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using ECS_MagicTile.Components;
 using UnityEngine;
 
@@ -49,31 +50,41 @@ namespace ECS_MagicTile
             perfectLineTag = perfectLineStorage.GetComponents<PerfectLineTagComponent>();
             perfectLineCorners = perfectLineStorage.GetComponents<CornerComponent>();
 
-            for (int i = 0; i < musicNoteMidiData.TotalNotes; i++)
+            var noteCount = musicNoteMidiData.TotalNotes;
+            var durations = musicNoteMidiData.Durations;
+            var positionIds = musicNoteMidiData.PositionIds;
+            var timeAppears = musicNoteMidiData.TimeAppears;
+            var minDuration = musicNoteMidiData.MinDuration;
+
+            var componentsList = new List<object[]>(noteCount);
+
+            for (int i = 0; i < noteCount; i++)
             {
-                MusicNoteType musicNoteType = MusicNoteType.ShortNote;
-                if (musicNoteMidiData.Durations[i] > musicNoteMidiData.MinDuration)
-                {
-                    musicNoteType = MusicNoteType.LongNote;
-                }
+                var musicNoteType =
+                    durations[i] > minDuration ? MusicNoteType.LongNote : MusicNoteType.ShortNote;
 
-                object[] components = new object[]
-                {
-                    new TransformComponent { },
-                    new MusicNoteComponent
+                componentsList.Add(
+                    new object[]
                     {
-                        Duration = musicNoteMidiData.Durations[i],
-                        PostionId = musicNoteMidiData.PositionIds[i],
-                        TimeAppear = musicNoteMidiData.TimeAppears[i],
-                        musicNoteType = musicNoteType,
-                        musicNotePositionState = MusicNotePositionState.AbovePerfectLine,
-                    },
-                    new CornerComponent { },
-                    new MusicNoteInteractionComponent { },
-                    new MusicNoteFillerComponent { },
-                    new ScoreStateComponent { HasBeenScored = false },
-                };
+                        new TransformComponent(),
+                        new MusicNoteComponent
+                        {
+                            Duration = durations[i],
+                            PostionId = positionIds[i],
+                            TimeAppear = timeAppears[i],
+                            musicNoteType = musicNoteType,
+                            musicNotePositionState = MusicNotePositionState.AbovePerfectLine,
+                        },
+                        new CornerComponent(),
+                        new MusicNoteInteractionComponent(),
+                        new MusicNoteFillerComponent(),
+                        new ScoreStateComponent { HasBeenScored = false },
+                    }
+                );
+            }
 
+            foreach (var components in componentsList)
+            {
                 World.CreateEntityWithComponents(Archetype.Registry.MusicNote, components);
             }
 
@@ -92,7 +103,15 @@ namespace ECS_MagicTile
             {
                 lastPerfectLineTopLeftY = perfectLineCorners[0].TopLeft.y;
                 lastPerfectLineTopLeftX = perfectLineCorners[0].TopLeft.x;
-                PrepareMusicNoteData();
+
+                if (musicNoteCreationSetting.UsePreciseNoteCalculation)
+                {
+                    CalculateMusicNoteDataPrecisely();
+                }
+                else
+                {
+                    CalculateMusicNoteData();
+                }
             }
         }
 
@@ -101,13 +120,63 @@ namespace ECS_MagicTile
             //
         }
 
-        private void PrepareMusicNoteData()
+        private void CalculateMusicNoteData()
         {
-            ref PerfectLineTagComponent PerfectLine = ref perfectLineTag[0];
-
             ref CornerComponent perfectLineCorner = ref perfectLineCorners[0];
 
-            // Calculate lane width once
+            // Calculate lane width and half lane width
+            float totalWidth = perfectLineCorner.TopRight.x - perfectLineCorner.TopLeft.x;
+            float laneWidth = totalWidth / 4;
+            float halfLaneWidth = laneWidth / 2f;
+
+            // Calculate Short and Long Note scale factors
+            float shortNoteScaleYFactor = MagicTileHelper.CalculateScaleY(
+                musicNoteCreationSetting.ShortNoteScaleYFactor,
+                perfectLineTag[0].PerfectLineWidth / 4
+            );
+            float longNoteScaleYFactor = MagicTileHelper.CalculateScaleY(
+                musicNoteCreationSetting.LongNoteScaleYFactor,
+                perfectLineTag[0].PerfectLineWidth / 4
+            );
+
+            // Set all music note positions and sizes
+            for (int i = 0; i < musicNoteStorage.Count; i++)
+            {
+                float spawnX =
+                    perfectLineCorner.TopLeft.x
+                    + (musicNoteMidiData.PositionIds[i] * laneWidth)
+                    + halfLaneWidth;
+
+                float spawnY =
+                    perfectLineCorner.TopLeft.y
+                    + (musicNoteMidiData.TimeAppears[i] * generalGameSetting.GameSpeed)
+                    + (
+                        musicNotes[i].musicNoteType == MusicNoteType.ShortNote
+                            ? shortNoteScaleYFactor
+                            : longNoteScaleYFactor
+                    );
+
+                musicNoteTransforms[i].Position = new Vector2(spawnX, spawnY);
+
+                musicNoteTransforms[i].Size = new Vector2(
+                    perfectLineTag[0].PerfectLineWidth / 4,
+                    musicNotes[i].musicNoteType == MusicNoteType.ShortNote
+                        ? shortNoteScaleYFactor
+                        : longNoteScaleYFactor
+                );
+            }
+        }
+
+        private void CalculateMusicNoteDataPrecisely()
+        {
+            float[] noteSizes = PreciseNoteCalculator.CalculateNoteSizes(musicNoteMidiData, 1.4f);
+            float[] positions = PreciseNoteCalculator.CalculateInitialPositions(
+                musicNoteMidiData,
+                perfectLineCorners[0].TopLeft.y,
+                noteSizes
+            );
+
+            ref CornerComponent perfectLineCorner = ref perfectLineCorners[0];
             float totalWidth = perfectLineCorner.TopRight.x - perfectLineCorner.TopLeft.x;
             float laneWidth = totalWidth / 4;
             float halfLaneWidth = laneWidth / 2f;
@@ -119,34 +188,11 @@ namespace ECS_MagicTile
                     + (musicNoteMidiData.PositionIds[i] * laneWidth)
                     + halfLaneWidth;
 
-                float spawnY =
-                    perfectLineCorner.TopLeft.y
-                    + (musicNoteMidiData.TimeAppears[i] * generalGameSetting.GameSpeed)
-                    + musicNoteTransforms[i].Size.y / 2f;
-
-                musicNoteTransforms[i].Position = new Vector2(spawnX, spawnY);
-
-                float scaleX = PerfectLine.PerfectLineWidth / 4;
-
-                float scaleY;
-
-                if (musicNotes[i].musicNoteType == MusicNoteType.ShortNote)
-                {
-                    scaleY = MagicTileHelper.CalculateScaleY(
-                        musicNoteCreationSetting.ShortNoteScaleYFactor,
-                        scaleX
-                    );
-                }
-                else
-                {
-                    scaleY = MagicTileHelper.CalculateScaleY(
-                        musicNoteCreationSetting.LongNoteScaleYFactor,
-                        scaleX,
-                        musicNotes[i].Duration
-                    );
-                }
-
-                musicNoteTransforms[i].Size = new Vector2(scaleX, scaleY);
+                musicNoteTransforms[i].Position = new Vector2(spawnX, positions[i]);
+                musicNoteTransforms[i].Size = new Vector2(
+                    perfectLineTag[0].PerfectLineWidth / 4,
+                    noteSizes[i]
+                );
             }
         }
     }
