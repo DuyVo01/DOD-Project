@@ -16,7 +16,7 @@ namespace ECS_MagicTile
         public LaneLineSettings laneLineSettings;
 
         [Header("Event Channel")]
-        public IntEventChannel entityIdChannel;
+        public IntEventChannel OnGameStartChannel;
         public BoolEventChannel OnScoreHitChannel;
         public BoolEventChannel OnOrientationChangedChannel;
 

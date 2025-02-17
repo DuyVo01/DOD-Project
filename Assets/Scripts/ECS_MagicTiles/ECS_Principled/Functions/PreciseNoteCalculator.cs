@@ -65,24 +65,37 @@ public static class PreciseNoteCalculator
     public static float[] CalculateInitialPositions(
         MusicNoteMidiData midiData,
         float perfectLineY,
-        float[] noteSizes
+        float[] noteSizes,
+        float baseSize = 2f
     )
     {
         float[] positions = new float[noteSizes.Length];
         if (noteSizes.Length == 0)
             return positions;
 
-        // Position first note considering its half size
+        // Position first note - add half its size to center point
         positions[0] = perfectLineY + (noteSizes[0] * 0.5f);
+        float smallestDuration = FindSmallestNoteDuration(midiData, 2);
 
-        // Position subsequent notes sequentially
+        // Position subsequent notes with proper gaps
         for (int i = 1; i < noteSizes.Length; i++)
         {
             // Start from previous note's center
             float pos = positions[i - 1];
-            // Add previous note's half size
+
+            // Add half size of previous note (to get to its top)
             pos += noteSizes[i - 1] * 0.5f;
-            // Add current note's half size
+
+            // Calculate and add remaining gap space
+            float remainingGap = midiData.Timespans[i] - midiData.Durations[i - 1];
+            if (remainingGap > 0)
+            {
+                // Convert time gap to space using velocity
+                float gapSpace = baseSize * (remainingGap / smallestDuration);
+                pos += gapSpace;
+            }
+
+            // Add half size of current note (to get to its center)
             pos += noteSizes[i] * 0.5f;
 
             positions[i] = pos;
@@ -92,14 +105,27 @@ public static class PreciseNoteCalculator
     }
 
     // Calculate road length from last note position and size
-    public static float CalculateRoadLength(float[] positions, float[] sizes)
+    public static float CalculateRoadLength(float[] noteSizes, MusicNoteMidiData midiData)
     {
-        if (positions.Length == 0)
-            return 0f;
+        float totalLength = noteSizes[0]; // First note's size
 
-        int lastIndex = positions.Length - 1;
-        // Last note center position plus its half size gives total road length
-        return positions[lastIndex] + (sizes[lastIndex] * 0.5f);
+        // Add subsequent notes' sizes and their gaps
+        for (int i = 1; i < noteSizes.Length; i++)
+        {
+            // Add remaining gap space
+            float remainingGap = midiData.Timespans[i] - midiData.Durations[i - 1];
+            if (remainingGap > 0)
+            {
+                // Estimate gap space relative to note sizes
+                float gapScale = remainingGap / midiData.Durations[i];
+                totalLength += noteSizes[i] * gapScale;
+            }
+
+            // Add current note's size
+            totalLength += noteSizes[i];
+        }
+
+        return totalLength;
     }
 
     // Calculate velocity based on road length and total time

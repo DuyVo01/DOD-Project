@@ -4,4 +4,6 @@ using UnityEngine;
 public class GeneralGameSetting : ScriptableObject
 {
     public float GameSpeed;
+
+    public float PreciseGameSpeed { get; set; }
 }

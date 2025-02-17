@@ -3,13 +3,13 @@ using UnityEngine;
 
 namespace ECS_MagicTile
 {
-    public class RaycastToObjects : MonoBehaviour
+    public class RaycastToStartGame : MonoBehaviour
     {
         [SerializeField]
         private LayerMask targetLayer;
 
         [SerializeField]
-        private IntEventChannel startNoteEntityIdChannel;
+        private IntEventChannel OnGameStartChannel;
 
         // Update is called once per frame
         void Update()
@@ -34,7 +34,7 @@ namespace ECS_MagicTile
             {
                 if (hit.collider.tag == "StartNote")
                 {
-                    startNoteEntityIdChannel?.RaiseEvent(
+                    OnGameStartChannel?.RaiseEvent(
                         hit.collider.GetComponent<IEntityHolder>().EntityId
                     );
                 }
