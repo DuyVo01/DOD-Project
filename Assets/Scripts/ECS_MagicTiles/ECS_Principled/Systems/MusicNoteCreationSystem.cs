@@ -169,11 +169,15 @@ namespace ECS_MagicTile
 
         private void CalculateMusicNoteDataPrecisely()
         {
-            float[] noteSizes = PreciseNoteCalculator.CalculateNoteSizes(musicNoteMidiData, 1.4f);
+            float[] noteSizes = PreciseNoteCalculator.CalculateNoteSizes(
+                musicNoteMidiData,
+                musicNoteCreationSetting.ShortNoteScaleYFactor
+            );
             float[] positions = PreciseNoteCalculator.CalculateInitialPositions(
                 musicNoteMidiData,
                 perfectLineCorners[0].TopLeft.y,
-                noteSizes
+                noteSizes,
+                musicNoteCreationSetting.ShortNoteScaleYFactor
             );
 
             ref CornerComponent perfectLineCorner = ref perfectLineCorners[0];
@@ -194,6 +198,17 @@ namespace ECS_MagicTile
                     noteSizes[i]
                 );
             }
+
+            float totalTime = PreciseNoteCalculator.CalculateTotalSongDuration(musicNoteMidiData);
+            float roadLength = PreciseNoteCalculator.CalculateRoadLength(
+                noteSizes,
+                musicNoteMidiData
+            );
+
+            generalGameSetting.PreciseGameSpeed = PreciseNoteCalculator.CalculateRequiredVelocity(
+                totalTime,
+                roadLength
+            );
         }
     }
 }

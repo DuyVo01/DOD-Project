@@ -15,7 +15,8 @@ namespace ECS_MagicTile
 
         public EGameState GameStateToExecute => EGameState.Ingame;
 
-        private GeneralGameSetting generalGameSetting;
+        private readonly GeneralGameSetting generalGameSetting;
+        private readonly MusicNoteCreationSetting musicNoteCreationSetting;
 
         ArchetypeStorage inputStorage;
         ArchetypeStorage musicNoteStorage;
@@ -32,6 +33,7 @@ namespace ECS_MagicTile
         {
             this.generalGameSetting = globalPoint.generalGameSetting;
             musicNoteViewSyncTool = globalPoint.musicNoteViewSyncTool;
+            musicNoteCreationSetting = globalPoint.musicNoteCreationSettings;
         }
 
         public void SetWorld(World world)
@@ -186,8 +188,12 @@ namespace ECS_MagicTile
             ref MusicNoteFillerComponent filler
         )
         {
-            float noteLength = corners.TopLeft.y - corners.BottomLeft.y;
             float gameSpeed = generalGameSetting.GameSpeed;
+            if (musicNoteCreationSetting.UsePreciseNoteCalculation)
+            {
+                gameSpeed = generalGameSetting.PreciseGameSpeed;
+            }
+            float noteLength = corners.TopLeft.y - corners.BottomLeft.y;
             float fillSpeed = gameSpeed / noteLength;
 
             float nextFillPercent = filler.FillPercent + (fillSpeed * Time.deltaTime);

@@ -11,6 +11,7 @@ namespace ECS_MagicTile
         public EGameState GameStateToExecute => EGameState.Ingame;
 
         private readonly GeneralGameSetting generalGameSetting;
+        private readonly MusicNoteCreationSetting musicNoteCreationSetting;
 
         ArchetypeStorage musicNoteStorage;
 
@@ -23,6 +24,7 @@ namespace ECS_MagicTile
         public MovingNoteSystem(GlobalPoint globalPoint)
         {
             this.generalGameSetting = globalPoint.generalGameSetting;
+            this.musicNoteCreationSetting = globalPoint.musicNoteCreationSettings;
             musicNoteViewSyncTool = globalPoint.musicNoteViewSyncTool;
         }
 
@@ -44,7 +46,16 @@ namespace ECS_MagicTile
 
         public void Update(float deltaTime)
         {
-            float gameSpeed = generalGameSetting.GameSpeed;
+            float gameSpeed;
+
+            if (musicNoteCreationSetting.UsePreciseNoteCalculation)
+            {
+                gameSpeed = generalGameSetting.PreciseGameSpeed;
+            }
+            else
+            {
+                gameSpeed = generalGameSetting.GameSpeed;
+            }
 
             for (int i = 0; i < musicNoteStorage.Count; i++)
             {
@@ -94,6 +105,8 @@ namespace ECS_MagicTile
             }
 
             musicNoteViewSyncTool.SyncNoteTransforms(musicNoteTransforms, musicNoteComponents);
+
+            //SystemRegistry.SetGameState(EGameState.Outro);
         }
     }
 }
