@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24a2a689475a5aa4997e54b10cc3c33c, type: 3}
   m_Name: GeneralGameSetting_SO
   m_EditorClassIdentifier: 
-  GameSpeed: 8
+  GameSpeed: 0
