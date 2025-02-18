@@ -1,4 +1,3 @@
-using System;
 using EventChannel;
 using UnityEngine;
 
@@ -7,7 +6,7 @@ namespace ECS_MagicTile
     public class AudioManager : MonoBehaviour
     {
         [SerializeField]
-        private IntEventChannel onGameStartChannel;
+        private EmptyEventChannel onSongStartChannel;
 
         [SerializeField]
         private AudioClip audioClip;
@@ -22,12 +21,12 @@ namespace ECS_MagicTile
 
         void OnEnable()
         {
-            onGameStartChannel.Subscribe(OnGameStart);
+            onSongStartChannel.Subscribe(OnGameStart);
         }
 
-        private void OnGameStart(int obj)
+        private void OnGameStart(EmptyData data)
         {
-            audioSource.Play();
+            audioSource.PlayWithFadeIn(this, .8f);
         }
     }
 }

@@ -23,16 +23,19 @@ namespace ECS_MagicTile
         TransformComponent[] musicNoteTransforms;
         MusicNoteComponent[] musicNotes;
 
+        ArchetypeStorage worldStateStorage;
+        WorldStateComponent[] worldStates;
+
+        Camera targetCamera;
+
         float lastPerfectLineTopLeftY;
         float lastPerfectLineTopLeftX;
 
-        public MusicNoteCreationSystem(
-            MusicNoteCreationSetting musicNoteCreationSetting,
-            GeneralGameSetting generalGameSetting
-        )
+        public MusicNoteCreationSystem(GlobalPoint globalPoint)
         {
-            this.musicNoteCreationSetting = musicNoteCreationSetting;
-            this.generalGameSetting = generalGameSetting;
+            this.musicNoteCreationSetting = globalPoint.musicNoteCreationSettings;
+            this.generalGameSetting = globalPoint.generalGameSetting;
+            targetCamera = globalPoint.mainCamera;
         }
 
         public void SetWorld(World world)
@@ -49,6 +52,9 @@ namespace ECS_MagicTile
             perfectLineStorage = World.GetStorage(Archetype.Registry.PerfectLine);
             perfectLineTag = perfectLineStorage.GetComponents<PerfectLineTagComponent>();
             perfectLineCorners = perfectLineStorage.GetComponents<CornerComponent>();
+
+            worldStateStorage = World.GetStorage(Archetype.Registry.WorldState);
+            worldStates = worldStateStorage.GetComponents<WorldStateComponent>();
 
             var noteCount = musicNoteMidiData.TotalNotes;
             var durations = musicNoteMidiData.Durations;
@@ -180,10 +186,15 @@ namespace ECS_MagicTile
                 musicNoteCreationSetting.ShortNoteScaleYFactor
             );
 
+            worldStates[0].FirstNotePositionToTriggerSong = positions[0];
+
             ref CornerComponent perfectLineCorner = ref perfectLineCorners[0];
+
             float totalWidth = perfectLineCorner.TopRight.x - perfectLineCorner.TopLeft.x;
             float laneWidth = totalWidth / 4;
             float halfLaneWidth = laneWidth / 2f;
+
+            float cameraBoundYOffset = CameraViewUtils.GetPositionYInCameraView(targetCamera, 1);
 
             for (int i = 0; i < musicNoteStorage.Count; i++)
             {
@@ -192,7 +203,10 @@ namespace ECS_MagicTile
                     + (musicNoteMidiData.PositionIds[i] * laneWidth)
                     + halfLaneWidth;
 
-                musicNoteTransforms[i].Position = new Vector2(spawnX, positions[i]);
+                musicNoteTransforms[i].Position = new Vector2(
+                    spawnX,
+                    positions[i] + (cameraBoundYOffset - perfectLineCorner.TopLeft.y)
+                );
                 musicNoteTransforms[i].Size = new Vector2(
                     perfectLineTag[0].PerfectLineWidth / 4,
                     noteSizes[i]

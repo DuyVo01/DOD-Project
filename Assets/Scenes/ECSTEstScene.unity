@@ -748,7 +748,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.534
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -859,7 +859,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a6eec2221ddc4ba2aadd917abe77374, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onGameStartChannel: {fileID: 11400000, guid: 44439b2ecef163c4e8e6b70a713339a8, type: 2}
+  onSongStartChannel: {fileID: 11400000, guid: e44f33d26247cc141ae0b8696485f784, type: 2}
   audioClip: {fileID: 8300000, guid: 897993da23bf1464d9a184ee0d557e8f, type: 3}
 --- !u!1 &690771442
 GameObject:
@@ -1215,6 +1215,7 @@ MonoBehaviour:
   OnGameStartChannel: {fileID: 11400000, guid: 44439b2ecef163c4e8e6b70a713339a8, type: 2}
   OnScoreHitChannel: {fileID: 11400000, guid: ea0ef8d03bdeb4c4784bc02c8a47c318, type: 2}
   OnOrientationChangedChannel: {fileID: 11400000, guid: 2ceeecf601ad944f699e78a3f56a522e, type: 2}
+  OnSongStartChannel: {fileID: 11400000, guid: e44f33d26247cc141ae0b8696485f784, type: 2}
   scoreText: {fileID: 1043838896}
   progressSlider: {fileID: 1796105110}
   perfectLineObject: {fileID: 349202818}

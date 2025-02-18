@@ -36,6 +36,7 @@ namespace ECS_MagicTile
             CreateStartingNote();
             CreateGameScore();
             CreateProgress();
+            CreateWorldStateComponent();
         }
 
         public void SetWorld(World world)
@@ -92,6 +93,12 @@ namespace ECS_MagicTile
                 },
             };
             World.CreateEntityWithComponents(Archetype.Registry.SongProgress, components);
+        }
+
+        private void CreateWorldStateComponent()
+        {
+            var components = new object[] { new WorldStateComponent() };
+            World.CreateEntityWithComponents(Archetype.Registry.WorldState, components);
         }
     }
 }

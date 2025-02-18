@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using EventChannel;
 using TMPro;
 using UnityEngine;
@@ -19,6 +20,7 @@ namespace ECS_MagicTile
         public IntEventChannel OnGameStartChannel;
         public BoolEventChannel OnScoreHitChannel;
         public BoolEventChannel OnOrientationChangedChannel;
+        public EmptyEventChannel OnSongStartChannel;
 
         [Header("UI references")]
         public TextMeshProUGUI scoreText;
@@ -69,13 +71,12 @@ namespace ECS_MagicTile
 
             //Creation System
             SystemRegistry.AddSystem(new PerfectLineSystem(this));
-            SystemRegistry.AddSystem(
-                new MusicNoteCreationSystem(musicNoteCreationSettings, generalGameSetting)
-            );
+            SystemRegistry.AddSystem(new MusicNoteCreationSystem(this));
             SystemRegistry.AddSystem(new StartingNoteSystem(this));
 
             //Handling Data system
             SystemRegistry.AddSystem(new MovingNoteSystem(this));
+            SystemRegistry.AddSystem(new TraceNoteToTriggerSongSystem(this));
             SystemRegistry.AddSystem(new InputSystem());
             SystemRegistry.AddSystem(new InputCollisionSystem(this));
             SystemRegistry.AddSystem(new ScoringSystem(this));

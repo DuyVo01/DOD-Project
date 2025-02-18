@@ -39,55 +39,60 @@ namespace ECS_MagicTile
         public static class Registry
         {
             // Note archetypes
-            public static readonly Archetype MusicNote = new(
-                new[]
-                {
-                    ComponentType.Registry.Transform,
-                    ComponentType.Registry.MusicNote,
-                    ComponentType.Registry.Corner, // Added CornerComponent
-                    ComponentType.Registry.MusicNoteInteraction,
-                    ComponentType.Registry.MusicNoteFiller,
-                    ComponentType.Registry.NoteScoreState,
-                }
-            );
+            public static readonly Archetype MusicNote =
+                new(
+                    new[]
+                    {
+                        ComponentType.Registry.Transform,
+                        ComponentType.Registry.MusicNote,
+                        ComponentType.Registry.Corner, // Added CornerComponent
+                        ComponentType.Registry.MusicNoteInteraction,
+                        ComponentType.Registry.MusicNoteFiller,
+                        ComponentType.Registry.NoteScoreState,
+                    }
+                );
 
             // Game setup archetypes
-            public static readonly Archetype PerfectLine = new(
-                new[]
-                {
-                    ComponentType.Registry.Transform,
-                    ComponentType.Registry.PerfectLine,
-                    ComponentType.Registry.Corner,
-                }
-            );
+            public static readonly Archetype PerfectLine =
+                new(
+                    new[]
+                    {
+                        ComponentType.Registry.Transform,
+                        ComponentType.Registry.PerfectLine,
+                        ComponentType.Registry.Corner,
+                    }
+                );
 
             public static readonly Archetype Input = new(new[] { ComponentType.Registry.Input });
-            public static readonly Archetype StartingNote = new(
-                new[]
-                {
-                    ComponentType.Registry.Transform,
-                    ComponentType.Registry.ActiveState,
-                    ComponentType.Registry.StartingNote,
-                }
-            );
+            public static readonly Archetype StartingNote =
+                new(
+                    new[]
+                    {
+                        ComponentType.Registry.Transform,
+                        ComponentType.Registry.ActiveState,
+                        ComponentType.Registry.StartingNote,
+                    }
+                );
 
-            public static readonly Archetype GameScore = new(
-                new[]
-                {
-                    ComponentType
-                        .Registry
-                        .GameScore // New score component
-                    ,
-                }
-            );
+            public static readonly Archetype GameScore =
+                new(
+                    new[]
+                    {
+                        ComponentType
+                            .Registry
+                            .GameScore // New score component
+                        ,
+                    }
+                );
 
-            public static readonly Archetype SongProgress = new(
-                new[] { ComponentType.Registry.Progress }
-            );
+            public static readonly Archetype SongProgress =
+                new(new[] { ComponentType.Registry.Progress });
 
-            public static readonly Archetype LaneLines = new(
-                new[] { ComponentType.Registry.Transform }
-            );
+            public static readonly Archetype LaneLines =
+                new(new[] { ComponentType.Registry.Transform });
+
+            public static readonly Archetype WorldState =
+                new(new[] { ComponentType.Registry.WorldState });
 
             // Keep track of all archetypes for initialization
             private static readonly Archetype[] AllArchetypes =
@@ -99,6 +104,7 @@ namespace ECS_MagicTile
                 GameScore,
                 SongProgress,
                 LaneLines,
+                WorldState,
             };
 
             public static ReadOnlySpan<Archetype> GetAllArchetypes() => AllArchetypes;

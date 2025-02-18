@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5af8e59dd796d941989a811a2c8754b, type: 3}
   m_Name: MusicNoteCreationSetting_SO
   m_EditorClassIdentifier: 
-  UsePreciseNoteCalculation: 0
+  UsePreciseNoteCalculation: 1
   MidiContent: {fileID: 4900000, guid: 5651cca0434e843a4af2569038996f88, type: 3}
   ShortNoteScaleYFactor: 2
   LongNoteScaleYFactor: 2.5
