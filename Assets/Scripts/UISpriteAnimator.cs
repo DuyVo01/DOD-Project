@@ -1,7 +1,8 @@
+using ComponentCache;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UISpriteAnimator : MonoBehaviour
+public class UISpriteAnimator : MonoBehaviour, ICachedID
 {
     [Header("Animation Settings")]
     [SerializeField]
@@ -18,13 +19,22 @@ public class UISpriteAnimator : MonoBehaviour
     private int currentFrame;
     private bool isPlaying = true;
 
+    public int Id { get; set; }
+
     private void Awake()
     {
-        image = GetComponent<Image>();
+        // image = GetComponent<Image>();
+    }
+
+    void Start()
+    {
+        Id = gameObject.RegisterComponent(GetComponent<Image>());
     }
 
     private void Update()
     {
+        Debug.Log("Is Null Image: " + (gameObject.Image(Id) == null));
+
         if (!isPlaying || frames == null || frames.Length <= 0)
             return;
 
@@ -48,7 +58,9 @@ public class UISpriteAnimator : MonoBehaviour
             }
 
             // Update sprite
-            image.sprite = frames[currentFrame];
+            // image.sprite = frames[currentFrame];
+
+            gameObject.Image(Id).sprite = frames[currentFrame];
         }
     }
 
