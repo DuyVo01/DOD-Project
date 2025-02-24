@@ -1,6 +1,5 @@
 using ECS_MagicTile.Components;
-using TMPro;
-using UnityEngine;
+using UnityEngine.UI;
 
 namespace ECS_MagicTile
 {
@@ -13,7 +12,7 @@ namespace ECS_MagicTile
         }
 
         protected override Archetype Archetype => Archetype.Registry.GameScore;
-        private readonly TextMeshProUGUI scoreText;
+        private readonly Text scoreText;
 
         public void SyncGameScore(ScoreComponent scoreComponent)
         {
