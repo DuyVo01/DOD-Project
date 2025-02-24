@@ -1,0 +1,1 @@
+namespace ECS_MagicTile.Settings {}
