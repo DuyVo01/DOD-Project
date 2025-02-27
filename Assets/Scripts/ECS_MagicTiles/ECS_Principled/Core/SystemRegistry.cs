@@ -11,7 +11,7 @@ namespace ECS_MagicTile
         private static readonly List<IGameSystem> updateSystems = new();
         private static World world;
         private static bool isInitialized;
-        private static EGameState currentGameState = EGameState.WaitingToStart;
+        private static EGameState currentGameState = EGameState.IngamePrestart;
 
         // Initialize our registry with a world reference
         public static void Initialize(World gameWorld)
@@ -38,7 +38,7 @@ namespace ECS_MagicTile
 
             // Provide the system with world reference and initialize it
             system.SetWorld(world);
-            system.Initialize();
+            system.RunInitialize();
 
             updateSystems.Add(system);
 
@@ -62,7 +62,7 @@ namespace ECS_MagicTile
                 {
                     try
                     {
-                        system.Update(deltaTime);
+                        system.RunUpdate(deltaTime);
                     }
                     catch (Exception e)
                     {
@@ -76,7 +76,7 @@ namespace ECS_MagicTile
         {
             foreach (var system in updateSystems)
             {
-                system.Cleanup();
+                system.RunCleanup();
             }
 
             updateSystems.Clear();

@@ -21,7 +21,7 @@ namespace ECS_MagicTile
         private BoolEventChannel onOrientationChangedChannel;
         private Camera targetCamera;
 
-        public EGameState GameStateToExecute => EGameState.WaitingToStart;
+        public EGameState GameStateToExecute => EGameState.IngamePrestart;
 
         ArchetypeStorage perfectLineStorage;
         CornerComponent[] perfectLineCorners;
@@ -32,9 +32,9 @@ namespace ECS_MagicTile
         private LaneLineSyncTool laneLineSyncTool;
         private LaneLineSettings laneLineSettings;
 
-        public void Cleanup() { }
+        public void RunCleanup() { }
 
-        public void Initialize()
+        public void RunInitialize()
         {
             CreateLaneLines();
             laneLineSyncTool.InitializeTool();
@@ -56,7 +56,7 @@ namespace ECS_MagicTile
             World = world;
         }
 
-        public void Update(float deltaTime) { }
+        public void RunUpdate(float deltaTime) { }
 
         private void CreateLaneLines()
         {

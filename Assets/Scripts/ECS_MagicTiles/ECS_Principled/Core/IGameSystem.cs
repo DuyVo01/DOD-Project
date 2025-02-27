@@ -7,9 +7,9 @@ namespace ECS_MagicTile
     public interface IGameSystem
     {
         void SetWorld(World world);
-        void Initialize(); // Called when system is first created
-        void Update(float deltaTime); // Called every frame
-        void Cleanup();
+        void RunInitialize(); // Called when system is first created
+        void RunUpdate(float deltaTime); // Called every frame
+        void RunCleanup();
         bool IsEnabled { get; set; } // Controls if system should be updated
         World World { get; set; }
         EGameState GameStateToExecute { get; }

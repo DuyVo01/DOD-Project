@@ -17,19 +17,22 @@ namespace ECS_MagicTile
         ActiveStateComponent[] startingNoteActiveState;
         private StartingNoteSyncTool startingNoteSyncTool;
 
+        private GeneralGameSetting generalGameSetting;
+
         public GameStateSystem(GlobalPoint globalPoint)
         {
             OnGameStartChannel = globalPoint.OnGameStartChannel;
 
             startingNoteSyncTool = globalPoint.startingNoteSyncTool;
+            generalGameSetting = globalPoint.generalGameSetting;
         }
 
-        public void Cleanup()
+        public void RunCleanup()
         {
             //
         }
 
-        public void Initialize()
+        public void RunInitialize()
         {
             startingNoteStorage = World.GetStorage(Archetype.Registry.StartingNote);
 
@@ -43,16 +46,17 @@ namespace ECS_MagicTile
             World = world;
         }
 
-        public void Update(float deltaTime)
+        public void RunUpdate(float deltaTime)
         {
             //
         }
 
         private void OnStartNoteInteraction(int startNoteId)
         {
-            SystemRegistry.SetGameState(EGameState.Ingame);
+            SystemRegistry.SetGameState(EGameState.IngamePlaying);
             startingNoteActiveState[0].isActive = false;
             startingNoteSyncTool.SyncStartNoteState(startingNoteActiveState[0]);
+            generalGameSetting.CurrentGameState = EGameState.IngamePlaying;
         }
     }
 }

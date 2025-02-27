@@ -5,7 +5,7 @@ namespace ECS_MagicTile
 {
     public class ProgressSyncer : ArchetypeSyncer
     {
-        public override EGameState GameStateToExecute => EGameState.Ingame;
+        public override EGameState GameStateToExecute => EGameState.IngamePlaying;
 
         protected override Archetype Archetype => Archetype.Registry.SongProgress;
 
@@ -21,7 +21,7 @@ namespace ECS_MagicTile
             progressSlider = globalPoint.progressSlider;
         }
 
-        public override void Initialize()
+        public override void RunInitialize()
         {
             IsEnabled = true;
 

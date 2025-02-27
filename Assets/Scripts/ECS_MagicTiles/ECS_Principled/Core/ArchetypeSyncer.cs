@@ -19,10 +19,10 @@ namespace ECS_MagicTile
             World = world;
         }
 
-        public virtual void Initialize() { }
+        public virtual void RunInitialize() { }
 
-        public virtual void Update(float deltaTime) { }
+        public virtual void RunUpdate(float deltaTime) { }
 
-        public virtual void Cleanup() { }
+        public virtual void RunCleanup() { }
     }
 }

@@ -8,29 +8,21 @@ namespace ECS_MagicTile
         public bool IsEnabled { get; set; }
         public World World { get; set; }
 
-        public EGameState GameStateToExecute => EGameState.WaitingToStart;
+        public EGameState GameStateToExecute => EGameState.IngamePrestart;
 
         private readonly MusicNoteCreationSetting musicNoteCreationSetting;
-        private readonly PerfectLineSetting perfectLineSetting;
-
-        private ArchetypeStorage perfectLineStorage;
-
-        private SpriteRenderer perfectLineSprite;
 
         public SingletonCreationSystem(GlobalPoint globalPoint)
         {
             musicNoteCreationSetting = globalPoint.musicNoteCreationSettings;
-            perfectLineSetting = globalPoint.perfectLineSetting;
-
-            perfectLineSprite = globalPoint.perfectLineObject.GetComponent<SpriteRenderer>();
         }
 
-        public void Cleanup()
+        public void RunCleanup()
         {
             //
         }
 
-        public void Initialize()
+        public void RunInitialize()
         {
             CreatePerfectLine();
             CreateStartingNote();
@@ -44,7 +36,7 @@ namespace ECS_MagicTile
             World = world;
         }
 
-        public void Update(float deltaTime)
+        public void RunUpdate(float deltaTime)
         {
             //
         }

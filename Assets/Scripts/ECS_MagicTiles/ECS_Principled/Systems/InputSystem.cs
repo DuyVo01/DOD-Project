@@ -12,14 +12,14 @@ namespace ECS_MagicTile
         public bool IsEnabled { get; set; } = true;
         public World World { get; set; }
 
-        public EGameState GameStateToExecute => EGameState.Ingame;
+        public EGameState GameStateToExecute => EGameState.IngamePlaying;
 
         public void SetWorld(World world)
         {
             World = world;
         }
 
-        public void Initialize()
+        public void RunInitialize()
         {
             // Create input entities
             for (int i = 0; i < MAX_INPUTS; i++)
@@ -40,7 +40,7 @@ namespace ECS_MagicTile
             }
         }
 
-        public void Update(float deltaTime)
+        public void RunUpdate(float deltaTime)
         {
             ArchetypeStorage inputStorage = World.GetStorage(Archetype.Registry.Input);
             var inputStates = inputStorage.GetComponents<InputStateComponent>();
@@ -156,7 +156,7 @@ namespace ECS_MagicTile
             return InputState.None;
         }
 
-        public void Cleanup()
+        public void RunCleanup()
         {
             // Nothing to cleanup for now
         }

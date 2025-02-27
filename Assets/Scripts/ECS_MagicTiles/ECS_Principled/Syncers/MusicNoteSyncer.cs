@@ -9,7 +9,7 @@ namespace ECS_MagicTile
     {
         protected override Archetype Archetype => Archetype.Registry.MusicNote;
 
-        public override EGameState GameStateToExecute { get; } = EGameState.Ingame;
+        public override EGameState GameStateToExecute { get; } = EGameState.IngamePlaying;
 
         private readonly EntityViewFactory shortNoteViewFactory;
         private readonly EntityViewFactory longNoteViewFactory;
@@ -37,7 +37,7 @@ namespace ECS_MagicTile
             );
         }
 
-        public override void Initialize()
+        public override void RunInitialize()
         {
             IsEnabled = true;
 
@@ -48,7 +48,7 @@ namespace ECS_MagicTile
             fillers = DedicatedStorage.GetComponents<MusicNoteFillerComponent>();
         }
 
-        public override void Update(float deltaTime)
+        public override void RunUpdate(float deltaTime)
         {
             // Process notes in batches for better cache utilization
             const int BATCH_SIZE = 64;

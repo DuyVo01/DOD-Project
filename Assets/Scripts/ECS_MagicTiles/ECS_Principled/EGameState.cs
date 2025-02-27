@@ -2,8 +2,9 @@ namespace ECS_MagicTile
 {
     public enum EGameState
     {
-        WaitingToStart,
-        Ingame,
+        Intro,
+        IngamePrestart,
+        IngamePlaying,
         Outro,
         All,
     }

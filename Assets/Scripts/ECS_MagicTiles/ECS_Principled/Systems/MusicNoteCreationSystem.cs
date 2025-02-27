@@ -11,7 +11,7 @@ namespace ECS_MagicTile
         public bool IsEnabled { get; set; } = true;
         public World World { get; set; }
 
-        public EGameState GameStateToExecute => EGameState.WaitingToStart;
+        public EGameState GameStateToExecute => EGameState.IngamePrestart;
 
         MusicNoteMidiData musicNoteMidiData;
 
@@ -43,7 +43,7 @@ namespace ECS_MagicTile
             World = world;
         }
 
-        public void Initialize()
+        public void RunInitialize()
         {
             musicNoteMidiData = MidiNoteParser.ParseFromText(
                 musicNoteCreationSetting.MidiContent.text
@@ -100,7 +100,7 @@ namespace ECS_MagicTile
             musicNotes = musicNoteStorage.GetComponents<MusicNoteComponent>();
         }
 
-        public void Update(float deltaTime)
+        public void RunUpdate(float deltaTime)
         {
             if (
                 lastPerfectLineTopLeftY != perfectLineCorners[0].TopLeft.y
@@ -121,7 +121,7 @@ namespace ECS_MagicTile
             }
         }
 
-        public void Cleanup()
+        public void RunCleanup()
         {
             //
         }

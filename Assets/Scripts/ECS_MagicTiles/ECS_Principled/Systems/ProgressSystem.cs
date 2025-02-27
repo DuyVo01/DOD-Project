@@ -8,7 +8,7 @@ namespace ECS_MagicTile
         public bool IsEnabled { get; set; }
         public World World { get; set; }
 
-        public EGameState GameStateToExecute => EGameState.Ingame;
+        public EGameState GameStateToExecute => EGameState.IngamePlaying;
 
         private BoolEventChannel scoreEventChannel;
 
@@ -22,9 +22,9 @@ namespace ECS_MagicTile
 
         private ArchetypeStorage progressArchetype;
 
-        public void Cleanup() { }
+        public void RunCleanup() { }
 
-        public void Initialize()
+        public void RunInitialize()
         {
             progressArchetype = World.GetStorage(Archetype.Registry.SongProgress);
 
@@ -36,7 +36,7 @@ namespace ECS_MagicTile
             World = world;
         }
 
-        public void Update(float deltaTime) { }
+        public void RunUpdate(float deltaTime) { }
 
         private void OnScoreEvent(bool isScore)
         {

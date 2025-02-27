@@ -1,9 +1,14 @@
+using ECS_MagicTile;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "GeneralGameSetting_SO", menuName = "Settings/GeneralGameSetting")]
-public class GeneralGameSetting : ScriptableObject
+namespace ECS_MagicTile
 {
-    public float GameSpeed;
+    [CreateAssetMenu(fileName = "GeneralGameSetting_SO", menuName = "Settings/GeneralGameSetting")]
+    public class GeneralGameSetting : ScriptableObject
+    {
+        public float GameSpeed;
 
-    public float PreciseGameSpeed { get; set; }
+        public float PreciseGameSpeed { get; set; }
+        public EGameState CurrentGameState { get; set; } = EGameState.IngamePrestart;
+    }
 }
