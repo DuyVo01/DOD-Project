@@ -10,71 +10,42 @@ namespace ComponentCache.Core
         private int currentCapacity;
         private const int MINIMUM_CAPACITY = 32;
 
-        // Our "recycling bin" for freed indices
-        private Queue<int> freedIndices;
-
-        // Track the highest used index for optimization
-        private int highestUsedIndex;
-
         public DynamicComponentCache(int initialCapacity = MINIMUM_CAPACITY)
         {
             initialCapacity = Mathf.Max(initialCapacity, MINIMUM_CAPACITY);
             cache = new T[initialCapacity];
             currentCapacity = initialCapacity;
-            freedIndices = new Queue<int>();
-            highestUsedIndex = -1;
         }
 
-        public int Set(T component)
+        /// <summary>
+        /// Set a component at a specific index (using GameObject's ID)
+        /// </summary>
+        public void Set(int index, T component)
         {
-            int index;
-            if (freedIndices.Count > 0)
-            {
-                // Reuse a freed index if available
-                index = freedIndices.Dequeue();
-                cache[index] = component;
-                return index;
-            }
-
-            // No holes available, use next available index
-            index = highestUsedIndex + 1;
-            ResizeIfNeeded(index + 1);
-            cache[index] = component;
-            highestUsedIndex = index;
-            return index;
-        }
-
-        public void Unregister(int index)
-        {
-            if (index < 0 || index >= currentCapacity)
+            if (index < 0)
                 return;
 
-            // Clear the component and add index to our recycling queue
-            cache[index] = null;
-            freedIndices.Enqueue(index);
-
-            // Update highestUsedIndex if we're removing the highest element
-            if (index == highestUsedIndex)
-            {
-                // Find the new highest used index
-                while (highestUsedIndex >= 0 && cache[highestUsedIndex] == null)
-                {
-                    highestUsedIndex--;
-                }
-            }
+            ResizeIfNeeded(index + 1);
+            cache[index] = component;
         }
 
+        /// <summary>
+        /// Get a component at a specific index
+        /// </summary>
         public T Get(int index)
         {
-            // Safety check - return null if index is out of bounds
-            if (index >= currentCapacity)
+            if (index < 0 || index >= currentCapacity)
                 return null;
+
             return cache[index];
         }
 
+        /// <summary>
+        /// Clear a component at a specific index
+        /// </summary>
         public void Clear(int index)
         {
-            if (index < currentCapacity)
+            if (index >= 0 && index < currentCapacity)
             {
                 cache[index] = null;
             }
@@ -101,22 +72,28 @@ namespace ComponentCache.Core
             }
         }
 
+        /// <summary>
+        /// Trim the array to save memory (optional)
+        /// </summary>
         public void TrimExcess()
         {
-            // Optional: Shrink array if we're using much less than capacity
-            // Could be called during scene transitions or quiet periods
-            int usedSlots = 0;
-            for (int i = 0; i < currentCapacity; i++)
+            // Find the highest used index
+            int highestUsedIndex = -1;
+            for (int i = currentCapacity - 1; i >= 0; i--)
             {
                 if (cache[i] != null)
-                    usedSlots = i + 1;
+                {
+                    highestUsedIndex = i;
+                    break;
+                }
             }
 
-            if (usedSlots < currentCapacity / 2)
+            // If we're using less than half the capacity, resize
+            if (highestUsedIndex < currentCapacity / 2)
             {
-                int newSize = Mathf.Max(usedSlots * 2, MINIMUM_CAPACITY);
+                int newSize = Mathf.Max((highestUsedIndex + 1) * 2, MINIMUM_CAPACITY);
                 T[] newCache = new T[newSize];
-                System.Array.Copy(cache, newCache, usedSlots);
+                System.Array.Copy(cache, newCache, highestUsedIndex + 1);
                 cache = newCache;
                 currentCapacity = newSize;
             }

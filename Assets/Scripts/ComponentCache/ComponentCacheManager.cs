@@ -9,10 +9,24 @@ namespace ComponentCache.Core
 {
     public class ComponentCacheManager : PersistentSingleton<ComponentCacheManager>
     {
+        private readonly Dictionary<GameObject, int> gameObjectToId =
+            new Dictionary<GameObject, int>();
+
+        private Queue<int> freedIds = new Queue<int>();
+
+        private int highestUsedId = -1;
+
         // Store caches for different component types
-        private readonly DynamicComponentCache<Transform> transformCache = new();
-        private readonly DynamicComponentCache<Image> imageCache = new();
-        private readonly DynamicComponentCache<RectTransform> rectTransformCache = new();
+        private readonly DynamicComponentCache<Transform> transformCache =
+            new DynamicComponentCache<Transform>();
+        private readonly DynamicComponentCache<Image> imageCache =
+            new DynamicComponentCache<Image>();
+        private readonly DynamicComponentCache<RawImage> rawImageCache =
+            new DynamicComponentCache<RawImage>();
+        private readonly DynamicComponentCache<RectTransform> rectTransformCache =
+            new DynamicComponentCache<RectTransform>();
+        private readonly DynamicComponentCache<Button> buttonCache =
+            new DynamicComponentCache<Button>();
 
         // Add more component types as needed
 
@@ -43,43 +57,167 @@ namespace ComponentCache.Core
 
         private void CleanupDestroyedReferences()
         {
-            // Implementation to check and clean up destroyed objects
-            // This could be called periodically or on scene changes
+            List<GameObject> objectsToRemove = new List<GameObject>();
+
+            // Find all destroyed GameObjects
+            foreach (var entry in gameObjectToId)
+            {
+                if (entry.Key == null)
+                {
+                    objectsToRemove.Add(entry.Key);
+                    ClearComponentsAtIndex(entry.Value);
+                    freedIds.Enqueue(entry.Value);
+                }
+            }
+
+            // Remove them from the dictionary
+            foreach (var obj in objectsToRemove)
+            {
+                gameObjectToId.Remove(obj);
+            }
         }
 
-        // Generic registration method
-        public int RegisterComponent<T>(T component)
+        /// <summary>
+        /// Get or create ID for a GameObject
+        /// </summary>
+        private int GetOrCreateIdForGameObject(GameObject gameObject)
+        {
+            if (gameObject == null)
+                return -1;
+
+            // If already registered, return existing ID
+            if (gameObjectToId.TryGetValue(gameObject, out int existingId))
+                return existingId;
+
+            int newId;
+            if (freedIds.Count > 0)
+            {
+                newId = freedIds.Dequeue();
+            }
+            else
+            {
+                newId = ++highestUsedId;
+            }
+
+            gameObjectToId[gameObject] = newId;
+            return newId;
+        }
+
+        /// <summary>
+        /// Register a component in the cache
+        /// </summary>
+        public int RegisterComponent<T>(GameObject gameObject, T component)
             where T : Component
         {
-            if (typeof(T) == typeof(Transform))
-                return transformCache.Set(component as Transform);
-            else if (typeof(T) == typeof(Image))
-                return imageCache.Set(component as Image);
-            else if (typeof(T) == typeof(RectTransform))
-                return rectTransformCache.Set(component as RectTransform);
-            // Add more types as needed
+            if (gameObject == null || component == null)
+                return -1;
 
-            return -1;
+            int id = GetOrCreateIdForGameObject(gameObject);
+
+            if (typeof(T) == typeof(Transform))
+                transformCache.Set(id, component as Transform);
+            else if (typeof(T) == typeof(RectTransform))
+                rectTransformCache.Set(id, component as RectTransform);
+            else if (typeof(T) == typeof(Image))
+                imageCache.Set(id, component as Image);
+            else if (typeof(T) == typeof(Button))
+                buttonCache.Set(id, component as Button);
+            else if (typeof(T) == typeof(RawImage))
+                rawImageCache.Set(id, component as RawImage);
+            else
+                Debug.LogWarning(
+                    $"Component type {typeof(T)} is not supported for caching. Add it to ComponentCacheManager."
+                );
+
+            return id;
         }
 
-        public void UnregisterComponent<T>(int id)
+        /// <summary>
+        /// Unregister all components for a GameObject
+        /// </summary>
+        public void UnregisterGameObject(GameObject gameObject)
+        {
+            if (gameObject == null || !gameObjectToId.TryGetValue(gameObject, out int id))
+                return;
+
+            ClearComponentsAtIndex(id);
+            gameObjectToId.Remove(gameObject);
+            freedIds.Enqueue(id);
+        }
+
+        private void ClearComponentsAtIndex(int id)
+        {
+            transformCache.Clear(id);
+            rectTransformCache.Clear(id);
+            imageCache.Clear(id);
+            buttonCache.Clear(id);
+            rawImageCache.Clear(id);
+            // Clear other caches as needed
+        }
+
+        /// <summary>
+        /// Get a component from the cache
+        /// </summary>
+        public T GetComponent<T>(GameObject gameObject)
             where T : Component
         {
+            if (gameObject == null || !gameObjectToId.TryGetValue(gameObject, out int id))
+                return null;
+
             if (typeof(T) == typeof(Transform))
-                transformCache.Unregister(id);
-            else if (typeof(T) == typeof(Image))
-                imageCache.Unregister(id);
+                return transformCache.Get(id) as T;
             else if (typeof(T) == typeof(RectTransform))
-                rectTransformCache.Unregister(id);
-            // Add more types as needed
+                return rectTransformCache.Get(id) as T;
+            else if (typeof(T) == typeof(Image))
+                return imageCache.Get(id) as T;
+            else if (typeof(T) == typeof(Button))
+                return buttonCache.Get(id) as T;
+            else if (typeof(T) == typeof(RawImage))
+                return rawImageCache.Get(id) as T;
+
+            return null;
         }
 
-        // Getter methods
-        public Transform GetTransform(int id) => transformCache.Get(id);
+        // Specific getters for common components
+        public Transform GetTransform(GameObject gameObject)
+        {
+            if (gameObject == null || !gameObjectToId.TryGetValue(gameObject, out int id))
+                return null;
 
-        public Image GetImage(int id) => imageCache.Get(id);
+            return transformCache.Get(id);
+        }
 
-        public RectTransform GetRectTransform(int id) => rectTransformCache.Get(id);
+        public RectTransform GetRectTransform(GameObject gameObject)
+        {
+            if (gameObject == null || !gameObjectToId.TryGetValue(gameObject, out int id))
+                return null;
+
+            return rectTransformCache.Get(id);
+        }
+
+        public Image GetImage(GameObject gameObject)
+        {
+            if (gameObject == null || !gameObjectToId.TryGetValue(gameObject, out int id))
+                return null;
+
+            return imageCache.Get(id);
+        }
+
+        public Button GetButton(GameObject gameObject)
+        {
+            if (gameObject == null || !gameObjectToId.TryGetValue(gameObject, out int id))
+                return null;
+
+            return buttonCache.Get(id);
+        }
+
+        public RawImage GetRawImage(GameObject gameObject)
+        {
+            if (gameObject == null || !gameObjectToId.TryGetValue(gameObject, out int id))
+                return null;
+
+            return rawImageCache.Get(id);
+        }
 
         // Optional: Scene transition cleanup
         public void OnSceneUnloaded()
@@ -87,6 +225,8 @@ namespace ComponentCache.Core
             transformCache.TrimExcess();
             imageCache.TrimExcess();
             rectTransformCache.TrimExcess();
+            buttonCache.TrimExcess();
+            rawImageCache.TrimExcess();
         }
     }
 }
