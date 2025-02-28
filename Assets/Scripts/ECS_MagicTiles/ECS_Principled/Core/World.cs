@@ -27,7 +27,7 @@ namespace ECS_MagicTile
         }
 
         // Helper method to create and set up an entity in one go
-        public int CreateEntityWithComponents(Archetype archetype, ReadOnlySpan<object> components)
+        public int CreateEntityWithComponents(Archetype archetype, object[] components)
         {
             int entityId = CreateEntity();
             ArchetypeStorage storage = GetStorage(archetype);

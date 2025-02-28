@@ -41,7 +41,7 @@ namespace ECS_MagicTile
 
         public EGameState GameStateToExecute => EGameState.All;
 
-        public void Initialize()
+        public void RunInitialize()
         {
             perfectLineStorage = World.GetStorage(Archetype.Registry.PerfectLine);
 
@@ -76,14 +76,14 @@ namespace ECS_MagicTile
             OnOrientationChangedChannel.Subscribe(OnOrientationChanged);
         }
 
-        public void Cleanup() { }
+        public void RunCleanup() { }
 
         public void SetWorld(World world)
         {
             World = world;
         }
 
-        public void Update(float deltaTime) { }
+        public void RunUpdate(float deltaTime) { }
 
         private void UpdatePerfectLinePos(float value)
         {

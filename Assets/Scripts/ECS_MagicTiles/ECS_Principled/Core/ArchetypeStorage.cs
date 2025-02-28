@@ -49,7 +49,7 @@ namespace ECS_MagicTile
         }
 
         // Adds an entity with its components to this storage
-        public void Add(int entityId, ReadOnlySpan<object> components)
+        public void Add(int entityId, object[] components)
         {
             // Grow arrays if needed
             if (count >= entityIds.Length)
@@ -131,6 +131,6 @@ namespace ECS_MagicTile
 
         // Properties for accessing storage information
         public int Count => count;
-        public ReadOnlySpan<int> EntityIds => new ReadOnlySpan<int>(entityIds, 0, count);
+        public int[] EntityIds => entityIds;
     }
 }

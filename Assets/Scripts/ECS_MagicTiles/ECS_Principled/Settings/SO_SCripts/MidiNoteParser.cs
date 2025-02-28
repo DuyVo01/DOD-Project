@@ -9,7 +9,8 @@ public static class MidiNoteParser
         if (string.IsNullOrEmpty(content))
             throw new MidiParseException("MIDI content cannot be empty");
 
-        var entries = content.Split(',', StringSplitOptions.RemoveEmptyEntries);
+        var entries = content.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
         if (entries.Length == 0)
             throw new MidiParseException("No valid MIDI entries found");
 

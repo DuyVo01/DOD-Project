@@ -5,7 +5,7 @@ using UnityEngine;
 
 public static class SystemRepository
 {
-    private static Dictionary<Type, IGameSystem> systems = new System.Collections.Generic.Dictionary<System.Type, IGameSystem>();
+    private static Dictionary<Type, IGameSystem> systems = new Dictionary<Type, IGameSystem>();
 
     public static void RegisterSystem<T>(T system)
         where T : struct, IGameSystem

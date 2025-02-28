@@ -10,9 +10,10 @@ namespace ECS_MagicTile
         private readonly EntityViewFactory longNoteViewFactory;
         protected override Archetype Archetype => Archetype.Registry.MusicNote;
 
-        private readonly Dictionary<int, SpriteRenderer> noteRenderers = new();
+        private readonly Dictionary<int, SpriteRenderer> noteRenderers =
+            new Dictionary<int, SpriteRenderer>();
         private readonly Dictionary<int, (GameObject obj, SpriteRenderer renderer)> fillerCache =
-            new();
+            new Dictionary<int, (GameObject obj, SpriteRenderer renderer)>();
 
         public MusicNoteViewSyncTool(GlobalPoint globalPoint)
             : base(globalPoint)
@@ -79,13 +80,26 @@ namespace ECS_MagicTile
             MusicNoteInteractiveState state
         )
         {
-            renderer.color = state switch
+            Color color;
+
+            switch (state)
             {
-                MusicNoteInteractiveState.Normal => Color.white,
-                MusicNoteInteractiveState.Pressed or MusicNoteInteractiveState.Hold => Color.yellow,
-                MusicNoteInteractiveState.Completed => new Color(1, 1, 1, 0.5f),
-                _ => Color.white,
-            };
+                case MusicNoteInteractiveState.Normal:
+                    color = Color.white;
+                    break;
+                case MusicNoteInteractiveState.Pressed:
+                case MusicNoteInteractiveState.Hold:
+                    color = Color.yellow;
+                    break;
+                case MusicNoteInteractiveState.Completed:
+                    color = new Color(1, 1, 1, 0.5f);
+                    break;
+                default:
+                    color = Color.white;
+                    break;
+            }
+
+            renderer.color = color;
         }
 
         public void SyncNoteFiller(int entityId, GameObject view, MusicNoteFillerComponent filler)

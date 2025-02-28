@@ -4,8 +4,8 @@ namespace ECS_MagicTile
 {
     public interface IEntityHolder
     {
-        public int EntityId { get; }
+        int EntityId { get; }
 
-        public void SetEntityId(int id);
+        void SetEntityId(int id);
     }
 }

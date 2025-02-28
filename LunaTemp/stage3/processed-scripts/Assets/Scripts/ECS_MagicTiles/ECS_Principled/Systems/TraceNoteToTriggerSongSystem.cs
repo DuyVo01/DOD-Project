@@ -9,7 +9,7 @@ namespace ECS_MagicTile
         public bool IsEnabled { get; set; } = true;
         public World World { get; set; }
 
-        public EGameState GameStateToExecute => EGameState.Ingame;
+        public EGameState GameStateToExecute => EGameState.IngamePlaying;
 
         ArchetypeStorage musicnNoteStorage;
         TransformComponent[] musicNoteTransforms;
@@ -24,9 +24,9 @@ namespace ECS_MagicTile
             OnSongStartChannel = globalPoint.OnSongStartChannel;
         }
 
-        public void Cleanup() { }
+        public void RunCleanup() { }
 
-        public void Initialize()
+        public void RunInitialize()
         {
             worldStateStorage = World.GetStorage(Archetype.Registry.WorldState);
             worldStateComponents = worldStateStorage.GetComponents<WorldStateComponent>();
@@ -40,7 +40,7 @@ namespace ECS_MagicTile
             World = world;
         }
 
-        public void Update(float deltaTime)
+        public void RunUpdate(float deltaTime)
         {
             if (
                 musicNoteTransforms[0].Position.y

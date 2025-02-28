@@ -19,7 +19,7 @@ public abstract class PersistentSingleton<T> : MonoBehaviour
             lock (_lock)
             {
                 // Find if there's an instance in the scene
-                _instance = FindAnyObjectByType<T>();
+                _instance = FindObjectOfType<T>();
 
                 // Create new instance if none exists
                 if (_instance == null)

@@ -77,15 +77,6 @@ namespace ECS_MagicTile
             return storage;
         }
 
-        public IEnumerable<ArchetypeStorage> GetStoragesForAspect(Archetype aspectArchetype)
-        {
-            if (aspectStorages.TryGetValue(aspectArchetype.GetHash(), out var storageList))
-            {
-                return storageList;
-            }
-            return Array.Empty<ArchetypeStorage>();
-        }
-
         private bool HasComponent(ArchetypeStorage storage, [Bridge.Ref] ComponentType componentType)
         {
             try

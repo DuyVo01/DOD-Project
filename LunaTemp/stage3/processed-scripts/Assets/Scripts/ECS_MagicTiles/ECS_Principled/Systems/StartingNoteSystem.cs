@@ -29,9 +29,9 @@ namespace ECS_MagicTile
             startingNoteSyncTool = globalPoint.startingNoteSyncTool;
         }
 
-        public void Cleanup() { }
+        public void RunCleanup() { }
 
-        public void Initialize()
+        public void RunInitialize()
         {
             startingNoteSyncTool.InitializeTool();
 
@@ -53,7 +53,7 @@ namespace ECS_MagicTile
             World = world;
         }
 
-        public void Update(float deltaTime)
+        public void RunUpdate(float deltaTime)
         {
             if (
                 lastPerfectLineTopLeftY != perfectLineCorners[0].TopLeft.y

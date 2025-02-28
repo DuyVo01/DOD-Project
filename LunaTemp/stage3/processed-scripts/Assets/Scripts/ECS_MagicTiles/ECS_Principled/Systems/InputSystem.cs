@@ -12,14 +12,14 @@ namespace ECS_MagicTile
         public bool IsEnabled { get; set; } = true;
         public World World { get; set; }
 
-        public EGameState GameStateToExecute => EGameState.Ingame;
+        public EGameState GameStateToExecute => EGameState.IngamePlaying;
 
         public void SetWorld(World world)
         {
             World = world;
         }
 
-        public void Initialize()
+        public void RunInitialize()
         {
             // Create input entities
             for (int i = 0; i < MAX_INPUTS; i++)
@@ -40,7 +40,7 @@ namespace ECS_MagicTile
             }
         }
 
-        public void Update(float deltaTime)
+        public void RunUpdate(float deltaTime)
         {
             ArchetypeStorage inputStorage = World.GetStorage(Archetype.Registry.Input);
             var inputStates = inputStorage.GetComponents<InputStateComponent>();
@@ -113,15 +113,25 @@ namespace ECS_MagicTile
                 Touch touch = Input.GetTouch(i);
                 Vector2 worldPos = Camera.main.ScreenToWorldPoint(touch.position);
 
-                InputState newState = touch.phase switch
+                InputState newState;
+
+                switch (touch.phase)
                 {
-                    TouchPhase.Began => InputState.JustPressed,
-                    TouchPhase.Moved => InputState.Held,
-                    TouchPhase.Stationary => InputState.Held,
-                    TouchPhase.Ended => InputState.JustReleased,
-                    TouchPhase.Canceled => InputState.JustReleased,
-                    _ => InputState.None,
-                };
+                    case TouchPhase.Began:
+                        newState = InputState.JustPressed;
+                        break;
+                    case TouchPhase.Moved:
+                    case TouchPhase.Stationary:
+                        newState = InputState.Held;
+                        break;
+                    case TouchPhase.Ended:
+                    case TouchPhase.Canceled:
+                        newState = InputState.JustReleased;
+                        break;
+                    default:
+                        newState = InputState.None;
+                        break;
+                }
 
                 UpdateInputState(ref inputStates[i], worldPos, newState);
             }
@@ -156,7 +166,7 @@ namespace ECS_MagicTile
             return InputState.None;
         }
 
-        public void Cleanup()
+        public void RunCleanup()
         {
             // Nothing to cleanup for now
         }

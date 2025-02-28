@@ -1,6 +1,5 @@
 using ECS_MagicTile.Components;
 using EventChannel;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace ECS_MagicTile

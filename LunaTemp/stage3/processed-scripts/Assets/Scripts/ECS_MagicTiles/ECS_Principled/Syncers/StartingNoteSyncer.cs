@@ -24,9 +24,9 @@ namespace ECS_MagicTile
             );
         }
 
-        public override void Initialize()
+        public override void RunInitialize()
         {
-            base.Initialize();
+            base.RunInitialize();
             IsEnabled = true;
 
             startingNoteActiveStateComponents =
@@ -40,7 +40,7 @@ namespace ECS_MagicTile
             startingNoteViewObject.transform.localScale = startingNoteTransformComponents[0].Size;
         }
 
-        public override void Update(float deltaTime)
+        public override void RunUpdate(float deltaTime)
         {
             startingNoteViewObject.SetActive(startingNoteActiveStateComponents[0].isActive);
             // if (!startingNoteViewObject.activeSelf)

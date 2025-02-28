@@ -120,14 +120,30 @@ public static class CameraViewUtils
         bounds.yMin += padding;
         bounds.yMax -= padding;
 
-        return boundCheck switch
+        bool result;
+
+        switch (boundCheck)
         {
-            CameraBoundCheck.Top => position.y > bounds.yMax,
-            CameraBoundCheck.Bottom => position.y < bounds.yMin,
-            CameraBoundCheck.Left => position.x < bounds.xMin,
-            CameraBoundCheck.Right => position.x > bounds.xMax,
-            CameraBoundCheck.All => !bounds.Contains(new Vector2(position.x, position.y)),
-            _ => false,
-        };
+            case CameraBoundCheck.Top:
+                result = position.y > bounds.yMax;
+                break;
+            case CameraBoundCheck.Bottom:
+                result = position.y < bounds.yMin;
+                break;
+            case CameraBoundCheck.Left:
+                result = position.x < bounds.xMin;
+                break;
+            case CameraBoundCheck.Right:
+                result = position.x > bounds.xMax;
+                break;
+            case CameraBoundCheck.All:
+                result = !bounds.Contains(new Vector2(position.x, position.y));
+                break;
+            default:
+                result = false;
+                break;
+        }
+
+        return result;
     }
 }

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using ECS_MagicTile.Components;
-using NUnit.Framework.Constraints;
 
 namespace ECS_MagicTile
 {
@@ -21,31 +20,67 @@ namespace ECS_MagicTile
         public static class Registry
         {
             // Core Components
-            public static readonly ComponentType Transform = new(typeof(TransformComponent), 0);
-            public static readonly ComponentType MusicNote = new(typeof(MusicNoteComponent), 1);
+            public static readonly ComponentType Transform = new ComponentType(
+                typeof(TransformComponent),
+                0
+            );
+            public static readonly ComponentType MusicNote = new ComponentType(
+                typeof(MusicNoteComponent),
+                1
+            );
 
-            public static readonly ComponentType PerfectLine =
-                new(typeof(PerfectLineTagComponent), 3);
-            public static readonly ComponentType Corner = new(typeof(CornerComponent), 4);
+            public static readonly ComponentType PerfectLine = new ComponentType(
+                typeof(PerfectLineTagComponent),
+                3
+            );
+            public static readonly ComponentType Corner = new ComponentType(
+                typeof(CornerComponent),
+                4
+            );
 
-            public static readonly ComponentType Input = new(typeof(InputStateComponent), 5);
-            public static readonly ComponentType MusicNoteInteraction =
-                new(typeof(MusicNoteInteractionComponent), 6);
-            public static readonly ComponentType MusicNoteFiller =
-                new(typeof(MusicNoteFillerComponent), 7);
+            public static readonly ComponentType Input = new ComponentType(
+                typeof(InputStateComponent),
+                5
+            );
+            public static readonly ComponentType MusicNoteInteraction = new ComponentType(
+                typeof(MusicNoteInteractionComponent),
+                6
+            );
+            public static readonly ComponentType MusicNoteFiller = new ComponentType(
+                typeof(MusicNoteFillerComponent),
+                7
+            );
 
-            public static readonly ComponentType ActiveState = new(typeof(ActiveStateComponent), 8);
-            public static readonly ComponentType StartingNote =
-                new(typeof(StartingNoteTagComponent), 9);
-            public static readonly ComponentType GameScore = new(typeof(ScoreComponent), 10);
-            public static readonly ComponentType NoteScoreState =
-                new(typeof(ScoreStateComponent), 11);
+            public static readonly ComponentType ActiveState = new ComponentType(
+                typeof(ActiveStateComponent),
+                8
+            );
+            public static readonly ComponentType StartingNote = new ComponentType(
+                typeof(StartingNoteTagComponent),
+                9
+            );
+            public static readonly ComponentType GameScore = new ComponentType(
+                typeof(ScoreComponent),
+                10
+            );
+            public static readonly ComponentType NoteScoreState = new ComponentType(
+                typeof(ScoreStateComponent),
+                11
+            );
 
-            public static readonly ComponentType TransformGroup =
-                new(typeof(TransformComponentGroup), 12);
+            public static readonly ComponentType TransformGroup = new ComponentType(
+                typeof(TransformComponentGroup),
+                12
+            );
 
-            public static readonly ComponentType Progress = new(typeof(ProgressComponent), 14);
-            public static readonly ComponentType WorldState = new(typeof(WorldStateComponent), 15);
+            public static readonly ComponentType Progress = new ComponentType(
+                typeof(ProgressComponent),
+                14
+            );
+            public static readonly ComponentType WorldState = new ComponentType(
+                typeof(WorldStateComponent),
+                15
+            );
 
             // A lookup dictionary to quickly find ComponentType by Type
             private static readonly Dictionary<Type, ComponentType> typeToComponentType =
@@ -83,7 +118,7 @@ namespace ECS_MagicTile
             }
 
             // The existing methods remain the same
-            public static ReadOnlySpan<ComponentType> GetAllTypes() => AllTypes;
+            public static ComponentType[] GetAllTypes() => AllTypes;
 
             private static readonly ComponentType[] AllTypes =
             {

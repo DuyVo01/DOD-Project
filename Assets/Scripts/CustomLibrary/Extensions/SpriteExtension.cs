@@ -112,14 +112,28 @@ public static class SpriteUtility
         Vector3 center = bounds.center;
         Vector3 extents = bounds.extents;
 
-        return pivot switch
+        Vector3 result;
+
+        switch (pivot)
         {
-            PivotPointXY.Top => center + new Vector3(0, extents.y, 0),
-            PivotPointXY.Bottom => center - new Vector3(0, extents.y, 0),
-            PivotPointXY.Left => center - new Vector3(extents.x, 0, 0),
-            PivotPointXY.Right => center + new Vector3(extents.x, 0, 0),
-            _ => center,
-        };
+            case PivotPointXY.Top:
+                result = center + new Vector3(0, extents.y, 0);
+                break;
+            case PivotPointXY.Bottom:
+                result = center - new Vector3(0, extents.y, 0);
+                break;
+            case PivotPointXY.Left:
+                result = center - new Vector3(extents.x, 0, 0);
+                break;
+            case PivotPointXY.Right:
+                result = center + new Vector3(extents.x, 0, 0);
+                break;
+            default:
+                result = center;
+                break;
+        }
+
+        return result;
     }
 
     /// <summary>

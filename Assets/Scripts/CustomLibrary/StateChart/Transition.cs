@@ -4,8 +4,8 @@ namespace StateMachineChart
 {
     public readonly struct Transition
     {
-        public readonly BaseState To { get; }
-        public readonly Func<bool> Condition { get; }
+        public BaseState To { get; }
+        public Func<bool> Condition { get; }
 
         public Transition(BaseState to, Func<bool> condition)
         {
@@ -30,11 +30,11 @@ namespace StateMachineChart
 
         public void Add(Transition transition)
         {
-            if(_count == _transitions.Length)
+            if (_count == _transitions.Length)
             {
                 Array.Resize(ref _transitions, _count * 2);
             }
-                _transitions[_count++] = transition;
+            _transitions[_count++] = transition;
         }
 
         public ref readonly Transition GetTransition(int index)

@@ -16,7 +16,7 @@ namespace ECS_MagicTile
         public bool IsEnabled { get; set; } = true;
         public World World { get; set; }
 
-        public EGameState GameStateToExecute => EGameState.Ingame;
+        public EGameState GameStateToExecute => EGameState.IngamePlaying;
 
         ArchetypeStorage noteStorage;
         ArchetypeStorage gameScoreStorage;
@@ -37,12 +37,12 @@ namespace ECS_MagicTile
             this.gameScoreSyncTool = globalPoint.gameScoreSyncTool;
         }
 
-        public void Cleanup()
+        public void RunCleanup()
         {
             //
         }
 
-        public void Initialize()
+        public void RunInitialize()
         {
             noteStorage = World.GetStorage(Archetype.Registry.MusicNote);
             gameScoreStorage = World.GetStorage(Archetype.Registry.GameScore);
@@ -60,7 +60,7 @@ namespace ECS_MagicTile
             World = world;
         }
 
-        public void Update(float deltaTime)
+        public void RunUpdate(float deltaTime)
         {
             var perfectLineCorners = perfectLineStorage.GetComponents<CornerComponent>()[0];
             ref var gameScore = ref gameScoreStorage.GetComponents<ScoreComponent>()[0];

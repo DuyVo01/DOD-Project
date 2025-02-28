@@ -1,8 +1,6 @@
-using System;
 using EventChannel;
-using PrimeTween;
+using Facade.Tweening;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace ECS_MagicTile
 {
@@ -25,7 +23,7 @@ namespace ECS_MagicTile
 
         [SerializeField]
         private BurstMovementUIController.BurstMovementElement[] burstMovementElements;
-        private Sequence effectSequence;
+        private ISequence effectSequence;
 
         void Awake()
         {
@@ -44,7 +42,8 @@ namespace ECS_MagicTile
 
         private void PlayEffect(bool isPerfect)
         {
-            effectSequence.Stop();
+            effectSequence?.Kill();
+            effectSequence = Tweener.Sequence();
 
             burstMovementUIController?.ResetAll();
             burstMovementUIController?.StartAll();
@@ -59,31 +58,57 @@ namespace ECS_MagicTile
                 );
             }
 
-            effectSequence = Tween
-                .Scale(
-                    target: perfectScorePrefab.transform,
-                    startValue: Vector3.zero,
-                    endValue: Vector3.one,
-                    duration: 0.2f,
-                    ease: Ease.Linear
-                )
+            // effectSequence = Tween
+            //     .Scale(
+            //         target: perfectScorePrefab.transform,
+            //         startValue: Vector3.zero,
+            //         endValue: Vector3.one,
+            //         duration: 0.2f,
+            //         ease: Ease.Linear
+            //     )
+            //     .Chain(
+            //         Tween
+            //             .Delay(duration: 0.5f)
+            //             .Chain(
+            //                 Tween
+            //                     .Alpha(
+            //                         target: perfectScorePrefab,
+            //                         startValue: 1f,
+            //                         endValue: 0f,
+            //                         duration: 0.5f,
+            //                         ease: Ease.Linear
+            //                     )
+            //                     .OnComplete(() =>
+            //                     {
+            //                         burstMovementUIController.StopAll();
+            //                     })
+            //             )
+            //     );
+
+            effectSequence
                 .Chain(
-                    Tween
-                        .Delay(duration: 0.5f)
-                        .Chain(
-                            Tween
-                                .Alpha(
-                                    target: perfectScorePrefab,
-                                    startValue: 1f,
-                                    endValue: 0f,
-                                    duration: 0.5f,
-                                    ease: Ease.Linear
-                                )
-                                .OnComplete(() =>
-                                {
-                                    burstMovementUIController.StopAll();
-                                })
+                    Tweener
+                        .DoScale(
+                            target: perfectScorePrefab.transform,
+                            startValue: Vector3.zero,
+                            endValue: Vector3.one,
+                            duration: 0.2f
                         )
+                        .SetEase(EaseType.Linear)
+                )
+                .Delay(interval: .5f)
+                .Chain(
+                    Tweener
+                        .DoFade(
+                            target: perfectScorePrefab,
+                            startValue: 1f,
+                            endValue: 0f,
+                            duration: 0.5f
+                        )
+                        .OnComplete(() =>
+                        {
+                            burstMovementUIController.StopAll();
+                        })
                 );
         }
     }

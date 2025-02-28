@@ -13,7 +13,7 @@ namespace ECS_MagicTile
         public bool IsEnabled { get; set; } = true;
         public World World { get; set; }
 
-        public EGameState GameStateToExecute => EGameState.Ingame;
+        public EGameState GameStateToExecute => EGameState.IngamePlaying;
 
         private readonly GeneralGameSetting generalGameSetting;
         private readonly MusicNoteCreationSetting musicNoteCreationSetting;
@@ -41,7 +41,7 @@ namespace ECS_MagicTile
             World = world;
         }
 
-        public void Initialize()
+        public void RunInitialize()
         {
             musicNoteStorage = World.GetStorage(Archetype.Registry.MusicNote);
             inputStorage = World.GetStorage(Archetype.Registry.Input);
@@ -53,7 +53,7 @@ namespace ECS_MagicTile
             musicNotes = musicNoteStorage.GetComponents<MusicNoteComponent>();
         }
 
-        public void Update(float deltaTime)
+        public void RunUpdate(float deltaTime)
         {
             for (int inputIdx = 0; inputIdx < MAX_INPUTS; inputIdx++)
             {
@@ -244,6 +244,6 @@ namespace ECS_MagicTile
             return (b.x - a.x) * (point.y - a.y) - (point.x - a.x) * (b.y - a.y);
         }
 
-        public void Cleanup() { }
+        public void RunCleanup() { }
     }
 }

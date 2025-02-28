@@ -72,15 +72,25 @@ public struct InputSystem : IGameSystem
             Touch touch = Input.GetTouch(i);
             Vector2 worldPos = Camera.main.ScreenToWorldPoint(touch.position);
 
-            InputState newState = touch.phase switch
+            InputState newState;
+
+            switch (touch.phase)
             {
-                TouchPhase.Began => InputState.JustPressed,
-                TouchPhase.Moved => InputState.Held,
-                TouchPhase.Stationary => InputState.Held,
-                TouchPhase.Ended => InputState.JustReleased,
-                TouchPhase.Canceled => InputState.JustReleased,
-                _ => InputState.None,
-            };
+                case TouchPhase.Began:
+                    newState = InputState.JustPressed;
+                    break;
+                case TouchPhase.Moved:
+                case TouchPhase.Stationary:
+                    newState = InputState.Held;
+                    break;
+                case TouchPhase.Ended:
+                case TouchPhase.Canceled:
+                    newState = InputState.JustReleased;
+                    break;
+                default:
+                    newState = InputState.None;
+                    break;
+            }
 
             UpdateInputSlot(ref inputData, i, worldPos, newState);
             inputData.activeInputCount++;

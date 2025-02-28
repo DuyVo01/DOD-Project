@@ -1,167 +1,130 @@
 {
   "ignores": [
-    "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/Demigiant/DOTween/Modules/DOTweenModuleAudio.cs",
-    "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/Demigiant/DOTween/Modules/DOTweenModulePhysics.cs",
-    "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/Demigiant/DOTween/Modules/DOTweenModulePhysics2D.cs",
-    "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/Demigiant/DOTween/Modules/DOTweenModuleSprite.cs",
-    "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/Demigiant/DOTween/Modules/DOTweenModuleUI.cs",
-    "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/Demigiant/DOTween/Modules/DOTweenModuleUnityVersion.cs",
-    "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/AudioSourceExtension.cs",
-    "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/HelperExtension.cs",
-    "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/SpriteExtension.cs"
+    "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/DOTween/Modules/DOTweenModuleAudio.cs",
+    "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/DOTween/Modules/DOTweenModulePhysics.cs",
+    "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/DOTween/Modules/DOTweenModulePhysics2D.cs",
+    "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/DOTween/Modules/DOTweenModuleSprite.cs",
+    "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/DOTween/Modules/DOTweenModuleUI.cs",
+    "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/DOTween/Modules/DOTweenModuleUnityVersion.cs",
+    "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/ComponentCache/ComponentCacheExtension.cs",
+    "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/Extensions/AudioSourceExtension.cs",
+    "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/Extensions/GraphicExtension.cs",
+    "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/Extensions/HelperExtension.cs",
+    "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/Extensions/RectTransformExtension.cs",
+    "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/Extensions/SpriteExtension.cs"
   ],
   "groups": [
     [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/Demigiant/DOTween/Modules/DOTweenModuleAudio.cs"
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/DOTween/Modules/DOTweenModuleAudio.cs"
     ],
     [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/Demigiant/DOTween/Modules/DOTweenModuleEPOOutline.cs"
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/DOTween/Modules/DOTweenModuleEPOOutline.cs"
     ],
     [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/Demigiant/DOTween/Modules/DOTweenModulePhysics.cs"
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/DOTween/Modules/DOTweenModulePhysics.cs"
     ],
     [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/Demigiant/DOTween/Modules/DOTweenModulePhysics2D.cs"
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/DOTween/Modules/DOTweenModulePhysics2D.cs"
     ],
     [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/Demigiant/DOTween/Modules/DOTweenModuleSprite.cs"
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/DOTween/Modules/DOTweenModuleSprite.cs"
     ],
     [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/Demigiant/DOTween/Modules/DOTweenModuleUI.cs"
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/DOTween/Modules/DOTweenModuleUI.cs"
     ],
     [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/Demigiant/DOTween/Modules/DOTweenModuleUnityVersion.cs"
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/DOTween/Modules/DOTweenModuleUnityVersion.cs"
     ],
     [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/Demigiant/DOTween/Modules/DOTweenModuleUtils.cs"
-    ],
-    [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/PrimeTween/Demo/Scripts/Animatable.cs"
-    ],
-    [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/PrimeTween/Demo/Scripts/Baggage.cs"
-    ],
-    [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/PrimeTween/Demo/Scripts/CameraController.cs"
-    ],
-    [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/PrimeTween/Demo/Scripts/CameraProjectionMatrixAnimation.cs"
-    ],
-    [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/PrimeTween/Demo/Scripts/Demo.cs"
-    ],
-    [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/PrimeTween/Demo/Scripts/DirectionalLightController.cs"
-    ],
-    [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/PrimeTween/Demo/Scripts/Door.cs"
-    ],
-    [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/PrimeTween/Demo/Scripts/Headlights.cs"
-    ],
-    [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/PrimeTween/Demo/Scripts/HighlightableElement.cs"
-    ],
-    [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/PrimeTween/Demo/Scripts/HighlightedElementController.cs"
-    ],
-    [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/PrimeTween/Demo/Scripts/InputController.cs"
-    ],
-    [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/PrimeTween/Demo/Scripts/JumpAnimation.cs"
-    ],
-    [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/PrimeTween/Demo/Scripts/MeasureAllocations/DebugInfo.cs"
-    ],
-    [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/PrimeTween/Demo/Scripts/MeasureAllocations/MeasureMemoryAllocations.cs"
-    ],
-    [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/PrimeTween/Demo/Scripts/Road.cs"
-    ],
-    [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/PrimeTween/Demo/Scripts/SlidingDoor.cs"
-    ],
-    [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/PrimeTween/Demo/Scripts/SqueezeAnimation.cs"
-    ],
-    [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/PrimeTween/Demo/Scripts/SwipeTutorial.cs"
-    ],
-    [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/PrimeTween/Demo/Scripts/TypewriterAnimatorExample.cs"
-    ],
-    [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/PrimeTween/Demo/Scripts/Wheels.cs"
-    ],
-    [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/PrimeTween/internal/PrimeTweenInstaller.cs"
-    ],
-    [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/AudioSourceExtension.cs"
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Plugins/DOTween/Modules/DOTweenModuleUtils.cs"
     ],
     [
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/CameraViewUtils.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/SpriteExtension.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/Extensions/SpriteExtension.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Syncers/MusicNoteSyncer.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Core/ArchetypeSyncer.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Syncers/ProgressSyncer.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/EGameState.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Core/IGameSystem.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Core/SystemRegistry.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Core/GlobalPoint.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Core/BaseSyncTool.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Syncers/GameScoreSyncTool.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Systems/ScoringSystem.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Core/World.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Core/IGameSystem.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Core/SystemRegistry.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Systems/GameStateSystem.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/EventChannels/SOScripts/IntEventChannel.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/MonoScripts/RaycastToObjects.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Core/IEntityHolder.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Core/EntityIdHolder.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Core/EntityViewFactory.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Core/World.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Functions/GameStateMachine/GameSystemState.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/StateChart/BaseState.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/StateChart/CompositeState.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/StateChart/StateChart.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/StateChart/Transition.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Systems_Mono/GameIntroSystem.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Settings/SO_SCripts/GeneralGameSetting.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Systems/InputCollisionSystem.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Settings/SO_SCripts/MusicNoteCreationSetting.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Syncers/MusicNoteViewSyncTool.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Systems/MovingNoteSystem.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Core/ArchetypeStorage.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Core/StorageManager.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Core/Archetype.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Syncers/LaneLineSyncTool.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Systems/LaneLineSystem.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/EventChannels/SOScripts/BoolEventChannel.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/MonoScripts/ScoreEffectController.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/MonoScripts/BurstMovementUIController.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/TweenFacade/ISequence.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/TweenFacade/Tweener.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/MonoScripts/CrownTween.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/MonoScripts/ProgressEffectController.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/MonoScripts/StarTween.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/TweenFacade/EaseType.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/TweenFacade/ITween.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/TweenFacade/TweenManager.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/PersistentSingleton.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/ComponentCache/ComponentCacheManager.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/ComponentCache/ComponentCacheExtension.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/ComponentCache/DynamicComponentCache.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/MonoScripts/ScreenManager.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Systems/PerfectLineSystem.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Core/ArchetypeStorage.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Core/StorageManager.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Core/Archetype.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Syncers/MusicNoteViewSyncTool.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Systems/InputCollisionSystem.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Settings/SO_SCripts/GeneralGameSetting.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Systems/MovingNoteSystem.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Settings/SO_SCripts/MusicNoteCreationSetting.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Syncers/StartingNoteSyncer.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/DataComponents/ActiveStateComponent.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/DataComponents/PerfectLineTagComponent.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Core/ComponentType.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/DataComponents/TransformComponent.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/DataComponents/ScoreEffectComponent.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Core/IComponent.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/DataComponents/ActiveStateComponent.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Syncers/StartingNoteSyncer.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Core/EntityViewFactory.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Syncers/StartingNoteSyncTool.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Systems/StartingNoteSystem.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/DataComponents/CornerComponent.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Systems/MusicNoteCreationSystem.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/DTO/MusicNoteMidiData.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Functions/PreciseNoteCalculator.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Settings/SO_SCripts/MidiNoteParser.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Systems/SingletonCreationSystem.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Settings/SO_SCripts/PerfectLineSetting.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Settings/SO_SCripts/LaneLineSettings.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MonoDebug/PerfectLineCameraSpacePositionAdjuster.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MonoDebug/PerfectLineFakeVisual.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MonoDebug/PerfectLineSpriteResizer.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/ReactiveProperty.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/DataComponents/PerfectLineTagComponent.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Systems/StartingNoteSystem.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Syncers/StartingNoteSyncTool.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Global/MagicTileHelper.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Systems/TransformUpdateSystem.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/DataComponents/StartingNoteTagComponent.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/DataComponents/ScoreComponent.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Syncers/ScoreUISyncer.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/DataComponents/ProgressComponent.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Syncers/ProgressSyncTool.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Systems/ProgressSystem.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/DataComponents/WorldStateComponent.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Systems/TraceNoteToTriggerSongSystem.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/EventChannel/EmptyEventChannel.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/MonoScripts/AudioManager.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/EventChannel/IEventData.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/EventChannel/EventChannelSO.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/EventChannels/SOScripts/IntEventChannel.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/MonoScripts/RaycastToObjects.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Core/IEntityHolder.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Core/EntityIdHolder.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Initializer/MusicNoteInitializer.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Systems/TransformUpdateSystem.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Interfaces/IGameSystem.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Repositories/SystemRepository.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Global/GlobalGameSetting.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Global/MagicTileHelper.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/Settings/SO Scripts/GeneralGameSettingSO.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Systems/InputCollisionSystem.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/World/MusicTileWorld.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Global/MusicTileManager.cs",
@@ -180,13 +143,13 @@
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/DataComponents/InputStateComponent.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Systems/InputSystem.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Systems/InputSystem.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Interfaces/IGameSystem.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Systems/IntroNoteInitSystem.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/DataComponent/IntroNoteData.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Interfaces/IDataComponent.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/DataComponent/LaneLineData.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Repositories/SingletonComponentRepository.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Initializer/LaneLineInitializer.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Systems/LaneLineSortingSystem.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/DataComponent/LaneLineData.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Interfaces/IDataComponent.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/DataComponent/IntroNoteData.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Systems/IntroNoteInitSystem.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/DataComponent/PerfectLineData.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Systems/NoteStateSystem.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/DataComponent/MusicNoteTransformData.cs",
@@ -194,49 +157,52 @@
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/DataComponent/MusicNoteStateData.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/DataComponents/MusicNoteComponent.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/DataComponents/MusicNoteInteractionComponent.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/Settings/SO Scripts/GeneralGameSettingSO.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Systems/TileSpawnSystem.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Systems/NoteCornerUpdateSystem.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MonoDebug/GizmoDebugger.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/PersistentSingleton.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/Settings/SO Scripts/LaneLineSettingSO.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Systems/TileSpawnSystem.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/Settings/SO Scripts/IntroNoteSettingSO.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/DataComponent/MusicNoteFillerData.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Global/EntityGroup.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Interfaces/IEntityGroup.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Repositories/EntityRepository.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Enum/EntityType.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/Settings/SO Scripts/LaneLineSettingSO.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Enum/DataComponentEnum/LaneLineComponentType.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Repositories/SingletonComponentRepository.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Enum/SingletonComponentType.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/DataComponent/MusicNoteFillerData.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/Settings/SO Scripts/IntroNoteSettingSO.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Enum/PresenterManagerType.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Interfaces/IPresenterManager.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/Enum/DataComponentEnum/MusicNoteComponentType.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/Settings/SO Scripts/MusicNoteSettingSO.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/Settings/SO Scripts/DataSystemSettingSO.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/Settings/SO Scripts/PresenterSettingSO.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/Settings/SO Scripts/PerfectLineSettingSO.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/Settings/SO Scripts/MusicNoteSettingSO.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/DataComponents/StartingNoteTagComponent.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/DataComponents/ScoreComponent.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Syncers/ScoreUISyncer.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/DataComponents/ProgressComponent.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Syncers/ProgressSyncTool.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Systems/ProgressSystem.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/DataComponents/WorldStateComponent.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Systems/TraceNoteToTriggerSongSystem.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/EventChannel/EmptyEventChannel.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/MonoScripts/AudioManager.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/EventChannel/IEventData.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/EventChannel/EventChannelSO.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/DataComponents/MusicNoteFillerComponent.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/DataComponents/ScoreStateComponent.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/DataComponents/GraphicComponent.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/DataComponents/LongNoteTagComponent.cs",
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/DataComponents/ShortNoteTagComponent.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Syncers/PerfectLineSyncTool.cs"
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Syncers/PerfectLineSyncTool.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Settings/SO_SCripts/PerfectLineSetting.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Settings/SO_SCripts/LaneLineSettings.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MonoDebug/PerfectLineCameraSpacePositionAdjuster.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MonoDebug/PerfectLineFakeVisual.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MonoDebug/PerfectLineSpriteResizer.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/ReactiveProperty.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/TweenFacade/Wrappers/DOTweenWrapper.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/TweenFacade/Wrappers/DOTweenSequenceWrapper.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/MonoScripts/EffectOnProgress.cs"
     ],
     [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/HelperExtension.cs"
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/Extensions/AudioSourceExtension.cs"
+    ],
+    [
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/Extensions/GraphicExtension.cs"
+    ],
+    [
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/Extensions/HelperExtension.cs"
+    ],
+    [
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/Extensions/RectTransformExtension.cs"
     ],
     [
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/CustomLibrary/ManualDebug/DebugHandler.cs",
@@ -257,18 +223,14 @@
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/MonoScripts/BurstMovement.cs"
     ],
     [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/MonoScripts/CrownTween.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/MonoScripts/ProgressEffectController.cs",
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/MonoScripts/StarTween.cs"
-    ],
-    [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/MonoScripts/EffectOnProgress.cs"
-    ],
-    [
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/MonoScripts/VerticalLineSetup.cs"
     ],
     [
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ECS_MagicTiles/ECS_Principled/Settings/SO_SCripts/ScoreEffectSettings.cs"
+    ],
+    [
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/ICachedID.cs",
+      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/UISpriteAnimator.cs"
     ],
     [
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/MagicTiles/CustomEditor/GlobalGameSettingEditor.cs"
@@ -280,16 +242,13 @@
       "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/UIRawImageAnimator.cs"
     ],
     [
-      "/Users/duy.vt/Desktop/Projects/DOD-Project-Git/LunaTemp/stage3/processed-scripts/Assets/Scripts/UISpriteAnimator.cs"
+      "/Users/duy.vt/Desktop/Project assets/6.2.0/pipeline/templates/LunaCompiler/Scripts/Properties/AssemblyInfo.cs"
     ],
     [
-      "/Users/duy.vt/Desktop/Project assets/6.2.1/pipeline/templates/LunaCompiler/Scripts/Properties/AssemblyInfo.cs"
+      "/Users/duy.vt/Desktop/Project assets/6.2.0/pipeline/templates/LunaCompiler/Scripts/Sources/OtherDummyScript.cs"
     ],
     [
-      "/Users/duy.vt/Desktop/Project assets/6.2.1/pipeline/templates/LunaCompiler/Scripts/Sources/OtherDummyScript.cs"
-    ],
-    [
-      "/Users/duy.vt/Desktop/Project assets/6.2.1/pipeline/templates/LunaCompiler/Scripts/obj/Debug/.NETFramework,Version=v4.7.AssemblyAttributes.cs"
+      "/Users/duy.vt/Desktop/Project assets/6.2.0/pipeline/templates/LunaCompiler/Scripts/obj/Debug/.NETFramework,Version=v4.7.AssemblyAttributes.cs"
     ]
   ]
 }

@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,7 +5,8 @@ namespace ECS_MagicTile
 {
     public class EntityViewFactory
     {
-        private readonly Dictionary<int, GameObject> entityViews = new();
+        private readonly Dictionary<int, GameObject> entityViews =
+            new Dictionary<int, GameObject>();
         private readonly GameObject prefabSource;
         private readonly Transform viewRoot;
 

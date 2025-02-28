@@ -1,4 +1,4 @@
-using PrimeTween;
+using Facade.Tweening;
 using UnityEngine;
 
 namespace ECS_MagicTile
@@ -22,25 +22,37 @@ namespace ECS_MagicTile
 
         void Start()
         {
-            Sequence
-                .Create(cycles: -1)
+            // Sequence
+            //     .Create(cycles: -1)
+            //     .Chain(
+            //         Tween.Scale(
+            //             target: rectTransform,
+            //             startValue: startScale,
+            //             endValue: endScale,
+            //             duration: duration,
+            //             ease: Ease.Linear
+            //         )
+            //     )
+            //     .Chain(
+            //         Tween.Scale(
+            //             target: rectTransform,
+            //             endValue: startScale,
+            //             duration: duration,
+            //             ease: Ease.Linear
+            //         )
+            //     );
+
+            Tweener
+                .Sequence()
                 .Chain(
-                    Tween.Scale(
-                        target: rectTransform,
-                        startValue: startScale,
-                        endValue: endScale,
-                        duration: duration,
-                        ease: Ease.Linear
-                    )
+                    Tweener
+                        .DoScale(rectTransform, startScale, endScale, duration)
+                        .SetEase(EaseType.Linear)
                 )
                 .Chain(
-                    Tween.Scale(
-                        target: rectTransform,
-                        endValue: startScale,
-                        duration: duration,
-                        ease: Ease.Linear
-                    )
-                );
+                    Tweener.DoScale(rectTransform, startScale, duration).SetEase(EaseType.Linear)
+                )
+                .SetLoops(-1);
         }
     }
 }

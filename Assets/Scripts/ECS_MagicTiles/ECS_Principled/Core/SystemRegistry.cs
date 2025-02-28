@@ -8,7 +8,7 @@ namespace ECS_MagicTile
     public static class SystemRegistry
     {
         // Store systems in order of execution priority
-        private static readonly List<IGameSystem> updateSystems = new();
+        private static readonly List<IGameSystem> updateSystems = new List<IGameSystem>();
         private static World world;
         private static bool isInitialized;
         private static EGameState currentGameState = EGameState.IngamePrestart;

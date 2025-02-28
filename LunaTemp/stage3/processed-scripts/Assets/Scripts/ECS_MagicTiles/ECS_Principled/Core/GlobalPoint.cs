@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using EventChannel;
+using StateMachineChart;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -29,6 +30,8 @@ namespace ECS_MagicTile
         public GameObject perfectLineObject;
         public Camera mainCamera;
 
+        [Header("Mono Settings")]
+        public GameIntroSystem gameIntroSystem;
         private World world;
 
         public World World
@@ -43,14 +46,19 @@ namespace ECS_MagicTile
         public ProgressSyncTool progressSyncTool { get; private set; }
         public LaneLineSyncTool laneLineSyncTool { get; private set; }
 
+        private StateChart stateChart;
+
         private void Awake()
         {
             // Initialize our ECS world
             world = new World();
 
+            generalGameSetting.CurrentGameState = EGameState.Intro;
+
             SystemRegistry.Initialize(world);
             InitializeSyncTools();
             RegisterSystems();
+            SetupStateChart();
         }
 
         private void InitializeSyncTools()
@@ -63,26 +71,71 @@ namespace ECS_MagicTile
             laneLineSyncTool = new LaneLineSyncTool(this);
         }
 
+        private void SetupStateChart()
+        {
+            var rootState = new CompositeState();
+            var introState = new GameSystemState(World, new IGameSystem[] { gameIntroSystem });
+            var preStartState = new GameSystemState(
+                World,
+                new IGameSystem[]
+                {
+                    new StartingNoteSystem(this),
+                    new PerfectLineSystem(this),
+                    new LaneLineSystem(this),
+                }
+            );
+            var ingameState = new GameSystemState(
+                World,
+                new IGameSystem[]
+                {
+                    new MusicNoteCreationSystem(this),
+                    new MovingNoteSystem(this),
+                    new TraceNoteToTriggerSongSystem(this),
+                    new InputSystem(),
+                    new InputCollisionSystem(this),
+                    new ScoringSystem(this),
+                    new ProgressSystem(this),
+                }
+            );
+
+            rootState.AddSubstate(introState);
+            rootState.AddSubstate(ingameState);
+
+            stateChart = new StateChart(rootState);
+
+            stateChart.AddTransition(
+                introState,
+                preStartState,
+                () => generalGameSetting.CurrentGameState == EGameState.IngamePrestart
+            );
+
+            stateChart.AddTransition(
+                preStartState,
+                ingameState,
+                () => generalGameSetting.CurrentGameState == EGameState.IngamePlaying
+            );
+        }
+
         private void RegisterSystems()
         {
             //Singleton Creation system
             SystemRegistry.AddSystem(new SingletonCreationSystem(this));
 
-            //Creation System
-            SystemRegistry.AddSystem(new PerfectLineSystem(this));
-            SystemRegistry.AddSystem(new MusicNoteCreationSystem(this));
-            SystemRegistry.AddSystem(new StartingNoteSystem(this));
+            // //Creation System
+            // SystemRegistry.AddSystem(new PerfectLineSystem(this));
+            // SystemRegistry.AddSystem(new MusicNoteCreationSystem(this));
+            // SystemRegistry.AddSystem(new StartingNoteSystem(this));
 
-            //Handling Data system
-            SystemRegistry.AddSystem(new MovingNoteSystem(this));
-            SystemRegistry.AddSystem(new TraceNoteToTriggerSongSystem(this));
-            SystemRegistry.AddSystem(new InputSystem());
-            SystemRegistry.AddSystem(new InputCollisionSystem(this));
-            SystemRegistry.AddSystem(new ScoringSystem(this));
-            SystemRegistry.AddSystem(new ProgressSystem(this));
-            SystemRegistry.AddSystem(new LaneLineSystem(this));
+            // //Handling Data system
+            // SystemRegistry.AddSystem(new MovingNoteSystem(this));
+            // SystemRegistry.AddSystem(new TraceNoteToTriggerSongSystem(this));
+            // SystemRegistry.AddSystem(new InputSystem());
+            // SystemRegistry.AddSystem(new InputCollisionSystem(this));
+            // SystemRegistry.AddSystem(new ScoringSystem(this));
+            // SystemRegistry.AddSystem(new ProgressSystem(this));
+            // SystemRegistry.AddSystem(new LaneLineSystem(this));
 
-            //Game State system
+            // //Game State system
             SystemRegistry.AddSystem(new GameStateSystem(this));
         }
 
@@ -90,6 +143,7 @@ namespace ECS_MagicTile
         {
             // Update all systems with current frame's delta time
             SystemRegistry.Update(Time.deltaTime);
+            stateChart.Update();
         }
     }
 }

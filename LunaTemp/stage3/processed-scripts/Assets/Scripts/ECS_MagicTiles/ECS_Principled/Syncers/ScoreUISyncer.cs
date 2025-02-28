@@ -19,7 +19,7 @@ namespace ECS_MagicTile
             this.scoreText = globalPoint.scoreText;
         }
 
-        public override void Update(float deltaTime)
+        public override void RunUpdate(float deltaTime)
         {
             // Get score data from storage
             ScoreComponent scoreComponent = DedicatedStorage.GetComponents<ScoreComponent>()[0];
