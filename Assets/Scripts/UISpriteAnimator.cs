@@ -33,7 +33,7 @@ public class UISpriteAnimator : MonoBehaviour, ICachedID
 
     private void Update()
     {
-        Debug.Log("Is Null Image: " + (gameObject.Image(Id) == null));
+        // Debug.Log("Is Null Image: " + (gameObject.Image(Id) == null));
 
         if (!isPlaying || frames == null || frames.Length <= 0)
             return;
@@ -60,7 +60,7 @@ public class UISpriteAnimator : MonoBehaviour, ICachedID
             // Update sprite
             // image.sprite = frames[currentFrame];
 
-            gameObject.Image(Id).sprite = frames[currentFrame];
+            // gameObject.Image(Id).sprite = frames[currentFrame];
         }
     }
 

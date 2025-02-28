@@ -1,5 +1,6 @@
 using System;
-using PrimeTween;
+using Facade.Tweening;
+// using PrimeTween;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,12 +8,42 @@ namespace ECS_MagicTile
 {
     public class StarTween : MonoBehaviour
     {
+        // Helper method to convert PrimeTween.Ease values to our facade's EaseType
+        private EaseType ConvertEase(int primeEase)
+        {
+            // Map the integer values from PrimeTween.Ease to our EaseType
+            switch (primeEase)
+            {
+                case 1:
+                    return EaseType.Linear;
+                case 2:
+                    return EaseType.InSine;
+                case 3:
+                    return EaseType.OutSine;
+                case 4:
+                    return EaseType.InOutSine;
+                case 5:
+                    return EaseType.InQuad;
+                case 6:
+                    return EaseType.OutQuad;
+                case 7:
+                    return EaseType.OutCubic;
+                case 10:
+                    return EaseType.InOutCubic;
+                // Add more mappings as needed
+                default:
+                    return EaseType.Linear;
+            }
+        }
+
         [SerializeField]
         private StarProperties defaultValue;
         private StarProperties[] stars;
         private int currentStarIndexToProcess;
 
         StarProperties currentStar;
+
+        private ISequence sequence;
 
         public void InitializeStars(StarProperties[] stars)
         {
@@ -30,80 +61,90 @@ namespace ECS_MagicTile
 
         public void PlayEffect()
         {
-            currentStar = stars[currentStarIndexToProcess];
+            sequence?.Kill();
+            sequence = Tweener.Sequence();
 
-            Tween
-                .Scale(
-                    target: currentStar.starRect,
-                    startValue: currentStar.scaleStartValue,
-                    endValue: currentStar.scaleMidValue,
-                    duration: currentStar.firstPhaseDuration,
-                    ease: currentStar.firstPhaseEase
+            currentStar = stars[currentStarIndexToProcess];
+            Debug.Log($"Play Effect of {currentStar.starAwakenedImg.name}");
+
+            sequence
+                .Chain(
+                    Tweener
+                        .DoScale(
+                            target: currentStar.starRect,
+                            startValue: currentStar.scaleStartValue,
+                            endValue: currentStar.scaleMidValue,
+                            duration: currentStar.firstPhaseDuration
+                        )
+                        .SetEase(currentStar.firstPhaseEase)
                 )
-                .Group(
-                    Tween.Rotation(
-                        target: currentStar.starRect,
-                        startValue: currentStar.rotationStartValue,
-                        endValue: currentStar.rotationMidValue,
-                        duration: currentStar.firstPhaseDuration,
-                        ease: currentStar.firstPhaseEase
-                    )
+                .Join(
+                    Tweener
+                        .DoRotate(
+                            target: currentStar.starRect,
+                            startValue: currentStar.rotationStartValue,
+                            endValue: currentStar.rotationMidValue,
+                            duration: currentStar.firstPhaseDuration
+                        )
+                        .SetEase(currentStar.firstPhaseEase)
                 )
-                .Group(
-                    Tween.Alpha(
-                        target: currentStar.starAwakenedImg,
-                        startValue: currentStar.alphaStart,
-                        endValue: currentStar.alphaMid,
-                        duration: currentStar.firstPhaseDuration,
-                        ease: currentStar.firstPhaseEase
-                    )
+                .Join(
+                    Tweener
+                        .DoFade(
+                            target: currentStar.starAwakenedImg,
+                            startValue: currentStar.alphaStart,
+                            endValue: currentStar.alphaMid,
+                            duration: currentStar.firstPhaseDuration
+                        )
+                        .SetEase(currentStar.firstPhaseEase)
                 )
-                .Group(
-                    Tween.Scale(
-                        target: currentStar.starAwakenedImg.rectTransform,
-                        startValue: currentStar.awakenedScaleStart,
-                        endValue: currentStar.awakenedScaleMid,
-                        duration: currentStar.firstPhaseDuration,
-                        ease: currentStar.firstPhaseEase
-                    )
+                .Join(
+                    Tweener
+                        .DoScale(
+                            target: currentStar.starAwakenedImg.rectTransform,
+                            startValue: currentStar.awakenedScaleStart,
+                            endValue: currentStar.awakenedScaleMid,
+                            duration: currentStar.firstPhaseDuration
+                        )
+                        .SetEase(currentStar.firstPhaseEase)
                 )
                 .Chain(
-                    Tween
-                        .Scale(
+                    Tweener
+                        .DoScale(
                             target: currentStar.starRect,
-                            startValue: currentStar.scaleMidValue,
                             endValue: currentStar.scaleEndValue,
-                            duration: currentStar.secondPhaseDuration,
-                            ease: currentStar.secondPhaseEase
+                            duration: currentStar.secondPhaseDuration
                         )
-                        .Group(
-                            Tween.Rotation(
-                                target: currentStar.starRect,
-                                startValue: currentStar.rotationMidValue,
-                                endValue: currentStar.rotationEndValue,
-                                duration: currentStar.secondPhaseDuration,
-                                ease: currentStar.secondPhaseEase
-                            )
+                        .SetEase(currentStar.secondPhaseEase)
+                )
+                .Join(
+                    Tweener
+                        .DoRotate(
+                            target: currentStar.starRect,
+                            endValue: currentStar.rotationEndValue,
+                            duration: currentStar.secondPhaseDuration
                         )
-                        .Group(
-                            Tween.Alpha(
-                                target: currentStar.starAwakenedImg,
-                                startValue: currentStar.alphaMid,
-                                endValue: currentStar.alphaEnd,
-                                duration: currentStar.secondPhaseDuration,
-                                ease: currentStar.secondPhaseEase
-                            )
+                        .SetEase(currentStar.secondPhaseEase)
+                )
+                .Join(
+                    Tweener
+                        .DoFade(
+                            target: currentStar.starAwakenedImg,
+                            endValue: currentStar.alphaEnd,
+                            duration: currentStar.secondPhaseDuration
                         )
-                        .Group(
-                            Tween.Scale(
-                                target: currentStar.starAwakenedImg.rectTransform,
-                                startValue: currentStar.awakenedScaleMid,
-                                endValue: currentStar.awakenedScaleEnd,
-                                duration: currentStar.secondPhaseDuration,
-                                ease: currentStar.secondPhaseEase
-                            )
+                        .SetEase(currentStar.secondPhaseEase)
+                )
+                .Join(
+                    Tweener
+                        .DoScale(
+                            target: currentStar.starAwakenedImg.rectTransform,
+                            endValue: currentStar.awakenedScaleEnd,
+                            duration: currentStar.secondPhaseDuration
                         )
+                        .SetEase(currentStar.secondPhaseEase)
                 );
+
             currentStarIndexToProcess++;
         }
 
@@ -139,9 +180,9 @@ namespace ECS_MagicTile
 
             [Header("Phase paremeters")]
             public float firstPhaseDuration = .4f;
-            public Ease firstPhaseEase = Ease.OutCubic;
+            public EaseType firstPhaseEase = EaseType.OutCubic; // Was Ease.OutCubic
             public float secondPhaseDuration = .2f;
-            public Ease secondPhaseEase = Ease.Linear;
+            public EaseType secondPhaseEase = EaseType.Linear; // Was Ease.Linear
         }
     }
 }
