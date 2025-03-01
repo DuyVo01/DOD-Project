@@ -28,5 +28,7 @@ namespace ComponentCache
 
         public static RawImage RawImage(this GameObject go) =>
             ComponentCacheManager.Instance.GetRawImage(go);
+
+        public static Text Text(this GameObject go) => ComponentCacheManager.Instance.GetText(go);
     }
 }

@@ -31,6 +31,7 @@ namespace ECS_MagicTile
 
         [Header("Mono Settings")]
         public GameIntroSystem gameIntroSystem;
+        public InGameUIElementHandlerSystem inGameUIElementHandlerSystem;
         private World world;
 
         public World World
@@ -73,6 +74,7 @@ namespace ECS_MagicTile
         private void SetupStateChart()
         {
             var rootState = new CompositeState();
+
             var introState = new GameSystemState(World, new IGameSystem[] { gameIntroSystem });
             var preStartState = new GameSystemState(
                 World,
@@ -81,6 +83,7 @@ namespace ECS_MagicTile
                     new StartingNoteSystem(this),
                     new PerfectLineSystem(this),
                     new LaneLineSystem(this),
+                    inGameUIElementHandlerSystem,
                 }
             );
             var ingameState = new GameSystemState(

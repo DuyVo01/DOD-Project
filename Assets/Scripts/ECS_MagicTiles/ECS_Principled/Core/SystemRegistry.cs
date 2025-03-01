@@ -52,22 +52,13 @@ namespace ECS_MagicTile
 
             foreach (var system in updateSystems)
             {
-                if (
-                    system.IsEnabled
-                    && (
-                        system.GameStateToExecute == currentGameState
-                        || system.GameStateToExecute == EGameState.All
-                    )
-                )
+                try
                 {
-                    try
-                    {
-                        system.RunUpdate(deltaTime);
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.LogError($"Error in system {system.GetType().Name}: {e}");
-                    }
+                    system.RunUpdate(deltaTime);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"Error in system {system.GetType().Name}: {e}");
                 }
             }
         }

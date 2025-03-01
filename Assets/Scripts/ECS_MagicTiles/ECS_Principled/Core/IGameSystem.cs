@@ -12,6 +12,5 @@ namespace ECS_MagicTile
         void RunCleanup();
         bool IsEnabled { get; set; } // Controls if system should be updated
         World World { get; set; }
-        EGameState GameStateToExecute { get; }
     }
 }

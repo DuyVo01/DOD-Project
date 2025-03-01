@@ -10,7 +10,7 @@ namespace ComponentCache.Core
         private readonly Dictionary<GameObject, int> gameObjectToId =
             new Dictionary<GameObject, int>();
 
-        private Queue<int> freedIds = new Queue<int>();
+        private readonly Queue<int> freedIds = new Queue<int>();
 
         private int highestUsedId = -1;
 
@@ -25,6 +25,8 @@ namespace ComponentCache.Core
             new DynamicComponentCache<RectTransform>();
         private readonly DynamicComponentCache<Button> buttonCache =
             new DynamicComponentCache<Button>();
+        private readonly DynamicComponentCache<Text> legacyTextCache =
+            new DynamicComponentCache<Text>();
 
         // Add more component types as needed
 
@@ -122,6 +124,8 @@ namespace ComponentCache.Core
                 buttonCache.Set(id, component as Button);
             else if (typeof(T) == typeof(RawImage))
                 rawImageCache.Set(id, component as RawImage);
+            else if (typeof(T) == typeof(Text))
+                legacyTextCache.Set(id, component as Text);
             else
                 Debug.LogWarning(
                     $"Component type {typeof(T)} is not supported for caching. Add it to ComponentCacheManager."
@@ -150,6 +154,7 @@ namespace ComponentCache.Core
             imageCache.Clear(id);
             buttonCache.Clear(id);
             rawImageCache.Clear(id);
+            legacyTextCache.Clear(id);
             // Clear other caches as needed
         }
 
@@ -172,6 +177,10 @@ namespace ComponentCache.Core
                 return buttonCache.Get(id) as T;
             else if (typeof(T) == typeof(RawImage))
                 return rawImageCache.Get(id) as T;
+            else if (typeof(T) == typeof(Text))
+                return legacyTextCache.Get(id) as T;
+
+            // Add more component types as needed
 
             return null;
         }
@@ -217,6 +226,14 @@ namespace ComponentCache.Core
             return rawImageCache.Get(id);
         }
 
+        public Text GetText(GameObject gameObject)
+        {
+            if (gameObject == null || !gameObjectToId.TryGetValue(gameObject, out int id))
+                return null;
+
+            return legacyTextCache.Get(id);
+        }
+
         // Optional: Scene transition cleanup
         public void OnSceneUnloaded()
         {
@@ -225,6 +242,7 @@ namespace ComponentCache.Core
             rectTransformCache.TrimExcess();
             buttonCache.TrimExcess();
             rawImageCache.TrimExcess();
+            legacyTextCache.TrimExcess();
         }
     }
 }

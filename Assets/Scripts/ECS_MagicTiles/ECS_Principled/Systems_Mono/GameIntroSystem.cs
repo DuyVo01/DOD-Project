@@ -1,5 +1,3 @@
-using ComponentCache;
-using ECS_MagicTile;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,13 +9,15 @@ namespace ECS_MagicTile
         [SerializeField]
         private GeneralGameSetting generalGameSetting;
 
+        [Header("Component references")]
         [SerializeField]
         private Button startButton;
 
+        [SerializeField]
+        private GameObject introBlock;
+
         public bool IsEnabled { get; set; }
         public World World { get; set; }
-
-        public EGameState GameStateToExecute => EGameState.All;
 
         public void RunCleanup()
         {
@@ -29,6 +29,7 @@ namespace ECS_MagicTile
             startButton.onClick.AddListener(() =>
             {
                 generalGameSetting.CurrentGameState = EGameState.IngamePrestart;
+                introBlock.SetActive(false);
             });
         }
 
