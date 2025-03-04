@@ -1,6 +1,8 @@
+using ComponentCache;
 using EventChannel;
-using Unity.VisualScripting;
+using Facade.Tweening;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace ECS_MagicTile
 {
@@ -8,7 +10,7 @@ namespace ECS_MagicTile
     {
         [Header("Event Channels")]
         [SerializeField]
-        private EmptyEventChannel OnIntroGameoEventChannel;
+        private EmptyEventChannel OnIntroGameEventChannel;
 
         [SerializeField]
         private EmptyEventChannel OnInGameEventChannel;
@@ -27,8 +29,15 @@ namespace ECS_MagicTile
         private GameObject outroBlock;
 
         [SerializeField]
+        private GameObject transition;
+
+        [SerializeField]
         public bool IsEnabled { get; set; }
         public World World { get; set; }
+
+        ISequence sequence;
+
+        void Start() { }
 
         public void SetWorld(World world)
         {
@@ -37,7 +46,7 @@ namespace ECS_MagicTile
 
         public void RunInitialize()
         {
-            OnIntroGameoEventChannel.Subscribe(OnIntro);
+            OnIntroGameEventChannel.Subscribe(OnIntro);
             OnInGameEventChannel.Subscribe(OnInGame);
             OnOutroGameEventChannel.Subscribe(OnOutro);
         }
@@ -48,16 +57,50 @@ namespace ECS_MagicTile
 
         private void OnIntro(EmptyData _)
         {
-            introBlock.SetActive(true);
-            inGameBlock.SetActive(false);
-            outroBlock.SetActive(false);
+            if (transition.Image() == null)
+            {
+                transition.RegisterComponent(transition.GetComponent<Image>());
+            }
+
+            sequence?.Kill();
+
+            sequence ??= Tweener
+                .Sequence()
+                .Chain(
+                    Tweener
+                        .DoFade(transition.Image(), 1f, 1f)
+                        .OnComplete(() =>
+                        {
+                            introBlock.SetActive(true);
+                            inGameBlock.SetActive(false);
+                            outroBlock.SetActive(false);
+                        })
+                )
+                .Chain(Tweener.DoFade(transition.Image(), 0f, 1f));
         }
 
         private void OnInGame(EmptyData _)
         {
-            introBlock.SetActive(false);
-            inGameBlock.SetActive(true);
-            outroBlock.SetActive(false);
+            if (transition.Image() == null)
+            {
+                transition.RegisterComponent(transition.GetComponent<Image>());
+            }
+
+            sequence?.Kill();
+
+            sequence ??= Tweener
+                .Sequence()
+                .Chain(
+                    Tweener
+                        .DoFade(transition.Image(), 1f, 1f)
+                        .OnComplete(() =>
+                        {
+                            introBlock.SetActive(false);
+                            inGameBlock.SetActive(true);
+                            outroBlock.SetActive(false);
+                        })
+                )
+                .Chain(Tweener.DoFade(transition.Image(), 0f, 1f));
         }
 
         private void OnOutro(EmptyData _)

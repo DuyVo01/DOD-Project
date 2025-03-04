@@ -13,16 +13,18 @@ MonoBehaviour:
   m_Name: SO_InGameUIElementSetting
   m_EditorClassIdentifier: 
   scoreUISettings:
-    phonePortraitPos: {x: 0, y: 0}
+    phonePortraitPos: {x: 0, y: -300}
     phoneLandscapePos: {x: 0, y: 0}
     tabletPortraitPos: {x: 0, y: 0}
     tabletLandscapePos: {x: 0, y: 0}
   songNameUISettings:
+    songNameContent: Perfect
     phonePortraitPos: {x: 0, y: 0}
     phoneLandscapePos: {x: 0, y: 0}
     tabletPortraitPos: {x: 0, y: 0}
     tabletLandscapePos: {x: 0, y: 0}
   songAuthorUISettings:
+    songAuthorContent: Ed Sheeran
     phonePortraitPos: {x: 0, y: 0}
     phoneLandscapePos: {x: 0, y: 0}
     tabletPortraitPos: {x: 0, y: 0}

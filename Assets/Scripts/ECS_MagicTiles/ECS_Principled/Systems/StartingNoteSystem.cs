@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace ECS_MagicTile
 {
-    public class StartingNoteSystem : IGameSystem
+    public class StartingNoteCreationSystem : IGameSystem
     {
         public bool IsEnabled { get; set; } = true;
         public World World { get; set; }
@@ -23,7 +23,7 @@ namespace ECS_MagicTile
         float lastPerfectLineTopLeftY;
         float lastPerfectLineTopLeftX;
 
-        public StartingNoteSystem(GlobalPoint globalPoint)
+        public StartingNoteCreationSystem(GlobalPoint globalPoint)
         {
             musicNoteCreationSetting = globalPoint.musicNoteCreationSettings;
             startingNoteSyncTool = globalPoint.startingNoteSyncTool;

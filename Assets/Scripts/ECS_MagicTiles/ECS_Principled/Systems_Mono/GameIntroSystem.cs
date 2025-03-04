@@ -1,3 +1,4 @@
+using EventChannel;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,6 +9,10 @@ namespace ECS_MagicTile
         [Header("Data")]
         [SerializeField]
         private GeneralGameSetting generalGameSetting;
+
+        [Header("Event Channel")]
+        [SerializeField]
+        private EmptyEventChannel onIngameGameEventChannel;
 
         [Header("Component references")]
         [SerializeField]
@@ -29,7 +34,7 @@ namespace ECS_MagicTile
             startButton.onClick.AddListener(() =>
             {
                 generalGameSetting.CurrentGameState = EGameState.IngamePrestart;
-                introBlock.SetActive(false);
+                onIngameGameEventChannel.RaiseEvent(EmptyData.Default());
             });
         }
 

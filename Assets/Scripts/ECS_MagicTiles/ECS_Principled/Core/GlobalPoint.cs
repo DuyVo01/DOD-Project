@@ -52,7 +52,7 @@ namespace ECS_MagicTile
 
         private StateChart stateChart;
 
-        private void Awake()
+        private void Start()
         {
             // Initialize our ECS world
             world = new World();
@@ -84,6 +84,7 @@ namespace ECS_MagicTile
                 World,
                 new IGameSystem[]
                 {
+                    new StartingNoteCreationSystem(this),
                     new StartingNoteSystem(this),
                     new PerfectLineSystem(this),
                     new LaneLineSystem(this),
@@ -108,6 +109,22 @@ namespace ECS_MagicTile
             rootState.AddSubstate(preStartState);
             rootState.AddSubstate(ingameState);
 
+            if (generalGameSetting.startState == EGameState.Intro)
+            {
+                rootState.SetState(introState);
+                OnIntroGameoEventChannel.RaiseEvent(EmptyData.Default());
+            }
+            else if (generalGameSetting.startState == EGameState.IngamePrestart)
+            {
+                rootState.SetState(preStartState);
+                OnInGameEventChannel.RaiseEvent(EmptyData.Default());
+            }
+            else if (generalGameSetting.startState == EGameState.IngamePlaying)
+            {
+                rootState.SetState(ingameState);
+                OnInGameEventChannel.RaiseEvent(EmptyData.Default());
+            }
+
             stateChart = new StateChart(rootState);
 
             stateChart.AddTransition(
@@ -128,23 +145,6 @@ namespace ECS_MagicTile
             //Singleton Creation system
             SystemRegistry.AddSystem(new SingletonCreationSystem(this));
             SystemRegistry.AddSystem(gameStateManagerSystem);
-
-            // //Creation System
-            // SystemRegistry.AddSystem(new PerfectLineSystem(this));
-            // SystemRegistry.AddSystem(new MusicNoteCreationSystem(this));
-            // SystemRegistry.AddSystem(new StartingNoteSystem(this));
-
-            // //Handling Data system
-            // SystemRegistry.AddSystem(new MovingNoteSystem(this));
-            // SystemRegistry.AddSystem(new TraceNoteToTriggerSongSystem(this));
-            // SystemRegistry.AddSystem(new InputSystem());
-            // SystemRegistry.AddSystem(new InputCollisionSystem(this));
-            // SystemRegistry.AddSystem(new ScoringSystem(this));
-            // SystemRegistry.AddSystem(new ProgressSystem(this));
-            // SystemRegistry.AddSystem(new LaneLineSystem(this));
-
-            // //Game State system
-            // SystemRegistry.AddSystem(new GameStateSystem(this));
         }
 
         private void Update()

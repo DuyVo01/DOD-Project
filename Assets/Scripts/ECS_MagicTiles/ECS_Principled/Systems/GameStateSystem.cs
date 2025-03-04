@@ -4,12 +4,10 @@ using UnityEngine;
 
 namespace ECS_MagicTile
 {
-    public class GameStateSystem : IGameSystem
+    public class StartingNoteSystem : IGameSystem
     {
         public bool IsEnabled { get; set; }
         public World World { get; set; }
-
-        public EGameState GameStateToExecute => EGameState.All;
 
         private readonly IntEventChannel OnGameStartChannel;
 
@@ -19,7 +17,7 @@ namespace ECS_MagicTile
 
         private GeneralGameSetting generalGameSetting;
 
-        public GameStateSystem(GlobalPoint globalPoint)
+        public StartingNoteSystem(GlobalPoint globalPoint)
         {
             OnGameStartChannel = globalPoint.OnGameStartChannel;
 
