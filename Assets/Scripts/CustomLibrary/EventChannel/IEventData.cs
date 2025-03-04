@@ -1,4 +1,7 @@
 namespace EventChannel
 {
-    public struct EmptyData { }
+    public struct EmptyData
+    {
+        public EmptyData Default() => default;
+    }
 }

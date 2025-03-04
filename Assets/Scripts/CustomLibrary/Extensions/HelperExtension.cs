@@ -27,4 +27,16 @@ public static class HelperExtension
         }
         return false;
     }
+
+    public static bool IsNull<T>(this T @object)
+        where T : UnityEngine.Object
+    {
+        return @object == null;
+    }
+
+    public static bool IsNotNull<T>(this T @object)
+        where T : UnityEngine.Object
+    {
+        return @object != null;
+    }
 }

@@ -20,6 +20,9 @@ namespace ECS_MagicTile
         public BoolEventChannel OnScoreHitChannel;
         public BoolEventChannel OnOrientationChangedChannel;
         public EmptyEventChannel OnSongStartChannel;
+        public EmptyEventChannel OnIntroGameoEventChannel;
+        public EmptyEventChannel OnInGameEventChannel;
+        public EmptyEventChannel OnOutroGameEventChannel;
 
         [Header("UI references")]
         public Text scoreText;
@@ -32,6 +35,7 @@ namespace ECS_MagicTile
         [Header("Mono Settings")]
         public GameIntroSystem gameIntroSystem;
         public InGameUIElementHandlerSystem inGameUIElementHandlerSystem;
+        public GameStateManagerSystem gameStateManagerSystem;
         private World world;
 
         public World World
@@ -101,6 +105,7 @@ namespace ECS_MagicTile
             );
 
             rootState.AddSubstate(introState);
+            rootState.AddSubstate(preStartState);
             rootState.AddSubstate(ingameState);
 
             stateChart = new StateChart(rootState);
@@ -122,6 +127,7 @@ namespace ECS_MagicTile
         {
             //Singleton Creation system
             SystemRegistry.AddSystem(new SingletonCreationSystem(this));
+            SystemRegistry.AddSystem(gameStateManagerSystem);
 
             // //Creation System
             // SystemRegistry.AddSystem(new PerfectLineSystem(this));
@@ -138,7 +144,7 @@ namespace ECS_MagicTile
             // SystemRegistry.AddSystem(new LaneLineSystem(this));
 
             // //Game State system
-            SystemRegistry.AddSystem(new GameStateSystem(this));
+            // SystemRegistry.AddSystem(new GameStateSystem(this));
         }
 
         private void Update()

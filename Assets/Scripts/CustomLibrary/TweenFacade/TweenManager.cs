@@ -108,6 +108,33 @@ namespace Facade.Tweening
                 throw new System.Exception("Unsupported tween library");
             }
         }
+
+        public ITween TweenValue(
+            Vector2 startValue,
+            Vector2 endValue,
+            float duration,
+            System.Action<Vector2> OnUpdated
+        )
+        {
+            if (_currentLibrary == TweenLibrary.DOTween)
+            {
+                Vector2 value = startValue;
+                var tween = DOTween.To(
+                    () => value,
+                    x =>
+                    {
+                        value = x;
+                        OnUpdated.Invoke(value);
+                    },
+                    endValue,
+                    duration
+                );
+
+                return new DOTweenWrapper(tween);
+            }
+
+            throw new System.Exception("Unsupported tween library");
+        }
         #endregion
 
         #region Sequence

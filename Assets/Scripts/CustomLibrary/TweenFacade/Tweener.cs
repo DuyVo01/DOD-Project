@@ -105,6 +105,16 @@ namespace Facade.Tweening
             return TweenManager.Instance.DoRotate(target, endValue, duration);
         }
 
+        public static ITween TweenValue(
+            Vector2 startValue,
+            Vector2 endValue,
+            float duration,
+            System.Action<Vector2> OnUpdated
+        )
+        {
+            return TweenManager.Instance.TweenValue(startValue, endValue, duration, OnUpdated);
+        }
+
         // Sequence operations
         public static ISequence Sequence()
         {

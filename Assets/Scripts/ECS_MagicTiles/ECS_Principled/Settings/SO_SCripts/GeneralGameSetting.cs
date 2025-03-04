@@ -7,6 +7,7 @@ namespace ECS_MagicTile
     public class GeneralGameSetting : ScriptableObject
     {
         public float GameSpeed;
+        public EGameState startState;
 
         public float PreciseGameSpeed { get; set; }
         public EGameState CurrentGameState { get; set; } = EGameState.IngamePrestart;
