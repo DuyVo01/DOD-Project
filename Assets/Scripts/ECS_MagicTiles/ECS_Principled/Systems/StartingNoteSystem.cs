@@ -1,51 +1,41 @@
 using ECS_MagicTile.Components;
-using UnityEngine;
+using EventChannel;
 
 namespace ECS_MagicTile
 {
-    public class StartingNoteCreationSystem : IGameSystem
+    public class StartingNoteSystem : IGameSystem
     {
-        public bool IsEnabled { get; set; } = true;
+        public bool IsEnabled { get; set; }
         public World World { get; set; }
 
-        public EGameState GameStateToExecute => EGameState.All;
+        private readonly IntEventChannel OnGameStartChannel;
 
-        private readonly MusicNoteCreationSetting musicNoteCreationSetting;
+        ArchetypeStorage startingNoteStorage;
+        ActiveStateComponent[] startingNoteActiveState;
+        private StartingNoteSyncTool startingNoteSyncTool;
 
-        private readonly StartingNoteSyncTool startingNoteSyncTool;
+        private GeneralGameSetting generalGameSetting;
 
-        private ArchetypeStorage startingNoteStorage;
-        private ArchetypeStorage perfectLineStorage;
-
-        private TransformComponent[] startingNoteTransforms;
-        private CornerComponent[] perfectLineCorners;
-
-        float lastPerfectLineTopLeftY;
-        float lastPerfectLineTopLeftX;
-
-        public StartingNoteCreationSystem(GlobalPoint globalPoint)
+        public StartingNoteSystem(GlobalPoint globalPoint)
         {
-            musicNoteCreationSetting = globalPoint.musicNoteCreationSettings;
+            OnGameStartChannel = globalPoint.OnGameStartChannel;
+
             startingNoteSyncTool = globalPoint.startingNoteSyncTool;
+            generalGameSetting = globalPoint.generalGameSetting;
         }
 
-        public void RunCleanup() { }
+        public void RunCleanup()
+        {
+            //
+        }
 
         public void RunInitialize()
         {
-            startingNoteSyncTool.InitializeTool();
+            startingNoteStorage = World.GetStorage(Archetype.Registry.StartingNote);
 
-            startingNoteStorage ??= World.GetStorage(Archetype.Registry.StartingNote);
-            perfectLineStorage ??= World.GetStorage(Archetype.Registry.PerfectLine);
+            startingNoteActiveState = startingNoteStorage.GetComponents<ActiveStateComponent>();
 
-            perfectLineCorners = perfectLineStorage.GetComponents<CornerComponent>();
-            startingNoteTransforms = startingNoteStorage.GetComponents<TransformComponent>();
-
-            ref ActiveStateComponent activeState =
-                ref startingNoteStorage.GetComponents<ActiveStateComponent>()[0];
-            activeState.isActive = true;
-
-            SetupStartingNote();
+            OnGameStartChannel.Subscribe(OnStartNoteInteraction);
         }
 
         public void SetWorld(World world)
@@ -55,49 +45,15 @@ namespace ECS_MagicTile
 
         public void RunUpdate(float deltaTime)
         {
-            if (
-                lastPerfectLineTopLeftY != perfectLineCorners[0].TopLeft.y
-                || lastPerfectLineTopLeftX != perfectLineCorners[0].TopLeft.x
-            )
-            {
-                lastPerfectLineTopLeftY = perfectLineCorners[0].TopLeft.y;
-                lastPerfectLineTopLeftX = perfectLineCorners[0].TopLeft.x;
-                SetupStartingNote();
-            }
-
-            //Debug.Log($"PerfectLine Topleft: {perfectLineCorners[0].TopLeft.x}");
+            //
         }
 
-        private void SetupStartingNote()
+        private void OnStartNoteInteraction(int startNoteId)
         {
-            ref TransformComponent transform = ref startingNoteTransforms[0];
-
-            ref CornerComponent perfectLineCorner = ref perfectLineCorners[0];
-
-            // Calculate lane width
-            float totalWidth = perfectLineCorner.TopRight.x - perfectLineCorner.TopLeft.x;
-            float laneWidth = totalWidth / 4;
-            float halfLaneWidth = laneWidth / 2f;
-
-            // Calculate spawn position
-            float spawnX = perfectLineCorner.TopLeft.x + (0 * laneWidth) + halfLaneWidth;
-            float spawnY = perfectLineCorner.TopLeft.y;
-
-            transform.Position = new Vector2(spawnX, spawnY);
-
-            ref PerfectLineTagComponent PerfectLine =
-                ref perfectLineStorage.GetComponents<PerfectLineTagComponent>()[0];
-
-            float scaleX = PerfectLine.PerfectLineWidth / 4;
-
-            float scaleY = MagicTileHelper.CalculateScaleY(
-                musicNoteCreationSetting.ShortNoteScaleYFactor,
-                scaleX
-            );
-
-            transform.Size = new Vector2(scaleX, scaleY);
-
-            startingNoteSyncTool.SyncStartNoteTransform(transform);
+            SystemRegistry.SetGameState(EGameState.IngamePlaying);
+            startingNoteActiveState[0].isActive = false;
+            startingNoteSyncTool.SyncStartNoteState(startingNoteActiveState[0]);
+            generalGameSetting.CurrentGameState = EGameState.IngamePlaying;
         }
     }
 }

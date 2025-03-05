@@ -29,7 +29,14 @@ public class AspectFillBackgroundTweaker : MonoBehaviour
             return;
         }
         OnOrientationChanged(Screen.width < Screen.height);
-        onOrientationChanged.Subscribe(OnOrientationChanged);
+
+        onOrientationChanged.Subscribe(this, (target, data) => OnOrientationChanged(data));
+    }
+
+    void OnDestroy()
+    {
+        onOrientationChanged.Subscribe(this, (target, data) => OnOrientationChanged(data));
+        
     }
 
     private void OnOrientationChanged(bool isPortrait)

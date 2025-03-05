@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace EventChannel
@@ -7,49 +8,45 @@ namespace EventChannel
     {
         [SerializeField]
         private int maxListeners = 8;
-        private Action<T>[] listeners;
+
+        private Listener<T>[] listeners;
         private T lastEventData;
         private bool hasEventOccurred;
-        private readonly object lockObject = new object();
+
+        private struct Listener<TData> 
+        {
+            public object Target;
+            public Action<object, TData> Action;
+        }
 
         private void InitializeIfNeeded()
         {
             if (listeners == null)
             {
-                listeners = new Action<T>[maxListeners];
+                listeners = new Listener<T>[maxListeners];
             }
         }
 
         public void RaiseEvent(T eventData)
         {
             if (listeners == null)
-            {
                 return;
-            }
 
-            if (eventData == null)
+            lastEventData = eventData;
+            hasEventOccurred = true;
+
+            for (int i = 0; i < listeners.Length; i++)
             {
-                Debug.LogError($"Attempted to raise null event data in {name}");
-                return;
-            }
-
-            lock (lockObject)
-            {
-                lastEventData = eventData;
-                hasEventOccurred = true;
-
-                for (int i = 0; i < listeners.Length; i++)
+                var listener = listeners[i];
+                if (listener.Action != null)
                 {
-                    if (listeners[i] != null)
+                    try
                     {
-                        try
-                        {
-                            listeners[i].Invoke(eventData);
-                        }
-                        catch (Exception e)
-                        {
-                            Debug.LogError($"Error invoking event listener in {name}: {e}");
-                        }
+                        listener.Action(listener.Target, eventData);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError($"Error invoking listener in {name}: {e}");
                     }
                 }
             }
@@ -63,62 +60,100 @@ namespace EventChannel
                 return false;
             }
 
-            lock (lockObject)
+            // Wrap in closure-based delegate (allocates)
+            return SubscribeInternal(listener.Target, (_, data) => listener(data), invokeLastEvent);
+        }
+
+        // Allocation-free subscription
+        public bool Subscribe<TTarget>(
+            TTarget target,
+            Action<TTarget, T> method,
+            bool invokeLastEvent = false
+        )
+        {
+            if (target == null)
             {
-                InitializeIfNeeded();
-
-                for (int i = 0; i < listeners.Length; i++)
-                {
-                    if (listeners[i] == listener)
-                    {
-                        Debug.LogWarning($"Attempted to subscribe duplicate listener to {name}");
-                        return false;
-                    }
-                }
-
-                for (int i = 0; i < listeners.Length; i++)
-                {
-                    if (listeners[i] == null)
-                    {
-                        listeners[i] = listener;
-
-                        if (invokeLastEvent && hasEventOccurred)
-                        {
-                            try
-                            {
-                                listener.Invoke(lastEventData);
-                            }
-                            catch (Exception e)
-                            {
-                                Debug.LogError($"Error invoking late subscriber in {name}: {e}");
-                            }
-                        }
-                        return true;
-                    }
-                }
-
-                Debug.LogError(
-                    $"Failed to subscribe listener to {name}: Maximum listeners ({maxListeners}) reached"
-                );
+                Debug.LogError($"Attempted to subscribe null target to {name}");
                 return false;
+            }
+
+            var cachedAction = CachedDelegate<TTarget, T>.GetOrCreate(method);
+            return SubscribeInternal(target, cachedAction, invokeLastEvent);
+        }
+
+        private bool SubscribeInternal(
+            object target,
+            Action<object, T> action,
+            bool invokeLastEvent = false
+        )
+        {
+            InitializeIfNeeded();
+            for (int i = 0; i < listeners.Length; i++)
+            {
+                if (listeners[i].Target == target && listeners[i].Action == action)
+                {
+                    Debug.LogWarning($"Duplicate subscription in {name}");
+                    return false;
+                }
+            }
+
+            // Find empty slot
+            for (int i = 0; i < listeners.Length; i++)
+            {
+                if (listeners[i].Action == null)
+                {
+                    listeners[i] = new Listener<T> { Target = target, Action = action };
+
+                    if (invokeLastEvent && hasEventOccurred)
+                    {
+                        try
+                        {
+                            action(target, lastEventData);
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.LogError($"Error invoking late subscriber in {name}: {e}");
+                        }
+                    }
+                    return true;
+                }
+            }
+
+            Debug.LogError($"Max listeners ({maxListeners}) reached in {name}");
+            return false;
+        }
+
+        public void Unsubscribe<TTarget>(TTarget target, Action<TTarget, T> method)
+        {
+            if (listeners == null)
+                return;
+
+            var cachedAction = CachedDelegate<TTarget, T>.GetOrCreate(method);
+            for (int i = 0; i < listeners.Length; i++)
+            {
+                if (
+                    EqualityComparer<object>.Default.Equals(listeners[i].Target, target)
+                    && listeners[i].Action == cachedAction
+                )
+                {
+                    listeners[i] = default;
+                    return;
+                }
             }
         }
 
-        public void Unsubscribe(Action<T> listener)
+        // Caching mechanism
+        private static class CachedDelegate<TTarget, TData>
         {
-            if (listener == null || listeners == null)
-                return;
+            private static Action<object, TData> cachedAction;
 
-            lock (lockObject)
+            public static Action<object, TData> GetOrCreate(Action<TTarget, TData> method)
             {
-                for (int i = 0; i < listeners.Length; i++)
+                if (cachedAction == null)
                 {
-                    if (listeners[i] == listener)
-                    {
-                        listeners[i] = null;
-                        return;
-                    }
+                    cachedAction = (target, data) => method((TTarget)target, data);
                 }
+                return cachedAction;
             }
         }
     }

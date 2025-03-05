@@ -109,22 +109,6 @@ namespace ECS_MagicTile
             rootState.AddSubstate(preStartState);
             rootState.AddSubstate(ingameState);
 
-            if (generalGameSetting.startState == EGameState.Intro)
-            {
-                rootState.SetState(introState);
-                OnIntroGameoEventChannel.RaiseEvent(EmptyData.Default());
-            }
-            else if (generalGameSetting.startState == EGameState.IngamePrestart)
-            {
-                rootState.SetState(preStartState);
-                OnInGameEventChannel.RaiseEvent(EmptyData.Default());
-            }
-            else if (generalGameSetting.startState == EGameState.IngamePlaying)
-            {
-                rootState.SetState(ingameState);
-                OnInGameEventChannel.RaiseEvent(EmptyData.Default());
-            }
-
             stateChart = new StateChart(rootState);
 
             stateChart.AddTransition(

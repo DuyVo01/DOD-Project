@@ -8,6 +8,10 @@ namespace ECS_MagicTile
 {
     public class GameStateManagerSystem : MonoBehaviour, IGameSystem
     {
+        [Header("Data SO")]
+        [SerializeField]
+        private GeneralGameSetting generalGameSetting;
+
         [Header("Event Channels")]
         [SerializeField]
         private EmptyEventChannel OnIntroGameEventChannel;
@@ -49,6 +53,19 @@ namespace ECS_MagicTile
             OnIntroGameEventChannel.Subscribe(OnIntro);
             OnInGameEventChannel.Subscribe(OnInGame);
             OnOutroGameEventChannel.Subscribe(OnOutro);
+
+            if (generalGameSetting.CurrentGameState == EGameState.Intro)
+            {
+                OnIntro(EmptyData.Default());
+            }
+            else if (generalGameSetting.CurrentGameState == EGameState.IngamePrestart)
+            {
+                OnInGame(EmptyData.Default());
+            }
+            else if (generalGameSetting.CurrentGameState == EGameState.Outro)
+            {
+                OnOutro(EmptyData.Default());
+            }
         }
 
         public void RunCleanup() { }
@@ -64,7 +81,7 @@ namespace ECS_MagicTile
 
             sequence?.Kill();
 
-            sequence ??= Tweener
+            sequence = Tweener
                 .Sequence()
                 .Chain(
                     Tweener
@@ -88,13 +105,15 @@ namespace ECS_MagicTile
 
             sequence?.Kill();
 
-            sequence ??= Tweener
+            sequence = Tweener
                 .Sequence()
                 .Chain(
                     Tweener
                         .DoFade(transition.Image(), 1f, 1f)
                         .OnComplete(() =>
                         {
+                            generalGameSetting.CurrentGameState = EGameState.IngamePrestart;
+
                             introBlock.SetActive(false);
                             inGameBlock.SetActive(true);
                             outroBlock.SetActive(false);

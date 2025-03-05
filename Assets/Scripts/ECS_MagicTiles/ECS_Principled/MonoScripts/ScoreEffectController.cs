@@ -37,7 +37,7 @@ namespace ECS_MagicTile
 
         void OnDisable()
         {
-            scoreSignalEffectChannel.Unsubscribe(PlayEffect);
+            scoreSignalEffectChannel.Unsubscribe(this, (target, data) => PlayEffect(data));
         }
 
         private void PlayEffect(bool isPerfect)

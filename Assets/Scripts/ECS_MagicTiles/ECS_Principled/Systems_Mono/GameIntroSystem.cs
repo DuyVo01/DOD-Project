@@ -33,7 +33,6 @@ namespace ECS_MagicTile
         {
             startButton.onClick.AddListener(() =>
             {
-                generalGameSetting.CurrentGameState = EGameState.IngamePrestart;
                 onIngameGameEventChannel.RaiseEvent(EmptyData.Default());
             });
         }

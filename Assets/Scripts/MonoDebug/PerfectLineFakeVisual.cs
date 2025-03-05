@@ -87,8 +87,8 @@ public class PerfectLineFakeVisual : MonoBehaviour
             UpdatePerfectLineFakeVisualPosition
         );
 
-        onOrientationChangedChannel.Unsubscribe(UpdatePosition);
-        onOrientationChangedChannel.Unsubscribe(UpdateSize);
+        onOrientationChangedChannel.Unsubscribe(this, (target, data) => UpdatePosition(data));
+        onOrientationChangedChannel.Unsubscribe(this, (target, data) => UpdateSize(data));
     }
 
     private void UpdatePerfectLineFakeVisualSize(float value)
