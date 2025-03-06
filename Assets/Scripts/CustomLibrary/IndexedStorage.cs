@@ -5,7 +5,7 @@ public class IndexedStorage<T>
 {
     private T[] items;
     private Dictionary<int, int> idToIndex;
-    private int[] indexToId;
+    private int[] indexToId; // New array for reverse mapping
     private int count;
 
     public int Count => count;
@@ -14,24 +14,25 @@ public class IndexedStorage<T>
     {
         items = new T[capacity];
         idToIndex = new Dictionary<int, int>(capacity);
-        indexToId = new int[capacity];
+        indexToId = new int[capacity]; // Initialize reverse mapping
         count = 0;
     }
 
     public void Add(int id, T item)
     {
-        // Resize array if needed
+        // Resize arrays if needed
         if (count >= items.Length)
         {
-            Array.Resize(ref items, items.Length * 2);
-            Array.Resize(ref indexToId, items.Length);
+            int newCapacity = items.Length * 2;
+            Array.Resize(ref items, newCapacity);
+            Array.Resize(ref indexToId, newCapacity);
         }
 
         // Store item at the end of the array
         int index = count;
         items[index] = item;
 
-        // Map id to array index
+        // Map id to array index and vice versa
         idToIndex[id] = index;
         indexToId[index] = id;
 
@@ -97,6 +98,14 @@ public class IndexedStorage<T>
         return items[index];
     }
 
+    // Get ID by index (new method)
+    public int GetIdByIndex(int index)
+    {
+        if (index < 0 || index >= count)
+            throw new IndexOutOfRangeException();
+        return indexToId[index];
+    }
+
     // Iterate over all items with their IDs
     public void ForEach(Action<int, T> action)
     {
@@ -104,6 +113,14 @@ public class IndexedStorage<T>
         {
             action(indexToId[i], items[i]);
         }
+    }
+
+    // Get all IDs as a collection
+    public IReadOnlyList<int> GetAllIds()
+    {
+        int[] ids = new int[count];
+        Array.Copy(indexToId, ids, count);
+        return ids;
     }
 
     // Clear the collection
@@ -117,12 +134,6 @@ public class IndexedStorage<T>
         count = 0;
     }
 
-    // Check if an ID exists in the collection
-    public bool Contains(int id)
-    {
-        return idToIndex.ContainsKey(id);
-    }
-
     // Trim excess capacity
     public void TrimExcess()
     {
@@ -132,5 +143,11 @@ public class IndexedStorage<T>
             Array.Resize(ref items, newCapacity);
             Array.Resize(ref indexToId, newCapacity);
         }
+    }
+
+    // Check if an ID exists in the collection
+    public bool Contains(int id)
+    {
+        return idToIndex.ContainsKey(id);
     }
 }

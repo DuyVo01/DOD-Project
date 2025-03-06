@@ -10,43 +10,17 @@ namespace ECS_MagicTile
     public class PerfectLineSetting : ScriptableObject
     {
         [Header(" Normalize Positions")]
-        public NormalizedFloatPreset portraitNormalizedPos;
+        [Range(0, 1)]
+        public Vector2 portraitNormalizedPos;
 
-        public NormalizedFloatPreset landscapeNormalizedPos;
+        public Vector2 landscapeNormalizedPos;
 
         [Header("Normalized Size")]
-        public NormalizedFloatPreset portraitNormalizedSize;
-
-        public NormalizedFloatPreset landscapeNormalizedSize;
-
-        [System.Serializable]
-        public struct NormalizedFloatPreset
-        {
-            public RangeReactiveFloat normalizedX;
-
-            public RangeReactiveFloat normalizedY;
-        }
-
-        private void OnValidate()
-        {
-            portraitNormalizedPos.normalizedX.OnChangeValidatedInInpsector();
-            portraitNormalizedPos.normalizedY.OnChangeValidatedInInpsector();
-
-            landscapeNormalizedPos.normalizedX.OnChangeValidatedInInpsector();
-            landscapeNormalizedPos.normalizedY.OnChangeValidatedInInpsector();
-
-            portraitNormalizedSize.normalizedX.OnChangeValidatedInInpsector();
-            portraitNormalizedSize.normalizedY.OnChangeValidatedInInpsector();
-
-            landscapeNormalizedSize.normalizedX.OnChangeValidatedInInpsector();
-            landscapeNormalizedSize.normalizedY.OnChangeValidatedInInpsector();
-        }
-    }
-
-    [Serializable]
-    public class RangeReactiveFloat : ReactiveValue<float>
-    {
         [Range(0, 1)]
-        protected new float _value;
+        public Vector2 portraitNormalizedSize;
+
+        public Vector2 landscapeNormalizedSize;
+
+        private void OnValidate() { }
     }
 }

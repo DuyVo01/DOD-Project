@@ -19,11 +19,20 @@ namespace UIBlock
 
         // Public getter with lazy initialization and thread safety
 
+        private int eventSubcriberId = 0;
 
         protected override void OnAwake()
         {
-            orientationChangedChannel.Subscribe(OnOrientationChange);
+            eventSubcriberId = orientationChangedChannel.Subscribe(
+                target: this,
+                (target, data) => OnOrientationChange(data)
+            );
             UpdateBackgrounds();
+        }
+
+        void OnDestroy()
+        {
+            orientationChangedChannel.Unsubscribe(eventSubcriberId);
         }
 
         void OnOrientationChange(bool isPortrait)

@@ -13,6 +13,8 @@ namespace ECS_MagicTile
 
         private AudioSource audioSource;
 
+        private int eventListenerId;
+
         void Start()
         {
             audioSource = GetComponent<AudioSource>();
@@ -21,10 +23,18 @@ namespace ECS_MagicTile
 
         void OnEnable()
         {
-            onSongStartChannel.Subscribe(OnGameStart);
+            eventListenerId = onSongStartChannel.Subscribe(
+                target: this,
+                (target, data) => OnGameStart(data)
+            );
         }
 
-        private void OnGameStart(EmptyData data)
+        void onDisable()
+        {
+            onSongStartChannel.Unsubscribe(eventListenerId);
+        }
+
+        private void OnGameStart(EmptyData _)
         {
             audioSource.PlayWithFadeIn(this, .8f);
         }

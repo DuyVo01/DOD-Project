@@ -24,10 +24,21 @@ namespace UIBlock
             get { return Screen.height > Screen.width; }
         }
 
+        private int eventListenerId;
+
         protected override void OnAwake()
         {
-            onOrientationChannel.Subscribe(OnOrientationChange);
+            eventListenerId = onOrientationChannel.Subscribe(
+                target: this,
+                (target, data) => OnOrientationChange(data)
+            );
+
             UpdateDeviceInfo();
+        }
+
+        protected override void OnDestroy()
+        {
+            onOrientationChannel.Unsubscribe(eventListenerId);
         }
 
         void OnOrientationChange(bool isPortrait)

@@ -11,10 +11,10 @@ public class PerfectLineSpriteResizer : MonoBehaviour
     private PerfectLineSetting perfectLineSetting;
 
     [SerializeField]
-    private PerfectLineSetting.NormalizedFloatPreset portraitNormalizedSize;
+    private Vector2 portraitNormalizedSize;
 
     [SerializeField]
-    private PerfectLineSetting.NormalizedFloatPreset landscapeNormalizedSize;
+    private Vector2 landscapeNormalizedSize;
 
     private SpriteRenderer spriteRenderer;
 

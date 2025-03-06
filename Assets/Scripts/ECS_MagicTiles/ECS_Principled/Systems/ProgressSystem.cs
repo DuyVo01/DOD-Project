@@ -22,13 +22,21 @@ namespace ECS_MagicTile
 
         private ArchetypeStorage progressArchetype;
 
-        public void RunCleanup() { }
+        private int eventSubscriptionId;
+
+        public void RunCleanup()
+        {
+            scoreEventChannel.Unsubscribe(eventSubscriptionId);
+        }
 
         public void RunInitialize()
         {
             progressArchetype = World.GetStorage(Archetype.Registry.SongProgress);
 
-            scoreEventChannel.Subscribe(OnScoreEvent);
+            eventSubscriptionId = scoreEventChannel.Subscribe(
+                target: this,
+                (target, data) => OnScoreEvent(data)
+            );
         }
 
         public void SetWorld(World world)

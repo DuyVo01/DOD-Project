@@ -31,7 +31,12 @@ namespace ECS_MagicTile
         private LaneLineSyncTool laneLineSyncTool;
         private LaneLineSettings laneLineSettings;
 
-        public void RunCleanup() { }
+        private int eventListenerId;
+
+        public void RunCleanup()
+        {
+            onOrientationChangedChannel.Unsubscribe(eventListenerId);
+        }
 
         public void RunInitialize()
         {
@@ -45,9 +50,10 @@ namespace ECS_MagicTile
 
             AdjustLaneLines();
 
-            onOrientationChangedChannel.Subscribe(OnOrientationChanged);
-
-            laneLineSettings.laneLineWidth.Subscribe(OnLaneLineSettingsAdjustInInpector);
+            eventListenerId = onOrientationChangedChannel.Subscribe(
+                target: this,
+                (target, data) => OnOrientationChanged(data)
+            );
         }
 
         public void SetWorld(World world)
@@ -93,7 +99,7 @@ namespace ECS_MagicTile
                 laneLineTransforms[i].Size = SpriteUtility.ResizeInCameraView(
                     laneLineSyncTool.LaneLineSprites[i],
                     targetCamera,
-                    laneLineSettings.laneLineWidth.Value,
+                    laneLineSettings.laneLineWidth,
                     1,
                     false
                 );

@@ -11,10 +11,10 @@ public class PerfectLineCameraSpacePositionAdjuster : MonoBehaviour
     private PerfectLineSetting perfectLineSetting;
 
     [SerializeField]
-    private PerfectLineSetting.NormalizedFloatPreset portraitNormalizedPos;
+    private Vector2 portraitNormalizedPos;
 
     [SerializeField]
-    private PerfectLineSetting.NormalizedFloatPreset landscapeNormalizedPos;
+    private Vector2 landscapeNormalizedPos;
 
     void Start()
     {

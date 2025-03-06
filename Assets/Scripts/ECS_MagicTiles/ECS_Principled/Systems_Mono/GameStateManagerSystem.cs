@@ -41,6 +41,8 @@ namespace ECS_MagicTile
 
         ISequence sequence;
 
+        int[] eventSubscriptions = new int[3];
+
         void Start() { }
 
         public void SetWorld(World world)
@@ -50,9 +52,18 @@ namespace ECS_MagicTile
 
         public void RunInitialize()
         {
-            OnIntroGameEventChannel.Subscribe(OnIntro);
-            OnInGameEventChannel.Subscribe(OnInGame);
-            OnOutroGameEventChannel.Subscribe(OnOutro);
+            eventSubscriptions[0] = OnIntroGameEventChannel.Subscribe(
+                target: this,
+                (target, data) => OnIntro(data)
+            );
+            eventSubscriptions[1] = OnInGameEventChannel.Subscribe(
+                target: this,
+                (target, data) => OnInGame(data)
+            );
+            eventSubscriptions[2] = OnOutroGameEventChannel.Subscribe(
+                target: this,
+                (target, data) => OnOutro(data)
+            );
 
             if (generalGameSetting.CurrentGameState == EGameState.Intro)
             {
@@ -68,7 +79,12 @@ namespace ECS_MagicTile
             }
         }
 
-        public void RunCleanup() { }
+        public void RunCleanup()
+        {
+            OnIntroGameEventChannel.Unsubscribe(eventSubscriptions[0]);
+            OnInGameEventChannel.Unsubscribe(eventSubscriptions[1]);
+            OnOutroGameEventChannel.Unsubscribe(eventSubscriptions[2]);
+        }
 
         public void RunUpdate(float deltaTime) { }
 

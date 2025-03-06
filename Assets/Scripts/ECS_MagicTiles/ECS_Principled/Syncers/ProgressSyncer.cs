@@ -15,6 +15,8 @@ namespace ECS_MagicTile
 
         private ProgressComponent[] progressComponents;
 
+        private int eventListenerId;
+
         public ProgressSyncer(GlobalPoint globalPoint)
         {
             scoreEventChannel = globalPoint.OnScoreHitChannel;
@@ -27,7 +29,10 @@ namespace ECS_MagicTile
 
             progressComponents = DedicatedStorage.GetComponents<ProgressComponent>();
 
-            scoreEventChannel.Subscribe(SyncProgressToView);
+            eventListenerId = scoreEventChannel.Subscribe(
+                target: this,
+                (target, data) => SyncProgressToView(data)
+            );
         }
 
         private void SyncProgressToView(bool isPerfect)

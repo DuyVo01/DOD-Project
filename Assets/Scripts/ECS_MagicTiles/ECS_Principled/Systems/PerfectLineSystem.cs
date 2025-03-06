@@ -29,6 +29,8 @@ namespace ECS_MagicTile
 
         private PerfectLineSyncTool perfectLineSyncTool;
 
+        private int eventListenerId;
+
         public PerfectLineSystem(GlobalPoint globalPoint)
         {
             perfectLineSprite = globalPoint.perfectLineObject.GetComponent<SpriteRenderer>();
@@ -49,34 +51,16 @@ namespace ECS_MagicTile
             perfectLineCorners = perfectLineStorage.GetComponents<CornerComponent>();
             perfectLineTransforms = perfectLineStorage.GetComponents<TransformComponent>();
 
-            //
-            perfectLineSetting.portraitNormalizedPos.normalizedX.Subscribe(UpdatePerfectLinePos);
-            perfectLineSetting.portraitNormalizedPos.normalizedY.Subscribe(UpdatePerfectLinePos);
-
-            //
-            perfectLineSetting.landscapeNormalizedPos.normalizedX.Subscribe(UpdatePerfectLinePos);
-            perfectLineSetting.landscapeNormalizedPos.normalizedY.Subscribe(UpdatePerfectLinePos);
-
-            //
-            perfectLineSetting.portraitNormalizedSize.normalizedX.Subscribe(
-                UpdatePerfectLineSizeData
+            eventListenerId = OnOrientationChangedChannel.Subscribe(
+                target: this,
+                (target, data) => OnOrientationChanged(data)
             );
-            perfectLineSetting.portraitNormalizedSize.normalizedY.Subscribe(
-                UpdatePerfectLineSizeData
-            );
-
-            //
-            perfectLineSetting.landscapeNormalizedSize.normalizedX.Subscribe(
-                UpdatePerfectLineSizeData
-            );
-            perfectLineSetting.landscapeNormalizedSize.normalizedY.Subscribe(
-                UpdatePerfectLineSizeData
-            );
-
-            OnOrientationChangedChannel.Subscribe(OnOrientationChanged);
         }
 
-        public void RunCleanup() { }
+        public void RunCleanup()
+        {
+            OnOrientationChangedChannel.Unsubscribe(eventListenerId);
+        }
 
         public void SetWorld(World world)
         {
@@ -91,16 +75,16 @@ namespace ECS_MagicTile
             {
                 perfectLineTransforms[0].Position = CameraViewUtils.GetPositionInCameraView(
                     mainCamera,
-                    perfectLineSetting.portraitNormalizedPos.normalizedX.Value,
-                    perfectLineSetting.portraitNormalizedPos.normalizedY.Value
+                    perfectLineSetting.portraitNormalizedPos.x,
+                    perfectLineSetting.portraitNormalizedPos.y
                 );
             }
             else
             {
                 perfectLineTransforms[0].Position = CameraViewUtils.GetPositionInCameraView(
                     mainCamera,
-                    perfectLineSetting.landscapeNormalizedPos.normalizedX.Value,
-                    perfectLineSetting.landscapeNormalizedPos.normalizedY.Value
+                    perfectLineSetting.landscapeNormalizedPos.x,
+                    perfectLineSetting.landscapeNormalizedPos.y
                 );
             }
 
@@ -116,8 +100,8 @@ namespace ECS_MagicTile
                 perfectLineTransforms[0].Size = SpriteUtility.ResizeInCameraView(
                     perfectLineSprite,
                     mainCamera,
-                    perfectLineSetting.portraitNormalizedSize.normalizedX.Value,
-                    perfectLineSetting.portraitNormalizedSize.normalizedY.Value,
+                    perfectLineSetting.portraitNormalizedSize.x,
+                    perfectLineSetting.portraitNormalizedSize.y,
                     false
                 );
             }
@@ -126,8 +110,8 @@ namespace ECS_MagicTile
                 perfectLineTransforms[0].Size = SpriteUtility.ResizeInCameraView(
                     perfectLineSprite,
                     mainCamera,
-                    perfectLineSetting.landscapeNormalizedSize.normalizedX.Value,
-                    perfectLineSetting.landscapeNormalizedSize.normalizedY.Value,
+                    perfectLineSetting.landscapeNormalizedSize.x,
+                    perfectLineSetting.landscapeNormalizedSize.y,
                     false
                 );
             }

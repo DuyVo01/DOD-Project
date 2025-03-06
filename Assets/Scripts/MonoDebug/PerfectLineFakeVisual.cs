@@ -15,6 +15,8 @@ public class PerfectLineFakeVisual : MonoBehaviour
 
     private SpriteRenderer perfectLineVisualSprite;
 
+    private int[] eventSubscriptionIds = new int[2];
+
     void Start()
     {
         perfectLineVisualSprite = GetComponent<SpriteRenderer>();
@@ -23,72 +25,20 @@ public class PerfectLineFakeVisual : MonoBehaviour
 
     void OnEnable()
     {
-        //Landscape Normalize Size
-        perfectLineSetting.landscapeNormalizedSize.normalizedX.Subscribe(
-            UpdatePerfectLineFakeVisualSize
+        eventSubscriptionIds[0] = onOrientationChangedChannel.Subscribe(
+            this,
+            (target, data) => UpdatePosition(data)
         );
-        perfectLineSetting.landscapeNormalizedSize.normalizedY.Subscribe(
-            UpdatePerfectLineFakeVisualSize
+        eventSubscriptionIds[1] = onOrientationChangedChannel.Subscribe(
+            this,
+            (target, data) => UpdateSize(data)
         );
-
-        //Portrait Normalize Size
-        perfectLineSetting.portraitNormalizedSize.normalizedX.Subscribe(
-            UpdatePerfectLineFakeVisualSize
-        );
-        perfectLineSetting.portraitNormalizedSize.normalizedY.Subscribe(
-            UpdatePerfectLineFakeVisualSize
-        );
-
-        //Potrait Normalized Pos
-        perfectLineSetting.portraitNormalizedPos.normalizedX.Subscribe(
-            UpdatePerfectLineFakeVisualPosition
-        );
-        perfectLineSetting.portraitNormalizedPos.normalizedY.Subscribe(
-            UpdatePerfectLineFakeVisualPosition
-        );
-
-        //Landscape Normalized Pos
-        perfectLineSetting.landscapeNormalizedPos.normalizedX.Subscribe(
-            UpdatePerfectLineFakeVisualPosition
-        );
-        perfectLineSetting.landscapeNormalizedPos.normalizedY.Subscribe(
-            UpdatePerfectLineFakeVisualPosition
-        );
-
-        onOrientationChangedChannel.Subscribe(UpdatePosition);
-        onOrientationChangedChannel.Subscribe(UpdateSize);
     }
 
     void OnDisable()
     {
-        perfectLineSetting.landscapeNormalizedSize.normalizedX.Unsubscribe(
-            UpdatePerfectLineFakeVisualSize
-        );
-        perfectLineSetting.landscapeNormalizedSize.normalizedY.Unsubscribe(
-            UpdatePerfectLineFakeVisualSize
-        );
-        perfectLineSetting.portraitNormalizedSize.normalizedX.Unsubscribe(
-            UpdatePerfectLineFakeVisualSize
-        );
-        perfectLineSetting.portraitNormalizedSize.normalizedY.Unsubscribe(
-            UpdatePerfectLineFakeVisualSize
-        );
-
-        perfectLineSetting.portraitNormalizedPos.normalizedX.Unsubscribe(
-            UpdatePerfectLineFakeVisualPosition
-        );
-        perfectLineSetting.portraitNormalizedPos.normalizedY.Unsubscribe(
-            UpdatePerfectLineFakeVisualPosition
-        );
-        perfectLineSetting.landscapeNormalizedPos.normalizedX.Unsubscribe(
-            UpdatePerfectLineFakeVisualPosition
-        );
-        perfectLineSetting.landscapeNormalizedPos.normalizedY.Unsubscribe(
-            UpdatePerfectLineFakeVisualPosition
-        );
-
-        onOrientationChangedChannel.Unsubscribe(this, (target, data) => UpdatePosition(data));
-        onOrientationChangedChannel.Unsubscribe(this, (target, data) => UpdateSize(data));
+        onOrientationChangedChannel.Unsubscribe(eventSubscriptionIds[0]);
+        onOrientationChangedChannel.Unsubscribe(eventSubscriptionIds[1]);
     }
 
     private void UpdatePerfectLineFakeVisualSize(float value)
@@ -121,16 +71,16 @@ public class PerfectLineFakeVisual : MonoBehaviour
         {
             transform.position = CameraViewUtils.GetPositionInCameraView(
                 targetCamera,
-                perfectLineSetting.portraitNormalizedPos.normalizedX.Value,
-                perfectLineSetting.portraitNormalizedPos.normalizedY.Value
+                perfectLineSetting.portraitNormalizedPos.x,
+                perfectLineSetting.portraitNormalizedPos.y
             );
         }
         else
         {
             transform.position = CameraViewUtils.GetPositionInCameraView(
                 targetCamera,
-                perfectLineSetting.landscapeNormalizedPos.normalizedX.Value,
-                perfectLineSetting.landscapeNormalizedPos.normalizedY.Value
+                perfectLineSetting.landscapeNormalizedPos.x,
+                perfectLineSetting.landscapeNormalizedPos.y
             );
         }
     }
@@ -142,7 +92,7 @@ public class PerfectLineFakeVisual : MonoBehaviour
             perfectLineVisualSprite.ResizeInCameraView(
                 targetCamera,
                 1,
-                perfectLineSetting.portraitNormalizedSize.normalizedY.Value,
+                perfectLineSetting.portraitNormalizedSize.y,
                 false
             );
         }
@@ -151,7 +101,7 @@ public class PerfectLineFakeVisual : MonoBehaviour
             perfectLineVisualSprite.ResizeInCameraView(
                 targetCamera,
                 1,
-                perfectLineSetting.landscapeNormalizedSize.normalizedY.Value,
+                perfectLineSetting.landscapeNormalizedSize.y,
                 false
             );
         }

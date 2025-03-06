@@ -7,11 +7,8 @@ namespace ECS_MagicTile
     {
         public GameObject landLinePrefab;
 
-        public RangeReactiveFloat laneLineWidth;
+        public float laneLineWidth;
 
-        private void OnValidate()
-        {
-            laneLineWidth.OnChangeValidatedInInpsector();
-        }
+        private void OnValidate() { }
     }
 }

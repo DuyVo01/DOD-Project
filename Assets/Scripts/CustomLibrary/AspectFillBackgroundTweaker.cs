@@ -22,6 +22,8 @@ public class AspectFillBackgroundTweaker : MonoBehaviour
     [SerializeField]
     List<BackgroundElement> backgroundElements = new List<BackgroundElement>();
 
+    private int onOrientationChangeEventSubId;
+
     void Start()
     {
         if (!useAspectFill)
@@ -30,13 +32,15 @@ public class AspectFillBackgroundTweaker : MonoBehaviour
         }
         OnOrientationChanged(Screen.width < Screen.height);
 
-        onOrientationChanged.Subscribe(this, (target, data) => OnOrientationChanged(data));
+        onOrientationChangeEventSubId = onOrientationChanged.Subscribe(
+            this,
+            (target, data) => OnOrientationChanged(data)
+        );
     }
 
     void OnDestroy()
     {
-        onOrientationChanged.Subscribe(this, (target, data) => OnOrientationChanged(data));
-        
+        onOrientationChanged.Unsubscribe(onOrientationChangeEventSubId);
     }
 
     private void OnOrientationChanged(bool isPortrait)

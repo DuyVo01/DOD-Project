@@ -36,6 +36,7 @@ namespace ECS_MagicTile
         public GameIntroSystem gameIntroSystem;
         public InGameUIElementHandlerSystem inGameUIElementHandlerSystem;
         public GameStateManagerSystem gameStateManagerSystem;
+        public GameInGameSystem gameInGameSystem;
         private World world;
 
         public World World
@@ -84,11 +85,12 @@ namespace ECS_MagicTile
                 World,
                 new IGameSystem[]
                 {
+                    new PerfectLineSystem(this),
                     new StartingNoteCreationSystem(this),
                     new StartingNoteSystem(this),
-                    new PerfectLineSystem(this),
                     new LaneLineSystem(this),
                     inGameUIElementHandlerSystem,
+                    gameInGameSystem,
                 }
             );
             var ingameState = new GameSystemState(
@@ -108,6 +110,8 @@ namespace ECS_MagicTile
             rootState.AddSubstate(introState);
             rootState.AddSubstate(preStartState);
             rootState.AddSubstate(ingameState);
+
+            rootState.SetState(introState);
 
             stateChart = new StateChart(rootState);
 

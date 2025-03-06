@@ -16,6 +16,8 @@ namespace ECS_MagicTile
 
         private GeneralGameSetting generalGameSetting;
 
+        private int eventListenerId;
+
         public StartingNoteSystem(GlobalPoint globalPoint)
         {
             OnGameStartChannel = globalPoint.OnGameStartChannel;
@@ -26,7 +28,7 @@ namespace ECS_MagicTile
 
         public void RunCleanup()
         {
-            //
+            OnGameStartChannel.Unsubscribe(eventListenerId);
         }
 
         public void RunInitialize()
@@ -35,7 +37,10 @@ namespace ECS_MagicTile
 
             startingNoteActiveState = startingNoteStorage.GetComponents<ActiveStateComponent>();
 
-            OnGameStartChannel.Subscribe(OnStartNoteInteraction);
+            eventListenerId = OnGameStartChannel.Subscribe(
+                target: this,
+                (target, data) => OnStartNoteInteraction(data)
+            );
         }
 
         public void SetWorld(World world)

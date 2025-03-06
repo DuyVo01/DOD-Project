@@ -25,6 +25,8 @@ namespace ECS_MagicTile
         private BurstMovementUIController.BurstMovementElement[] burstMovementElements;
         private ISequence effectSequence;
 
+        private int eventListenerId;
+
         void Awake()
         {
             burstMovementUIController.InitializeElement(burstMovementElements);
@@ -32,12 +34,15 @@ namespace ECS_MagicTile
 
         void OnEnable()
         {
-            scoreSignalEffectChannel.Subscribe(PlayEffect);
+            eventListenerId = scoreSignalEffectChannel.Subscribe(
+                target: this,
+                (target, data) => PlayEffect(data)
+            );
         }
 
         void OnDisable()
         {
-            scoreSignalEffectChannel.Unsubscribe(this, (target, data) => PlayEffect(data));
+            scoreSignalEffectChannel.Unsubscribe(eventListenerId);
         }
 
         private void PlayEffect(bool isPerfect)
