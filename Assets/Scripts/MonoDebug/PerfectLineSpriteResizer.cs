@@ -37,31 +37,33 @@ public class PerfectLineSpriteResizer : MonoBehaviour
         targetCamera = Camera.main;
     }
 
+#if UNITY_EDITOR
     private void UpdateSize(bool isPortrait)
     {
-        // if (spriteRenderer == null || targetCamera == null)
-        //     return;
+        if (spriteRenderer == null || targetCamera == null)
+            return;
 
-        // if (isPortrait)
-        // {
-        //     spriteRenderer.ResizeInCameraView(
-        //         targetCamera,
-        //         portraitNormalizedSize.normalizedX.Value,
-        //         portraitNormalizedSize.normalizedY.Value,
-        //         maintainAspectRatio
-        //     );
-        // }
-        // else
-        // {
-        //     spriteRenderer.ResizeInCameraView(
-        //         targetCamera,
-        //         landscapeNormalizedSize.normalizedX.Value,
-        //         landscapeNormalizedSize.normalizedY.Value,
-        //         maintainAspectRatio
-        //     );
-        // }
+        if (isPortrait)
+        {
+            spriteRenderer.ResizeInCameraView(
+                targetCamera,
+                portraitNormalizedSize.x,
+                portraitNormalizedSize.y,
+                maintainAspectRatio
+            );
+        }
+        else
+        {
+            spriteRenderer.ResizeInCameraView(
+                targetCamera,
+                landscapeNormalizedSize.x,
+                landscapeNormalizedSize.y,
+                maintainAspectRatio
+            );
+        }
 
-        // perfectLineSetting.portraitNormalizedSize = portraitNormalizedSize;
-        // perfectLineSetting.landscapeNormalizedSize = landscapeNormalizedSize;
+        perfectLineSetting.portraitNormalizedSize = portraitNormalizedSize;
+        perfectLineSetting.landscapeNormalizedSize = landscapeNormalizedSize;
     }
+#endif
 }

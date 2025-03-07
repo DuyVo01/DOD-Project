@@ -21,6 +21,7 @@ public class PerfectLineCameraSpacePositionAdjuster : MonoBehaviour
         this.enabled = false;
     }
 
+#if UNITY_EDITOR
     public void OnValidate()
     {
         if (targetCamera == null)
@@ -42,29 +43,30 @@ public class PerfectLineCameraSpacePositionAdjuster : MonoBehaviour
             OnOrientationChanged(false);
         }
     }
+#endif
 
     private void OnOrientationChanged(bool isPortrait)
     {
-        // if (isPortrait)
-        // {
-        //     // Position object within camera view
-        //     transform.position = CameraViewUtils.GetPositionInCameraView(
-        //         targetCamera,
-        //         portraitNormalizedPos.normalizedX.Value,
-        //         portraitNormalizedPos.normalizedY.Value
-        //     );
-        // }
-        // else
-        // {
-        //     // Position object within camera view
-        //     transform.position = CameraViewUtils.GetPositionInCameraView(
-        //         targetCamera,
-        //         landscapeNormalizedPos.normalizedX.Value,
-        //         landscapeNormalizedPos.normalizedY.Value
-        //     );
-        // }
+        if (isPortrait)
+        {
+            // Position object within camera view
+            transform.position = CameraViewUtils.GetPositionInCameraView(
+                targetCamera,
+                portraitNormalizedPos.x,
+                portraitNormalizedPos.y
+            );
+        }
+        else
+        {
+            // Position object within camera view
+            transform.position = CameraViewUtils.GetPositionInCameraView(
+                targetCamera,
+                landscapeNormalizedPos.x,
+                landscapeNormalizedPos.y
+            );
+        }
 
-        // perfectLineSetting.landscapeNormalizedPos = landscapeNormalizedPos;
-        // perfectLineSetting.portraitNormalizedPos = portraitNormalizedPos;
+        perfectLineSetting.landscapeNormalizedPos = landscapeNormalizedPos;
+        perfectLineSetting.portraitNormalizedPos = portraitNormalizedPos;
     }
 }

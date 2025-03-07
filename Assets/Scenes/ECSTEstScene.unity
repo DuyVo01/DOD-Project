@@ -5721,16 +5721,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetCamera: {fileID: 1965127783}
   perfectLineSetting: {fileID: 11400000, guid: d1a21492714ea480f9449e5933a8acd1, type: 2}
-  portraitNormalizedSize:
-    normalizedX:
-      _value: 1
-    normalizedY:
-      _value: 0.004
-  landscapeNormalizedSize:
-    normalizedX:
-      _value: 0.5
-    normalizedY:
-      _value: 0.004
+  portraitNormalizedSize: {x: 1, y: 0.005}
+  landscapeNormalizedSize: {x: 1, y: 0.005}
   maintainAspectRatio: 0
 --- !u!114 &349202821
 MonoBehaviour:
@@ -5746,16 +5738,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetCamera: {fileID: 1965127783}
   perfectLineSetting: {fileID: 11400000, guid: d1a21492714ea480f9449e5933a8acd1, type: 2}
-  portraitNormalizedPos:
-    normalizedX:
-      _value: 0.5
-    normalizedY:
-      _value: 0.3
-  landscapeNormalizedPos:
-    normalizedX:
-      _value: 0.5
-    normalizedY:
-      _value: 0.3
+  portraitNormalizedPos: {x: 0.5, y: 0.35}
+  landscapeNormalizedPos: {x: 0.5, y: 0.35}
 --- !u!212 &349202822
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -5817,8 +5801,8 @@ Transform:
   m_GameObject: {fileID: 349202818}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.8360646, y: -3.47681, z: 0}
-  m_LocalScale: {x: 4.620853, y: 0.040000003, z: 1}
+  m_LocalPosition: {x: -0.8360646, y: -2.97681, z: 0}
+  m_LocalScale: {x: 4.620853, y: 0.049999997, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -6947,6 +6931,7 @@ MonoBehaviour:
   gameIntroSystem: {fileID: 2005598943}
   inGameUIElementHandlerSystem: {fileID: 40707071}
   gameStateManagerSystem: {fileID: 1869955908}
+  gameInGameSystem: {fileID: 40707072}
 --- !u!1 &896596638
 GameObject:
   m_ObjectHideFlags: 0

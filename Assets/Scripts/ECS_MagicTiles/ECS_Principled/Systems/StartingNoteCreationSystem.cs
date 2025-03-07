@@ -8,12 +8,9 @@ namespace ECS_MagicTile
         public bool IsEnabled { get; set; } = true;
         public World World { get; set; }
 
-        public EGameState GameStateToExecute => EGameState.All;
-
         private readonly MusicNoteCreationSetting musicNoteCreationSetting;
 
         private readonly StartingNoteSyncTool startingNoteSyncTool;
-        private readonly GlobalPoint globalPoint;
 
         private ArchetypeStorage startingNoteStorage;
         private ArchetypeStorage perfectLineStorage;
@@ -26,7 +23,6 @@ namespace ECS_MagicTile
 
         public StartingNoteCreationSystem(GlobalPoint globalPoint)
         {
-            this.globalPoint = globalPoint;
             musicNoteCreationSetting = globalPoint.musicNoteCreationSettings;
             startingNoteSyncTool = globalPoint.startingNoteSyncTool;
         }
