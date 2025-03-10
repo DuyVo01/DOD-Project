@@ -68,5 +68,7 @@ public class PerfectLineCameraSpacePositionAdjuster : MonoBehaviour
 
         perfectLineSetting.landscapeNormalizedPos = landscapeNormalizedPos;
         perfectLineSetting.portraitNormalizedPos = portraitNormalizedPos;
+        perfectLineSetting.Position = transform.position;
+        perfectLineSetting.Size = transform.localScale;
     }
 }

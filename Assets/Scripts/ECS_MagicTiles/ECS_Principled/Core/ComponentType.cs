@@ -4,22 +4,51 @@ using ECS_MagicTile.Components;
 
 namespace ECS_MagicTile
 {
-    public readonly struct ComponentType
+    /// <summary>
+    /// Represents a component type in the ECS system with enhanced dynamic registration
+    /// </summary>
+    public readonly struct ComponentType : IEquatable<ComponentType>
     {
         public readonly Type Type;
         public readonly int Id;
 
-        // Private constructor ensures all types are created through registry
+        // Private constructor to ensure all types are created through registry
         private ComponentType(Type type, int id)
         {
             Type = type;
             Id = id;
         }
 
-        // Static registry of all component types in our game
+        public bool Equals(ComponentType other)
+        {
+            return Id == other.Id;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is ComponentType other)
+            {
+                return Equals(other);
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return Id;
+        }
+
+        public override string ToString()
+        {
+            return $"ComponentType({Type.Name}, {Id})";
+        }
+
+        /// <summary>
+        /// Registry for managing component types, enhanced with dynamic registration
+        /// </summary>
         public static class Registry
         {
-            // Core Components
+            // Predefined components
             public static readonly ComponentType Transform = new ComponentType(
                 typeof(TransformComponent),
                 0
@@ -28,7 +57,6 @@ namespace ECS_MagicTile
                 typeof(MusicNoteComponent),
                 1
             );
-
             public static readonly ComponentType PerfectLine = new ComponentType(
                 typeof(PerfectLineTagComponent),
                 3
@@ -37,7 +65,6 @@ namespace ECS_MagicTile
                 typeof(CornerComponent),
                 4
             );
-
             public static readonly ComponentType Input = new ComponentType(
                 typeof(InputStateComponent),
                 5
@@ -50,7 +77,6 @@ namespace ECS_MagicTile
                 typeof(MusicNoteFillerComponent),
                 7
             );
-
             public static readonly ComponentType ActiveState = new ComponentType(
                 typeof(ActiveStateComponent),
                 8
@@ -67,12 +93,10 @@ namespace ECS_MagicTile
                 typeof(ScoreStateComponent),
                 11
             );
-
             public static readonly ComponentType TransformGroup = new ComponentType(
                 typeof(TransformComponentGroup),
                 12
             );
-
             public static readonly ComponentType Progress = new ComponentType(
                 typeof(ProgressComponent),
                 14
@@ -82,7 +106,10 @@ namespace ECS_MagicTile
                 15
             );
 
-            // A lookup dictionary to quickly find ComponentType by Type
+            // Next available ID for dynamically registered components
+            private static int nextId = 16;
+
+            // Lookup dictionaries
             private static readonly Dictionary<Type, ComponentType> typeToComponentType =
                 new Dictionary<Type, ComponentType>
                 {
@@ -102,22 +129,35 @@ namespace ECS_MagicTile
                     { typeof(WorldStateComponent), WorldState },
                 };
 
-            // This is our new generic lookup method
-            public static ComponentType GetComponentType<T>()
-                where T : struct
+            /// <summary>
+            /// Gets a component type for a specific type, dynamically registering if not found
+            /// </summary>
+            public static ComponentType GetComponentType(Type type)
             {
-                var type = typeof(T);
-                if (!typeToComponentType.TryGetValue(type, out var componentType))
+                if (typeToComponentType.TryGetValue(type, out var componentType))
                 {
-                    throw new InvalidOperationException(
-                        $"Component type {type.Name} is not registered. "
-                            + "Make sure to add it to the ComponentType.Registry."
-                    );
+                    return componentType;
                 }
+
+                // Dynamically register the new component type
+                componentType = new ComponentType(type, nextId++);
+                typeToComponentType[type] = componentType;
+                
+                // Log when we dynamically register a new component type
+                UnityEngine.Debug.Log($"Dynamically registered new component type: {type.Name} with ID {componentType.Id}");
+                
                 return componentType;
             }
 
-            // The existing methods remain the same
+            /// <summary>
+            /// Gets a component type for a specific generic type
+            /// </summary>
+            public static ComponentType GetComponentType<T>() where T : struct
+            {
+                return GetComponentType(typeof(T));
+            }
+
+            // The existing methods for compatibility
             public static ComponentType[] GetAllTypes() => AllTypes;
 
             private static readonly ComponentType[] AllTypes =

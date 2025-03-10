@@ -9,9 +9,7 @@ namespace ECS_MagicTile
     {
         [Header("Game Settings")]
         public GeneralGameSetting generalGameSetting;
-
         public MusicNoteCreationSetting musicNoteCreationSettings;
-
         public PerfectLineSetting perfectLineSetting;
         public LaneLineSettings laneLineSettings;
 
@@ -83,27 +81,27 @@ namespace ECS_MagicTile
             var introState = new GameSystemState(World, new IGameSystem[] { gameIntroSystem });
             var preStartState = new GameSystemState(
                 World,
-                new IGameSystem[]
+                new GameSystemBase[]
                 {
                     new PerfectLineSystem(this),
                     new StartingNoteCreationSystem(this),
                     new StartingNoteSystem(this),
                     new LaneLineSystem(this),
-                    inGameUIElementHandlerSystem,
-                    gameInGameSystem,
+                    // inGameUIElementHandlerSystem,
+                    // gameInGameSystem,
                 }
             );
             var ingameState = new GameSystemState(
                 World,
-                new IGameSystem[]
+                new GameSystemBase[]
                 {
                     new MusicNoteCreationSystem(this),
-                    new MovingNoteSystem(this),
-                    new TraceNoteToTriggerSongSystem(this),
-                    new InputSystem(),
-                    new InputCollisionSystem(this),
-                    new ScoringSystem(this),
-                    new ProgressSystem(this),
+                    // new MovingNoteSystem(this),
+                    // new TraceNoteToTriggerSongSystem(this),
+                    // new InputSystem(),
+                    // new InputCollisionSystem(this),
+                    // new ScoringSystem(this),
+                    // new ProgressSystem(this),
                 }
             );
 

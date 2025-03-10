@@ -1,96 +1,106 @@
 using ECS_MagicTile.Components;
 using UnityEngine;
+using static ECS_MagicTile.DelegateTypes;
 
 namespace ECS_MagicTile
 {
-    public class SingletonCreationSystem : IGameSystem
+    public class SingletonCreationSystem : GameSystemBase
     {
-        public bool IsEnabled { get; set; }
-        public World World { get; set; }
-
-        public EGameState GameStateToExecute => EGameState.IngamePrestart;
-
         private readonly MusicNoteCreationSetting musicNoteCreationSetting;
+        private readonly PerfectLineSetting perfectLineSetting;
 
         public SingletonCreationSystem(GlobalPoint globalPoint)
         {
             musicNoteCreationSetting = globalPoint.musicNoteCreationSettings;
+            perfectLineSetting = globalPoint.perfectLineSetting;
         }
 
-        public void RunCleanup()
-        {
-            //
-        }
-
-        public void RunInitialize()
+        protected override void Initialize()
         {
             CreatePerfectLine();
             CreateStartingNote();
             CreateGameScore();
             CreateProgress();
             CreateWorldStateComponent();
+
+            Debug.Log("Singletons created with optimized storage");
         }
 
-        public void SetWorld(World world)
+        protected override void Execute(float deltaTime)
         {
-            World = world;
+            // No per-frame logic needed
         }
 
-        public void RunUpdate(float deltaTime)
+        protected override void Cleanup()
         {
-            //
+            // No cleanup needed
         }
 
         private void CreatePerfectLine()
         {
-            //The perfect line singleton
-            var components = new object[]
-            {
-                new TransformComponent(),
-                new PerfectLineTagComponent(),
-                new CornerComponent(),
-            };
-            World.CreateEntityWithComponents(Archetype.Registry.PerfectLine, components);
+            // Create the perfect line singleton directly with components
+            // The ISingletonFlag implementation will route this to optimized storage
+            World.CreateEntity(
+                new TransformComponent
+                {
+                    Position = perfectLineSetting.Position,
+                    Size = perfectLineSetting.Size,
+                },
+                new PerfectLineTagComponent { PerfectLineWidth = perfectLineSetting.Width },
+                new CornerComponent()
+            );
+
+            Debug.Log(
+                $"Perfect Line singleton created with ID: {World.GetSingletonEntityId<PerfectLineTagComponent>()}"
+            );
         }
 
         private void CreateStartingNote()
         {
-            var components = new object[]
-            {
-                new TransformComponent(),
-                new ActiveStateComponent(),
-                new StartingNoteTagComponent(),
-            };
-            World.CreateEntityWithComponents(Archetype.Registry.StartingNote, components);
+            // Create the starting note singleton directly with components
+            // The ISingletonFlag implementation will route this to optimized storage
+            World.CreateEntity(
+                new TransformComponent { Position = new Vector2(0, 0), Size = new Vector2(1, 1) },
+                new ActiveStateComponent { IsActive = true },
+                new StartingNoteTagComponent { initalLane = 0 }
+            );
+
+            Debug.Log(
+                $"Starting Note singleton created with ID: {World.GetSingletonEntityId<StartingNoteTagComponent>()}"
+            );
         }
 
         private void CreateGameScore()
         {
-            var components = new object[] { new ScoreComponent { TotalScore = 0 } };
-            World.CreateEntityWithComponents(Archetype.Registry.GameScore, components);
+            // Create the game score singleton
+            // Note: This would need to be updated with ISingletonFlag to use the singleton storage
+            World.CreateEntity(new ScoreComponent { TotalScore = 0 });
         }
 
         private void CreateProgress()
         {
+            // Parse the MIDI data
             MusicNoteMidiData musicNoteMidiData = MidiNoteParser.ParseFromText(
                 musicNoteCreationSetting.MidiContent.text
             );
-            var components = new object[]
-            {
+
+            // Create the progress singleton
+            // Note: This would need to be updated with ISingletonFlag to use the singleton storage
+            World.CreateEntity(
                 new ProgressComponent
                 {
                     CurrentProgressRawValue = 0,
                     currentProgressPercent = 0,
                     MaxProgressRawValue = musicNoteMidiData.TotalNotes,
-                },
-            };
-            World.CreateEntityWithComponents(Archetype.Registry.SongProgress, components);
+                }
+            );
         }
 
         private void CreateWorldStateComponent()
         {
-            var components = new object[] { new WorldStateComponent() };
-            World.CreateEntityWithComponents(Archetype.Registry.WorldState, components);
+            // Create the world state singleton
+            // Note: This would need to be updated with ISingletonFlag to use the singleton storage
+            World.CreateEntity(new WorldStateComponent());
         }
     }
 }

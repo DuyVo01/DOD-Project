@@ -73,6 +73,16 @@ public class IndexedStorage<T>
         throw new KeyNotFoundException($"Item with id {id} not found");
     }
 
+    public bool SetById(int id, T item)
+    {
+        if (idToIndex.TryGetValue(id, out int index))
+        {
+            items[index] = item;
+            return true;
+        }
+        return false;
+    }
+
     public bool TryGetById(int id, out T item)
     {
         if (idToIndex.TryGetValue(id, out int index))

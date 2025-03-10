@@ -3,23 +3,17 @@ using UnityEngine;
 
 namespace ECS_MagicTile
 {
-    public class StartingNoteCreationSystem : IGameSystem
+    public class StartingNoteCreationSystem : GameSystemBase
     {
-        public bool IsEnabled { get; set; } = true;
-        public World World { get; set; }
-
         private readonly MusicNoteCreationSetting musicNoteCreationSetting;
-
         private readonly StartingNoteSyncTool startingNoteSyncTool;
 
-        private ArchetypeStorage startingNoteStorage;
-        private ArchetypeStorage perfectLineStorage;
+        // Track perfect line position for optimization
+        private float lastPerfectLineTopLeftY;
+        private float lastPerfectLineTopLeftX;
 
-        private TransformComponent[] startingNoteTransforms;
-        private CornerComponent[] perfectLineCorners;
-
-        float lastPerfectLineTopLeftY;
-        float lastPerfectLineTopLeftX;
+        // Track if the starting note has been set up
+        private bool isInitialized = false;
 
         public StartingNoteCreationSystem(GlobalPoint globalPoint)
         {
@@ -27,75 +21,110 @@ namespace ECS_MagicTile
             startingNoteSyncTool = globalPoint.startingNoteSyncTool;
         }
 
-        public void RunCleanup() { }
-
-        public void RunInitialize()
+        protected override void Initialize()
         {
+            // Initialize the sync tool
             startingNoteSyncTool.InitializeTool();
 
-            startingNoteStorage ??= World.GetStorage(Archetype.Registry.StartingNote);
-            perfectLineStorage ??= World.GetStorage(Archetype.Registry.PerfectLine);
-
-            perfectLineCorners = perfectLineStorage.GetComponents<CornerComponent>();
-            startingNoteTransforms = startingNoteStorage.GetComponents<TransformComponent>();
-
-            ref ActiveStateComponent activeState =
-                ref startingNoteStorage.GetComponents<ActiveStateComponent>()[0];
-            activeState.isActive = true;
-
+            // Initial setup on system initialization
             SetupStartingNote();
-        }
-
-        public void SetWorld(World world)
-        {
-            World = world;
-        }
-
-        public void RunUpdate(float deltaTime)
-        {
-            if (
-                lastPerfectLineTopLeftY != perfectLineCorners[0].TopLeft.y
-                || lastPerfectLineTopLeftX != perfectLineCorners[0].TopLeft.x
-            )
-            {
-                lastPerfectLineTopLeftY = perfectLineCorners[0].TopLeft.y;
-                lastPerfectLineTopLeftX = perfectLineCorners[0].TopLeft.x;
-                SetupStartingNote();
-            }
-
-            //Debug.Log($"PerfectLine Topleft: {perfectLineCorners[0].TopLeft.x}");
+            isInitialized = true;
         }
 
         private void SetupStartingNote()
         {
-            ref TransformComponent transform = ref startingNoteTransforms[0];
-
-            ref CornerComponent perfectLineCorner = ref perfectLineCorners[0];
+            // Get references to the singleton components we need
+            ref var startingNoteTransform = ref World.GetSingleton<
+                StartingNoteTagComponent,
+                TransformComponent
+            >();
+            ref var perfectLineCorner = ref World.GetSingleton<
+                PerfectLineTagComponent,
+                CornerComponent
+            >();
+            ref var perfectLine = ref World.GetSingleton<PerfectLineTagComponent>();
+            ref var activeState = ref World.GetSingleton<
+                StartingNoteTagComponent,
+                ActiveStateComponent
+            >();
 
             // Calculate lane width
             float totalWidth = perfectLineCorner.TopRight.x - perfectLineCorner.TopLeft.x;
             float laneWidth = totalWidth / 4;
             float halfLaneWidth = laneWidth / 2f;
 
-            // Calculate spawn position
-            float spawnX = perfectLineCorner.TopLeft.x + (0 * laneWidth) + halfLaneWidth;
+            // Calculate spawn position - first lane (index 0)
+            float spawnX = perfectLineCorner.TopLeft.x + halfLaneWidth;
             float spawnY = perfectLineCorner.TopLeft.y;
 
-            transform.Position = new Vector2(spawnX, spawnY);
+            // Update starting note transform
+            startingNoteTransform.Position = new Vector2(spawnX, spawnY);
 
-            ref PerfectLineTagComponent PerfectLine =
-                ref perfectLineStorage.GetComponents<PerfectLineTagComponent>()[0];
-
-            float scaleX = PerfectLine.PerfectLineWidth / 4;
-
+            // Calculate scale based on perfect line properties
+            float scaleX = perfectLine.PerfectLineWidth / 4;
             float scaleY = MagicTileHelper.CalculateScaleY(
                 musicNoteCreationSetting.ShortNoteScaleYFactor,
                 scaleX
             );
 
-            transform.Size = new Vector2(scaleX, scaleY);
+            startingNoteTransform.Size = new Vector2(scaleX, scaleY);
 
-            startingNoteSyncTool.SyncStartNoteTransform(transform);
+            // Sync the transform to the visual representation
+            startingNoteSyncTool.SyncSingleton();
+
+            // Store the current perfect line position for future reference
+            lastPerfectLineTopLeftX = perfectLineCorner.TopLeft.x;
+            lastPerfectLineTopLeftY = perfectLineCorner.TopLeft.y;
+
+            Debug.Log("Starting note positioned at: " + startingNoteTransform.Position);
+        }
+
+        protected override void Execute(float deltaTime)
+        {
+            // Only run this check if we've been initialized
+            if (!isInitialized)
+                return;
+
+            // Check if the perfect line has moved
+            ref var perfectLineCorner = ref World.GetSingleton<
+                PerfectLineTagComponent,
+                CornerComponent
+            >();
+
+            // Reposition the starting note if the perfect line has moved
+            if (
+                perfectLineCorner.TopLeft.x != lastPerfectLineTopLeftX
+                || perfectLineCorner.TopLeft.y != lastPerfectLineTopLeftY
+            )
+            {
+                SetupStartingNote();
+            }
+        }
+
+        /// <summary>
+        /// Activates the starting note when the game begins
+        /// </summary>
+        public void ActivateStartingNote()
+        {
+            ref var activeState = ref World.GetSingleton<
+                StartingNoteTagComponent,
+                ActiveStateComponent
+            >();
+            activeState.IsActive = true;
+            startingNoteSyncTool.SyncSingleton();
+        }
+
+        /// <summary>
+        /// Deactivates the starting note when no longer needed
+        /// </summary>
+        public void DeactivateStartingNote()
+        {
+            ref var activeState = ref World.GetSingleton<
+                StartingNoteTagComponent,
+                ActiveStateComponent
+            >();
+            activeState.IsActive = false;
+            startingNoteSyncTool.SyncSingleton();
         }
     }
 }

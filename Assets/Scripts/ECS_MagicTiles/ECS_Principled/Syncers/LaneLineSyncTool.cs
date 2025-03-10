@@ -5,6 +5,13 @@ namespace ECS_MagicTile
 {
     public class LaneLineSyncTool : BaseSyncTool
     {
+        protected override Archetype Archetype => Archetype.Registry.LaneLines;
+
+        private readonly EntityViewFactory laneLineViewFactory;
+        private SpriteRenderer[] laneLineSprites;
+
+        private int laneLineCount;
+
         public LaneLineSyncTool(GlobalPoint globalPoint)
             : base(globalPoint)
         {
@@ -12,35 +19,30 @@ namespace ECS_MagicTile
                 globalPoint.laneLineSettings.landLinePrefab,
                 null
             );
+
+            laneLineCount = globalPoint.laneLineSettings.laneLineCount;
         }
-
-        protected override Archetype Archetype => Archetype.Registry.LaneLines;
-
-        public SpriteRenderer[] LaneLineSprites => laneLineSprites;
-
-        private readonly EntityViewFactory laneLineViewFactory;
-        private SpriteRenderer[] laneLineSprites;
 
         public override void InitializeTool()
         {
             base.InitializeTool();
-            laneLineSprites = new SpriteRenderer[DedicatedStorage.Count];
+            laneLineSprites = new SpriteRenderer[laneLineCount];
 
-            for (int i = 0; i < DedicatedStorage.Count; i++)
+            for (int i = 0; i < laneLineCount; i++)
             {
-                int entityId = DedicatedStorage.EntityIds[i];
-                laneLineSprites[i] = GetOrCreateLaneLineView(entityId)
-                    .GetComponent<SpriteRenderer>();
+                laneLineSprites[i] = GetOrCreateLaneLineView(i).GetComponent<SpriteRenderer>();
             }
         }
 
-        public void SyncLaneLineTransform(TransformComponent[] lanelineTransform)
+        public void SyncLaneLineTransform(int index, in TransformComponent lanelineTransform)
         {
-            for (int i = 0; i < DedicatedStorage.Count; i++)
-            {
-                laneLineSprites[i].transform.position = lanelineTransform[i].Position;
-                laneLineSprites[i].transform.localScale = lanelineTransform[i].Size;
-            }
+            laneLineSprites[index].transform.position = lanelineTransform.Position;
+            laneLineSprites[index].transform.localScale = lanelineTransform.Size;
+        }
+
+        public SpriteRenderer GetSpriteAtIndex(int index)
+        {
+            return laneLineSprites[index];
         }
 
         private GameObject GetOrCreateLaneLineView(int entityId)

@@ -3,61 +3,55 @@ using EventChannel;
 
 namespace ECS_MagicTile
 {
-    public class StartingNoteSystem : IGameSystem
+    public class StartingNoteSystem : GameSystemBase
     {
-        public bool IsEnabled { get; set; }
-        public World World { get; set; }
-
         private readonly IntEventChannel OnGameStartChannel;
-
-        ArchetypeStorage startingNoteStorage;
-        ActiveStateComponent[] startingNoteActiveState;
-        private StartingNoteSyncTool startingNoteSyncTool;
-
-        private GeneralGameSetting generalGameSetting;
-
+        private readonly StartingNoteSyncTool startingNoteSyncTool;
+        private readonly GeneralGameSetting generalGameSetting;
         private int eventListenerId;
 
         public StartingNoteSystem(GlobalPoint globalPoint)
         {
             OnGameStartChannel = globalPoint.OnGameStartChannel;
-
             startingNoteSyncTool = globalPoint.startingNoteSyncTool;
             generalGameSetting = globalPoint.generalGameSetting;
         }
 
-        public void RunCleanup()
+        protected override void Initialize()
         {
-            OnGameStartChannel.Unsubscribe(eventListenerId);
-        }
-
-        public void RunInitialize()
-        {
-            startingNoteStorage = World.GetStorage(Archetype.Registry.StartingNote);
-
-            startingNoteActiveState = startingNoteStorage.GetComponents<ActiveStateComponent>();
-
+            // Subscribe to the game start event
             eventListenerId = OnGameStartChannel.Subscribe(
                 target: this,
                 (target, data) => OnStartNoteInteraction(data)
             );
         }
 
-        public void SetWorld(World world)
+        protected override void Execute(float deltaTime)
         {
-            World = world;
+            // No per-frame logic needed
         }
 
-        public void RunUpdate(float deltaTime)
+        protected override void Cleanup()
         {
-            //
+            // Unsubscribe from event when system is cleaned up
+            OnGameStartChannel.Unsubscribe(eventListenerId);
         }
 
         private void OnStartNoteInteraction(int startNoteId)
         {
+            // Get a direct reference to the active state component of the starting note singleton
+            ref var activeState = ref World.GetSingleton<StartingNoteTagComponent, ActiveStateComponent>();
+            
+            // Update game state
             SystemRegistry.SetGameState(EGameState.IngamePlaying);
-            startingNoteActiveState[0].isActive = false;
-            startingNoteSyncTool.SyncStartNoteState(startingNoteActiveState[0]);
+            
+            // Deactivate the starting note
+            activeState.IsActive = false;
+            
+            // Sync the state change to the visual representation
+            startingNoteSyncTool.SyncSingleton();
+            
+            // Update global game state
             generalGameSetting.CurrentGameState = EGameState.IngamePlaying;
         }
     }

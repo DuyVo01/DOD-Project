@@ -6,9 +6,7 @@ namespace ECS_MagicTile
     public class LaneLineSettings : ScriptableObject
     {
         public GameObject landLinePrefab;
-
-        public float laneLineWidth;
-
-        private void OnValidate() { }
+        public short laneLineCount = 5;
+        public float laneLineWidth = .01f;
     }
 }

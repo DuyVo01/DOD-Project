@@ -30,9 +30,10 @@ namespace UIBlock
             UpdateBackgrounds();
         }
 
-        void OnDestroy()
+        protected override void OnDestroy()
         {
             orientationChangedChannel.Unsubscribe(eventSubcriberId);
+            base.OnDestroy();
         }
 
         void OnOrientationChange(bool isPortrait)

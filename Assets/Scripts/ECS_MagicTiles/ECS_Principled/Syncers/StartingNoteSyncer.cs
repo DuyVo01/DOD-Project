@@ -42,7 +42,7 @@ namespace ECS_MagicTile
 
         public override void RunUpdate(float deltaTime)
         {
-            startingNoteViewObject.SetActive(startingNoteActiveStateComponents[0].isActive);
+            startingNoteViewObject.SetActive(startingNoteActiveStateComponents[0].IsActive);
             // if (!startingNoteViewObject.activeSelf)
             // {
             //     IsEnabled = false;

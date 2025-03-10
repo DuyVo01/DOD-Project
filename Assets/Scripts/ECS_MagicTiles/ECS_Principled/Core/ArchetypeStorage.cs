@@ -35,7 +35,7 @@ namespace ECS_MagicTile
         }
 
         // Provides type-safe access to component arrays
-        public T[] GetComponents<T>()
+        public virtual T[] GetComponents<T>()
             where T : struct
         {
             var componentType = ComponentType.Registry.GetComponentType<T>();

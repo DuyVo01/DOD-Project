@@ -5,8 +5,9 @@ namespace ECS_MagicTile
 {
     public class EntityViewFactory
     {
-        private readonly Dictionary<int, GameObject> entityViews =
-            new Dictionary<int, GameObject>();
+        private readonly IndexedStorage<GameObject> entityViews = new IndexedStorage<GameObject>(
+            64
+        );
         private readonly GameObject prefabSource;
         private readonly Transform viewRoot;
 
@@ -20,7 +21,7 @@ namespace ECS_MagicTile
 
         public GameObject GetOrCreateView(int entityId, string nameOnCreation = "")
         {
-            if (entityViews.TryGetValue(entityId, out var existing))
+            if (entityViews.TryGetById(entityId, out var existing))
             {
                 return existing;
             }
@@ -30,13 +31,13 @@ namespace ECS_MagicTile
             GameObject view = GameObject.Instantiate(prefab, viewRoot);
             EntityIdHolder viewEntityIdHolder = view.AddComponent<EntityIdHolder>();
             viewEntityIdHolder.SetEntityId(entityId);
-            entityViews[entityId] = view;
+            entityViews.SetById(entityId, view);
             return view;
         }
 
         public GameObject GetView(int entityId)
         {
-            return entityViews.TryGetValue(entityId, out var view) ? view : null;
+            return entityViews.TryGetById(entityId, out var view) ? view : null;
         }
     }
 }

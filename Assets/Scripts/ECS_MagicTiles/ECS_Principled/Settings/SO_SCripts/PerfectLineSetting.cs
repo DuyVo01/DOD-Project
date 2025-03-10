@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace ECS_MagicTile
@@ -19,6 +20,16 @@ namespace ECS_MagicTile
 
         public Vector2 landscapeNormalizedSize;
 
-        private void OnValidate() { }
+        public Vector2 Position { get; set; }
+        public Vector2 Size { get; set; }
+        public float Width { get; private set; }
+
+        public void UpdateWidth(SpriteRenderer spriteRenderer)
+        {
+            SpriteUtility.SpriteCorners spriteCorners = SpriteUtility.GetSpriteCorners(
+                spriteRenderer
+            );
+            Width = spriteCorners.TopRight.x - spriteCorners.TopLeft.x;
+        }
     }
 }

@@ -164,9 +164,10 @@ public class GlobalGameSetting : PersistentSingleton<GlobalGameSetting>
         // GizmoDebugger.Instance.InitData(musicNoteEntityGroup.EntityCount);
     }
 
-    private void OnDestroy()
+    protected override void OnDestroy()
     {
         SystemRepository.Clear();
         EntityRepository.Clear();
+        base.OnDestroy();
     }
 }

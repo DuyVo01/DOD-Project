@@ -5,7 +5,10 @@ using UnityEngine;
 
 namespace ECS_MagicTile.Components
 {
-    public struct PerfectLineTagComponent : IComponent
+    /// <summary>
+    /// Tags an entity as the Perfect Line - implemented as a singleton
+    /// </summary>
+    public struct PerfectLineTagComponent : IComponent, ISingletonFlag
     {
         public float PerfectLineWidth;
     }

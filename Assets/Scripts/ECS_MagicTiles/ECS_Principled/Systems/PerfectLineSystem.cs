@@ -1,151 +1,99 @@
 using ECS_MagicTile.Components;
-using EventChannel;
 using UnityEngine;
 
 namespace ECS_MagicTile
 {
-    public class PerfectLineSystem : IGameSystem
+    /// <summary>
+    /// System that manages the perfect line position, size, and corners
+    /// </summary>
+    public class PerfectLineSystem : GameSystemBase
     {
-        public bool IsEnabled { get; set; } = true;
-        public World World { get; set; }
+        private readonly PerfectLineSetting perfectLineSetting;
+        private readonly PerfectLineSyncTool perfectLineSyncTool;
 
-        //Storage and Data arrays
-        ArchetypeStorage perfectLineStorage;
-        PerfectLineTagComponent[] perfectLineTagComponents;
-        CornerComponent[] perfectLineCorners;
-        TransformComponent[] perfectLineTransforms;
-
-        //SO settings
-        PerfectLineSetting perfectLineSetting;
-
-        //Event Channels
-        private BoolEventChannel OnOrientationChangedChannel;
-
-        //Game object refs
-        SpriteRenderer perfectLineSprite;
-        Camera mainCamera;
-
-        SpriteUtility.SpriteCorners perfectLineCornersInCamSpace;
-
-        private PerfectLineSyncTool perfectLineSyncTool;
-
-        private int eventListenerId;
+        // Track time for any animations
+        private float elapsedTime = 0;
 
         public PerfectLineSystem(GlobalPoint globalPoint)
         {
-            perfectLineSprite = globalPoint.perfectLineObject.GetComponent<SpriteRenderer>();
             perfectLineSetting = globalPoint.perfectLineSetting;
-            mainCamera = globalPoint.mainCamera;
-            OnOrientationChangedChannel = globalPoint.OnOrientationChangedChannel;
-
             perfectLineSyncTool = globalPoint.perfectLineSyncTool;
         }
 
-        public EGameState GameStateToExecute => EGameState.All;
-
-        public void RunInitialize()
+        protected override void Initialize()
         {
-            perfectLineStorage = World.GetStorage(Archetype.Registry.PerfectLine);
-
-            perfectLineTagComponents = perfectLineStorage.GetComponents<PerfectLineTagComponent>();
-            perfectLineCorners = perfectLineStorage.GetComponents<CornerComponent>();
-            perfectLineTransforms = perfectLineStorage.GetComponents<TransformComponent>();
-
-            eventListenerId = OnOrientationChangedChannel.Subscribe(
-                target: this,
-                (target, data) => OnOrientationChanged(data)
-            );
+            Debug.Log("PerfectLineSystem initialized with singleton API");
+            UpdatePerfectLine();
         }
 
-        public void RunCleanup()
+        protected override void Execute(float deltaTime)
         {
-            OnOrientationChangedChannel.Unsubscribe(eventListenerId);
+            // elapsedTime += deltaTime;
+
+            // // Check if we need to update the perfect line components
+            // // This could be based on game events, difficulty changes, etc.
+            // bool needsUpdate = false;
+
+            // // Add any conditions here that would require an update
+            // // For example, if the perfectLineSetting has changed
+
+            // if (needsUpdate)
+            // {
+            //     UpdatePerfectLine();
+            // }
+
+            // // Sync visual representation
+            // perfectLineSyncTool.SyncSingleton();
         }
 
-        public void SetWorld(World world)
+        /// <summary>
+        /// Updates all components of the perfect line
+        /// </summary>
+        private void UpdatePerfectLine()
         {
-            World = world;
+            // Get references to the singleton components
+            ref var transform = ref World.GetSingleton<
+                PerfectLineTagComponent,
+                TransformComponent
+            >();
+            ref var perfectLine = ref World.GetSingleton<PerfectLineTagComponent>();
+            ref var corner = ref World.GetSingleton<PerfectLineTagComponent, CornerComponent>();
+
+            // Update transform based on settings
+            transform.Position = perfectLineSetting.Position;
+            transform.Size = perfectLineSetting.Size;
+
+            // Update the tag component
+
+            // The most important part: Calculate and update the corner positions
+            // These are used for collision detection and positioning other elements
+
+            perfectLine.PerfectLineWidth = perfectLineSetting.Width;
+
+            // Extract values for clarity
+            float width = perfectLine.PerfectLineWidth;
+            float height = 0.1f; // Typical height for perfect line
+            Vector2 position = transform.Position;
+
+            // Calculate half extents
+            float halfWidth = width / 2f;
+            float halfHeight = height / 2f;
+
+            // Update corner positions
+            corner.TopLeft = new Vector2(position.x - halfWidth, position.y + halfHeight);
+            corner.TopRight = new Vector2(position.x + halfWidth, position.y + halfHeight);
+            corner.BottomLeft = new Vector2(position.x - halfWidth, position.y - halfHeight);
+            corner.BottomRight = new Vector2(position.x + halfWidth, position.y - halfHeight);
+
+            Debug.Log($"Updated perfect line corners at position {position}, width {width}");
         }
 
-        public void RunUpdate(float deltaTime) { }
-
-        private void UpdatePerfectLinePos(float value)
+        /// <summary>
+        /// Called externally when settings are changed
+        /// </summary>
+        public void OnSettingsChanged()
         {
-            if (ScreenManager.Instance.IsPortrait)
-            {
-                perfectLineTransforms[0].Position = CameraViewUtils.GetPositionInCameraView(
-                    mainCamera,
-                    perfectLineSetting.portraitNormalizedPos.x,
-                    perfectLineSetting.portraitNormalizedPos.y
-                );
-            }
-            else
-            {
-                perfectLineTransforms[0].Position = CameraViewUtils.GetPositionInCameraView(
-                    mainCamera,
-                    perfectLineSetting.landscapeNormalizedPos.x,
-                    perfectLineSetting.landscapeNormalizedPos.y
-                );
-            }
-
-            perfectLineSyncTool.SyncPerfectLineTransform(perfectLineTransforms[0]);
-
-            UpdatePerfectLineCornersData();
-        }
-
-        private void UpdatePerfectLineSizeData(float value)
-        {
-            if (ScreenManager.Instance.IsPortrait)
-            {
-                perfectLineTransforms[0].Size = SpriteUtility.ResizeInCameraView(
-                    perfectLineSprite,
-                    mainCamera,
-                    perfectLineSetting.portraitNormalizedSize.x,
-                    perfectLineSetting.portraitNormalizedSize.y,
-                    false
-                );
-            }
-            else
-            {
-                perfectLineTransforms[0].Size = SpriteUtility.ResizeInCameraView(
-                    perfectLineSprite,
-                    mainCamera,
-                    perfectLineSetting.landscapeNormalizedSize.x,
-                    perfectLineSetting.landscapeNormalizedSize.y,
-                    false
-                );
-            }
-
-            perfectLineSyncTool.SyncPerfectLineTransform(perfectLineTransforms[0]);
-
-            UpdatePerfectLineCornersData();
-        }
-
-        private void UpdatePerfectLineCornersData()
-        {
-            perfectLineCornersInCamSpace = SpriteUtility.GetSpriteCorners(perfectLineSprite);
-
-            perfectLineCorners[0].TopLeft = perfectLineCornersInCamSpace.TopLeft;
-            perfectLineCorners[0].TopRight = perfectLineCornersInCamSpace.TopRight;
-            perfectLineCorners[0].BottomLeft = perfectLineCornersInCamSpace.BottomLeft;
-            perfectLineCorners[0].BottomRight = perfectLineCornersInCamSpace.BottomRight;
-
-            perfectLineTagComponents[0].PerfectLineWidth = Mathf.Abs(
-                perfectLineCornersInCamSpace.TopLeft.x - perfectLineCornersInCamSpace.TopRight.x
-            );
-        }
-
-        private void OnOrientationChanged(bool isPortrait)
-        {
-            if (isPortrait)
-            {
-                UpdatePerfectLinePos(0f);
-            }
-            else
-            {
-                UpdatePerfectLinePos(0f);
-            }
-            UpdatePerfectLineSizeData(0f);
+            UpdatePerfectLine();
         }
     }
 }

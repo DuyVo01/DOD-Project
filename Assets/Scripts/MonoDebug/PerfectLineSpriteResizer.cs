@@ -64,6 +64,9 @@ public class PerfectLineSpriteResizer : MonoBehaviour
 
         perfectLineSetting.portraitNormalizedSize = portraitNormalizedSize;
         perfectLineSetting.landscapeNormalizedSize = landscapeNormalizedSize;
+        perfectLineSetting.Size = transform.localScale;
+        perfectLineSetting.Position = transform.position;
+        perfectLineSetting.UpdateWidth(spriteRenderer);
     }
 #endif
 }

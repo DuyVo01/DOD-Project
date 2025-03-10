@@ -1,11 +1,20 @@
 using ECS_MagicTile.Components;
 using EventChannel;
 using UnityEngine;
+using static ECS_MagicTile.DelegateTypes;
 
 namespace ECS_MagicTile
 {
-    public class LaneLineSystem : IGameSystem
+    public class LaneLineSystem : GameSystemBase
     {
+        private BoolEventChannel onOrientationChangedChannel;
+        private Camera targetCamera;
+        private LaneLineSyncTool laneLineSyncTool;
+        private LaneLineSettings laneLineSettings;
+        private int eventListenerId;
+
+        // References to component data
+
         public LaneLineSystem(GlobalPoint globalPoint)
         {
             onOrientationChangedChannel = globalPoint.OnOrientationChangedChannel;
@@ -14,39 +23,10 @@ namespace ECS_MagicTile
             targetCamera = globalPoint.mainCamera;
         }
 
-        public bool IsEnabled { get; set; }
-        public World World { get; set; }
-
-        private BoolEventChannel onOrientationChangedChannel;
-        private Camera targetCamera;
-
-        public EGameState GameStateToExecute => EGameState.IngamePrestart;
-
-        ArchetypeStorage perfectLineStorage;
-        CornerComponent[] perfectLineCorners;
-
-        ArchetypeStorage laneLineStorage;
-        TransformComponent[] laneLineTransforms;
-
-        private LaneLineSyncTool laneLineSyncTool;
-        private LaneLineSettings laneLineSettings;
-
-        private int eventListenerId;
-
-        public void RunCleanup()
-        {
-            onOrientationChangedChannel.Unsubscribe(eventListenerId);
-        }
-
-        public void RunInitialize()
+        protected override void Initialize()
         {
             CreateLaneLines();
             laneLineSyncTool.InitializeTool();
-            perfectLineStorage = World.GetStorage(Archetype.Registry.PerfectLine);
-            laneLineStorage = World.GetStorage(Archetype.Registry.LaneLines);
-
-            laneLineTransforms = laneLineStorage.GetComponents<TransformComponent>();
-            perfectLineCorners = perfectLineStorage.GetComponents<CornerComponent>();
 
             AdjustLaneLines();
 
@@ -56,19 +36,21 @@ namespace ECS_MagicTile
             );
         }
 
-        public void SetWorld(World world)
+        protected override void Execute(float deltaTime)
         {
-            World = world;
+            // Nothing needed in update for this system
         }
 
-        public void RunUpdate(float deltaTime) { }
+        protected override void Cleanup()
+        {
+            onOrientationChangedChannel.Unsubscribe(eventListenerId);
+        }
 
         private void CreateLaneLines()
         {
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < laneLineSettings.laneLineCount; i++)
             {
-                var LaneLinesComponents = new object[] { new TransformComponent() };
-                World.CreateEntityWithComponents(Archetype.Registry.LaneLines, LaneLinesComponents);
+                World.CreateEntity(new TransformComponent(), new LaneLineTagComponent());
             }
         }
 
@@ -77,35 +59,52 @@ namespace ECS_MagicTile
             AdjustLaneLines();
         }
 
-        private void OnLaneLineSettingsAdjustInInpector(float value)
-        {
-            AdjustLaneLines();
-        }
-
         private void AdjustLaneLines()
         {
-            ref CornerComponent perfectLineCorner = ref perfectLineCorners[0];
+            CornerComponent perfectLineCorner = World.GetSingleton<
+                PerfectLineTagComponent,
+                CornerComponent
+            >();
+            if (perfectLineCorner.TopLeft.x == 0 && perfectLineCorner.TopLeft.y == 0)
+            {
+                Debug.LogWarning(
+                    "Perfect line corner not initialized yet, can't adjust lane lines"
+                );
+                return;
+            }
 
             // Calculate lane width once
             float totalWidth = perfectLineCorner.TopRight.x - perfectLineCorner.TopLeft.x;
             float laneWidth = totalWidth / 4;
 
-            for (int i = 0; i < laneLineStorage.Count; i++)
-            {
-                float spawnX = i * laneWidth + perfectLineCorner.TopLeft.x;
-                float spawnY = CameraViewUtils.GetPositionYInCameraView(targetCamera, .5f);
+            float spawnY = CameraViewUtils.GetPositionYInCameraView(targetCamera, .5f);
 
-                laneLineTransforms[i].Position = new Vector3(spawnX, spawnY, 0);
-                laneLineTransforms[i].Size = SpriteUtility.ResizeInCameraView(
-                    laneLineSyncTool.LaneLineSprites[i],
-                    targetCamera,
-                    laneLineSettings.laneLineWidth,
-                    1,
-                    false
+            int index = 0;
+
+            // Get a direct reference to the component
+            World
+                .CreateQuery()
+                .ForEach(
+                    (
+                        ref TransformComponent transform,
+                        ref LaneLineTagComponent tag,
+                        int entityId
+                    ) =>
+                    {
+                        float spawnX = index * laneWidth + perfectLineCorner.TopLeft.x;
+                        transform.Position = new Vector3(spawnX, spawnY, 0);
+                        transform.Size = SpriteUtility.ResizeInCameraView(
+                            laneLineSyncTool.GetSpriteAtIndex(index),
+                            targetCamera,
+                            laneLineSettings.laneLineWidth,
+                            1,
+                            false
+                        );
+
+                        laneLineSyncTool.SyncLaneLineTransform(index, transform);
+                        index++;
+                    }
                 );
-            }
-
-            laneLineSyncTool.SyncLaneLineTransform(laneLineTransforms);
         }
     }
 }

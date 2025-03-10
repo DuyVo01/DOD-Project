@@ -4,6 +4,6 @@ namespace ECS_MagicTile.Components
 {
     public struct ActiveStateComponent : IComponent
     {
-        public bool isActive;
+        public bool IsActive;
     }
 }

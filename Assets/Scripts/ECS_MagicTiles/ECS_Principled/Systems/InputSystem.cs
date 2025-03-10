@@ -1,25 +1,18 @@
 using ECS_MagicTile.Components;
 using UnityEngine;
+using static ECS_MagicTile.DelegateTypes;
 
 namespace ECS_MagicTile
 {
-    public class InputSystem : IGameSystem
+    public class InputSystem : GameSystemBase
     {
         private const int MAX_INPUTS = 2;
         private const string LOG_PREFIX = "[Input System] ";
         private bool wasMousePressed;
 
-        public bool IsEnabled { get; set; } = true;
-        public World World { get; set; }
-
         public EGameState GameStateToExecute => EGameState.IngamePlaying;
 
-        public void SetWorld(World world)
-        {
-            World = world;
-        }
-
-        public void RunInitialize()
+        protected override void Initialize()
         {
             // Create input entities
             for (int i = 0; i < MAX_INPUTS; i++)
@@ -33,86 +26,103 @@ namespace ECS_MagicTile
                     FrameCount = 0,
                 };
 
-                World.CreateEntityWithComponents(
-                    Archetype.Registry.Input,
-                    new object[] { inputComponent }
-                );
+                World.CreateEntity(inputComponent);
             }
         }
 
-        public void RunUpdate(float deltaTime)
+        protected override void Execute(float deltaTime)
         {
-            ArchetypeStorage inputStorage = World.GetStorage(Archetype.Registry.Input);
-            var inputStates = inputStorage.GetComponents<InputStateComponent>();
-
             // Update previous states
-            UpdatePreviousStates(inputStates);
+            World
+                .CreateQuery()
+                .ForEach<InputStateComponent>(
+                    (ref InputStateComponent inputState) =>
+                    {
+                        if (inputState.State == InputState.JustReleased)
+                        {
+                            inputState.State = InputState.None;
+                            inputState.FrameCount = 0;
+                            inputState.IsActive = false;
+                        }
+                        else if (inputState.State == InputState.JustPressed)
+                        {
+                            inputState.State = InputState.Held;
+                        }
+                    }
+                );
 
             // Process new input
             if (Input.touchCount > 0)
             {
-                ProcessTouchInput(inputStates);
+                ProcessTouchInput();
             }
             else
             {
-                ProcessMouseInput(inputStates);
+                ProcessMouseInput();
             }
         }
 
-        private void UpdatePreviousStates(InputStateComponent[] inputStates)
-        {
-            for (int i = 0; i < MAX_INPUTS; i++)
-            {
-                if (inputStates[i].State == InputState.JustReleased)
-                {
-                    inputStates[i].State = InputState.None;
-                    inputStates[i].FrameCount = 0;
-                    inputStates[i].IsActive = false;
-                }
-                else if (inputStates[i].State == InputState.JustPressed)
-                {
-                    inputStates[i].State = InputState.Held;
-                }
-            }
-        }
-
-        private void ProcessMouseInput(InputStateComponent[] inputStates)
+        private void ProcessMouseInput()
         {
             bool isCurrentlyPressed = Input.GetMouseButton(0);
             Vector2 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-            ref var currentState = ref inputStates[0];
-            InputState newState = DetermineNewInputState(isCurrentlyPressed, wasMousePressed);
+            // We'll use the query system to find and update the first input state
+            bool updated = false;
+            int index = 0;
 
-            // Only update if state changed or position changed
-            if (newState != currentState.State || worldPos != currentState.Position)
-            {
-                UpdateInputState(ref currentState, worldPos, newState);
-            }
+            World
+                .CreateQuery()
+                .ForEach<InputStateComponent>(
+                    (ref InputStateComponent inputState, int entityId) =>
+                    {
+                        if (!updated && index == 0) // Process only the first input
+                        {
+                            InputState newState = DetermineNewInputState(
+                                isCurrentlyPressed,
+                                wasMousePressed
+                            );
+
+                            // Only update if state changed or position changed
+                            if (newState != inputState.State || worldPos != inputState.Position)
+                            {
+                                UpdateInputState(ref inputState, worldPos, newState);
+                            }
+
+                            updated = true;
+                        }
+                        index++;
+                    }
+                );
 
             wasMousePressed = isCurrentlyPressed;
         }
 
-        private void ProcessTouchInput(InputStateComponent[] inputStates)
+        private void ProcessTouchInput()
         {
             int touchCount = Mathf.Min(Input.touchCount, MAX_INPUTS);
 
-            // Reset unused input slots
-            for (int i = touchCount; i < MAX_INPUTS; i++)
-            {
-                if (inputStates[i].IsActive)
-                {
-                    inputStates[i].State = InputState.None;
-                    inputStates[i].IsActive = false;
-                }
-            }
+            // First reset all input states
+            int index = 0;
+            World
+                .CreateQuery()
+                .ForEach<InputStateComponent>(
+                    (ref InputStateComponent inputState, int entityId) =>
+                    {
+                        if (index >= touchCount && inputState.IsActive)
+                        {
+                            inputState.State = InputState.None;
+                            inputState.IsActive = false;
+                        }
+                        index++;
+                    }
+                );
 
-            // Process active touches
+            // Now process active touches
             for (int i = 0; i < touchCount; i++)
             {
                 Touch touch = Input.GetTouch(i);
                 Vector2 worldPos = Camera.main.ScreenToWorldPoint(touch.position);
-
                 InputState newState;
 
                 switch (touch.phase)
@@ -133,7 +143,21 @@ namespace ECS_MagicTile
                         break;
                 }
 
-                UpdateInputState(ref inputStates[i], worldPos, newState);
+                // Find the corresponding input state entity
+                int touchIndex = i;
+                index = 0;
+                World
+                    .CreateQuery()
+                    .ForEach<InputStateComponent>(
+                        (ref InputStateComponent inputState, int entityId) =>
+                        {
+                            if (index == touchIndex)
+                            {
+                                UpdateInputState(ref inputState, worldPos, newState);
+                            }
+                            index++;
+                        }
+                    );
             }
         }
 
@@ -164,11 +188,6 @@ namespace ECS_MagicTile
             if (isPressed)
                 return InputState.Held;
             return InputState.None;
-        }
-
-        public void RunCleanup()
-        {
-            // Nothing to cleanup for now
         }
     }
 }
